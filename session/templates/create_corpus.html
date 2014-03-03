@@ -6,6 +6,8 @@
     Neuen Korpus erstellen:
 </p>
 
+<div id="sid" class="hidden" data-sessionid="{{ sid }}">{{ sid }}</div>
+
 <form role="form" action="{% url 'session.views.startCreateCorpus' %}">
 
     <div class="form-group">
@@ -103,6 +105,8 @@
 
 
 <div id="form-progress" class="hidden">
+    <div id="progress-step"></div>
+    <div id="progress-progress"></div>
     <div class="progress">
         <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
             <span class="sr-only">60% Complete</span>
@@ -119,15 +123,11 @@
     {% load staticfiles %}
     <script src="{% static 'components/slider/js/bootstrap-slider.js' %}"></script>
     <script src="{% static 'js/create_corpus_view.js' %}"></script>
+    <script src="http://localhost:3000/socket.io/socket.io.js"></script>
 
     <script>
-
         var corpusView = CorpusView();
         corpusView.init();
-
-        $(corpusView).on("foo", function() {
-            console.log("bar");
-        });
 
         function updateProgressbar(progress) {
             console.log("update progress: ", progress)
@@ -154,10 +154,43 @@
         };
 
         $(document).ready(function() {
+
+            var id = $("#sid").data("sessionid");
+            console.log(id);
+
+            var socket = io.connect('http://localhost:3000');
+            socket.emit("connect", id);
+            socket.on('corpuscreation_progress', function (data) {
+                var status = JSON.parse(data);
+                console.log("status: ", status);
+
+                // 1 = download tweets
+                // 2 = save tweets to file
+                switch(status.task) {
+                    case 1:
+                        var currentStep = status.steps[0],
+                        totalFetched = currentStep.numFetched + currentStep.numFailed,
+                        percent = totalFetched / currentStep.numTotal * 100;
+
+                            console.log("Update progress to ", percent);
+                        updateProgressbar(percent);
+                        $("#progress-progress").text("Lade Tweet " + totalFetched + " / " + currentStep.numTotal);
+                        break;
+                    case 2:
+                        var currentStep = status.steps[1];
+                        $("#progress-progress").text("Speichere tweet " + currentStep.numSaved + " / " + currentStep.numTotal);
+                        if(currentStep.numSaved === currentStep.numTotal) $("form").trigger("corpusCreationFinished");
+                        break;
+                }
+
+            });
+
+
             $("form").on("startCorpusCreation", function() {
                 disableForm();
                 $("#form-progress").removeClass("hidden");
-                poll();
+{#                poll();#}
+
             });
 
             $("form").on("corpusCreationFinished", function() {

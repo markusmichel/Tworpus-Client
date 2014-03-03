@@ -17,8 +17,6 @@ from nltk.tokenize.punkt import PunktWordTokenizer
 from ThreadPool import ThreadPool
 
 
-
-
 class TwitterFetcherProgressListener:
     """
     Interface.
@@ -27,10 +25,23 @@ class TwitterFetcherProgressListener:
 
     numSuccessfullTweets = 0
     numFailedTweets = 0
+    numTotalTweets = 0
 
     successfullTweets = []
     failedTweets = []
 
+    def resetCounter(self):
+        self.reset()
+
+    def reset(self):
+        self.numSuccessfullTweets = 0
+        self.numFailedTweets = 0
+        self.successfullTweets = []
+        self.failedTweets = []
+        self.numTotalTweets = 0
+
+    def onStart(self):
+        pass
     def onProgress(data):
         pass
     def onFinish(self):
@@ -45,26 +56,37 @@ class TweetsFetcher:
 
     # lister is type of TwitterFetcherProgressListener
     def __init__(self, listener):
-        self.__tweetsToFetch = []
-        self.__listener = listener
-        self.__numTweetsFetched = 0
-        self.__fetchedTweets = []
         self.__isWorking = False
+        self.__listener = listener
+        self.__threadPoolMaxThreads = 30
+        self.__numTweetsToFetch = 0
+        self.__initLists()
 
+    def __initLists(self):
         self.__fetchQueue = Queue.Queue()
         self.__workingThreads = []
-        self.__threadPoolMaxThreads = 50
+        self.__listener.reset()
 
     def isWorking(self):
-        return self.__fetchQueue.qsize() > 0 or len(self.__workingThreads) > 0
+        #size = self.__fetchQueue.qsize()
+        #len = len(self.__workingThreads)
+        #return self.__fetchQueue.qsize() > 0 or len(self.__workingThreads) > 0
+        return self.__isWorking
 
     def fetchTweets(self, ids):
         """
         Start fetching a list of tweets.
         """
-        self.__numTweetsToFetch = len(ids)
+        if self.isWorking() is True:
+            raise Exception("Fetcher is still working")
+
         self.__isWorking = True
-        self.__workingThreads = []
+        self.__numTweetsToFetch = len(ids)
+        self.__initLists()
+
+        self.__listener.reset()
+        self.__listener.numTotalTweets = len(ids)
+        self.__listener.onStart()
 
         for id in ids:
             self.__startWorkerThread(id)
@@ -77,7 +99,7 @@ class TweetsFetcher:
             tweetId = str(id["tweet_id"])
             userId = str(id["userid"])
 
-            fetcher = TweetFetcher(tweetId, userId, self)
+            fetcher = TweetFetcher(tweetId=tweetId, userId=userId, tweetsFetcher=self)
             self.__workingThreads.append(fetcher)
             fetcher.start()
         else:
@@ -89,7 +111,8 @@ class TweetsFetcher:
         Called when a tweet was successfully fetched
         """
         self.__listener.numSuccessfullTweets += 1
-        self.__fetchedTweets.append(tweet)
+        self.__listener.successfullTweets.append(tweet)
+        self.__listener.onProgress()
 
     def onTweetFetchError(self, tweetId=0, userId=0):
         """
@@ -101,6 +124,7 @@ class TweetsFetcher:
         tweet["userid"] = userId
         tweet["id"] = tweetId
         self.__listener.failedTweets.append(tweet)
+        self.__listener.onProgress()
 
     def onFetched(self, thread):
         """
@@ -111,28 +135,10 @@ class TweetsFetcher:
         if(self.__fetchQueue.qsize() > 0):
             self.__startWorkerThread(self.__fetchQueue.get())
 
-        self.__listener.onProgress(self.getProgress())
-        if self.__listener.failedTweets + self.__listener.successfullTweets >= self.__numTweetsToFetch:
+        # All tweets have been fetched
+        if self.__listener.numFailedTweets + self.__listener.numSuccessfullTweets >= self.__numTweetsToFetch:
+            self.__isWorking = False
             self.__listener.onFinish()
-
-
-            arr = []
-            for tweet in self.__fetchedTweets:
-                t = {}
-                t["chars"]      = tweet.chars
-                t["words"]      = tweet.words
-                t["fullName"]   = tweet.fullName
-                t["screenName"] = tweet.screenName
-                t["text"]       = tweet.text
-                t["tweetId"]    = tweet.tweetId
-                t["userId"]     = tweet.userId
-                arr.append(t)
-
-            str = json.dumps(arr)
-
-            f = open("foo.json", "w+")
-            json.dump(arr, f, ensure_ascii=True)
-            f.close()
 
     @staticmethod
     def getTweetIdList(limit=100, language="de", wordcount="0", charcount="0"):
@@ -158,10 +164,10 @@ class TweetsFetcher:
         Progress in percent between 0 and 100
         """
 
-        if self.__listener.successfullTweets + self.__listener.failedTweets >= self.__numTweetsToFetch:
+        if self.__listener.numSuccessfullTweets + self.__listener.numFailedTweets >= self.__numTweetsToFetch:
             return 100
         else:
-            return (float(self.__listener.successfullTweets + self.__listener.failedTweets) / self.__numTweetsToFetch) * 100
+            return (float(self.__listener.numSuccessfullTweets + self.__listener.numFailedTweets) / self.__numTweetsToFetch) * 100
 
 
 
@@ -192,8 +198,7 @@ class TweetFetcher(Thread):
         except Exception as ex:
             self.__tweetsFetcher.onTweetFetchError(self.__tweetId, self.__userId)
             print "___EXCEPTION____"
-            print ex.message
-            print ex.args
+            print ex
 
         self.__tweetsFetcher.onFetched(self)
 
@@ -204,12 +209,10 @@ class TweetFetcher(Thread):
         Throws exception if twitter is unavailable or the parser failed to parse the text.
         """
 
-        assert isinstance(tweetId, str)
-        assert isinstance(userId, str)
         assert id != ""
         assert userId != ""
 
-        url = 'https://twitter.com/' + str(userId) + '/status/' + str(userId)
+        url = 'https://twitter.com/' + str(userId) + '/status/' + str(tweetId)
         print url
 
         response = urllib2.urlopen(url)

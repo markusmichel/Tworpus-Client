@@ -82,7 +82,15 @@ var CorpusView = function() {
             data: data,
             success: function(data) {
                 console.log("success", data)
-                $("form").trigger("startCorpusCreation");
+                if(data.working === true) {
+                    console.log("ERROR");
+                    $.pnotify({
+                        title: 'Hinweis',
+                        text: data.message,
+                        type: 'info'
+                    });
+                }
+                else $("form").trigger("startCorpusCreation");
             },
             error: function(err) {
                 console.log("error", err)
