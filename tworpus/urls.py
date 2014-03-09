@@ -1,6 +1,7 @@
 from django.conf.urls import patterns, include, url
 from visualizer import views as visualizerViews
 from session import views as sessionViews
+import views as baseViews
 
 urlpatterns = patterns('',
     # Examples:
@@ -10,6 +11,9 @@ urlpatterns = patterns('',
     url(r'^test/', visualizerViews.index),
 
     url(r'^new/', sessionViews.createCorpus),
+    url(r'^views/createcorpus/', sessionViews.createCorpusContent),
+    url(r'^$', baseViews.home),
+
     url(r'^api/createcorpus', sessionViews.startCreateCorpus),
     url(r'^api/progress', sessionViews.checkCorpusCreationProgress)
 )

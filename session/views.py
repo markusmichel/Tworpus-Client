@@ -128,7 +128,8 @@ class TweetFetcherController(Twitter.TwitterFetcherProgressListener):
         # @TODO: wrap in thread
         self.reportFailedTweets()
 
-        folder = "projects" + os.sep + "test"
+        from tworpus import settings
+        folder = settings.BASE_PROJECT_DIR + "test"
         self.saveSuccessfullTweets(filename="tweets.json", folder=folder)
 
         print "successful tweets = " + str(self.numSuccessfullTweets)
@@ -187,6 +188,14 @@ def createCorpus(request):
     print "working" if controller.isWorking() else "IDLE"
 
     return HttpResponse(template.render(context))
+
+def createCorpusContent(request):
+    """
+    Returns just the content for corpus creation.
+    Used for angular.js route /views/createcorpus
+    """
+    from django.shortcuts import render_to_response
+    return render_to_response("create_corpus_content.html")
 
 
 @csrf_exempt

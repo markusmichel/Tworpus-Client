@@ -37,7 +37,6 @@ INSTALLED_APPS = (
     'tworpus',
     'session',
     'visualizer',
-    'bootstrap3',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -82,3 +81,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+# Custom variables
+BASE_PROJECT_DIR = BASE_DIR + os.sep + 'projects' + os.sep
