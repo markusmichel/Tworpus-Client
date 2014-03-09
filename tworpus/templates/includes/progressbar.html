@@ -1,0 +1,44 @@
+<style>
+    #progressbar-container {
+        -webkit-transition: height 1s;
+        height: 0px;
+        position: fixed;
+        bottom: 0px;
+        background-color: lightgrey;
+        border-radius: 5px 5px 0 0;
+        width: 100%
+    }
+    #progressbar-container.expanded {
+        height: 200px;
+    }
+</style>
+
+<div ng-controller="ProgressController">
+
+    <div id="progressbar-container" ng-class="(progress.working == 1) ? 'expanded' : ''">
+        progressbar is working - DELETE THIS TEXT IN "progressbar.html"
+    </div>
+
+    <div ng-if="progress.working == 1">
+        {% verbatim %}
+        Progressbar
+        Working: <br/>
+
+        <div ng-if="progress.currentStep == 0">
+            Download Tweet {{ progress.steps[0].numFetched }} / {{ progress.steps[0].numTotal }}
+        </div>
+        <div ng-if="progress.currentStep == 1">
+            Save tweet {{ progress.steps[1].numSaved }} / {{ progress.steps[1].numTotal }}
+        </div>
+
+        <div class="progress progress-striped active">
+            <div class="progress-bar" ng-style="style()" role="progressbar" aria-valuenow="45" aria-valuemin="0"
+                 aria-valuemax="100"
+                 style="width: 45%">
+                <span class="sr-only">45% Complete</span>
+            </div>
+        </div>
+        {% endverbatim %}
+
+    </div>
+</div>

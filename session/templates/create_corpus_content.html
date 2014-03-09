@@ -1,0 +1,136 @@
+<div>
+    <p>
+        Neuen Korpus erstellen:
+    </p>
+    <slider id="slider" scale="scale" class="span2"></slider>
+
+    <form role="form" action="{% url 'session.views.startCreateCorpus' %}">
+
+        <div class="form-group">
+            <label for="input_title">Titel</label>
+            <input type="text" class="form-control" id="input_title" placeholder="Titel des Projekts">
+        </div>
+
+
+        <div class="row" ng-bootstrap-slider>
+            <div class="col-lg-4">
+                <input
+                        id="fooslider"
+                        type="text"
+                        class="slider"
+                        value="1"
+                        data-slider-value="1"
+                        data-slider-min="1"
+                        data-slider-max="100000"
+                        data-slider-step="1"
+                        data-slider-orientation="horizontal"
+                        data-slider-selection="after"
+                        data-slider-tooltip="show">
+            </div>
+            <div class="col-lg-4">
+                <input type="number" min="20" max="100000" step="20"
+                       id="input_num_tweets"
+                       class="form-control col-lg-2" value="0"/>
+                {{ numTweets }}
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            <label for="">Sprache</label>
+            <select id="select-language">
+                <option value="de">deutsch</option>
+                <option value="en">englisch</option>
+                <option value="fr">französisch</option>
+                <option value="es">spanisch</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="">Zeitraum</label>
+
+        </div>
+
+        <div class="form-group">
+            <label for="input_slider_num_tweets">Anzahl an Tweets</label>
+            <br/>
+
+            <div class="row">
+                <div class="col-lg-4">
+                    <input
+                            ng-model="numTweets"
+                            id="input_slider_num_tweets"
+                            type="text"
+                            class="slider"
+                            value="20"
+                            data-slider-min="20"
+                            data-slider-max="100000"
+                            data-slider-step="20"
+                            data-slider-value="20"
+                            data-slider-orientation="horizontal"
+                            data-slider-selection="after"
+                            data-slider-tooltip="show">
+                </div>
+                <div class="col-lg-4">
+                    <input type="number" min="20" max="100000" step="20"
+                           value="{% verbatim %}{{ numTweets }}{% endverbatim %}" id="input_num_tweets"
+                           class="form-control col-lg-2" value="0"/>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="input_slider_min_chars">Minimale Anzahl an Buchstaben pro Tweet</label>
+            <br/>
+
+            <div class="row">
+                <div class="col-lg-4">
+                    <input id="input_slider_min_chars"
+                           type="text"
+                           class="slider"
+                           value=""
+                           data-slider-min="0"
+                           data-slider-max="100"
+                           data-slider-step="1"
+                           data-slider-value="5"
+                           data-slider-orientation="horizontal"
+                           data-slider-selection="after"
+                           data-slider-tooltip="show">
+                </div>
+                <div class="col-lg-4">
+                    <input type="number" min="0" max="100" value="5" id="input_min_chars" class="form-control col-lg-2"
+                           value="0"/>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="input_slider_min_words">Minimale Anzahl an Wörtern pro Tweet</label>
+            <br/>
+
+            <div class="row">
+                <div class="col-lg-4">
+                    <input id="input_slider_min_words"
+                           type="text"
+                           class="slider"
+                           value=""
+                           data-slider-min="0"
+                           data-slider-max="100"
+                           data-slider-step="1"
+                           data-slider-value="5"
+                           data-slider-orientation="horizontal"
+                           data-slider-selection="after"
+                           data-slider-tooltip="show">
+                </div>
+                <div class="col-lg-4">
+                    <input type="number" min="0" max="100" value="5" id="input_min_words" class="form-control col-lg-2"
+                           value="0"/>
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-default">erstellen</button>
+
+    </form>
+
+</div>
