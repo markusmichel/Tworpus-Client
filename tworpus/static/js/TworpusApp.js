@@ -1,10 +1,3 @@
-var tworpusApp = angular.module('tworpusApp', [
-    'ngRoute',
-    'ui',
-    'ui.bootstrap',
-    'ui.select2'
-]);
-
 tworpusApp.config(['$routeProvider',
     function ($routeProvider) {
         $routeProvider.

@@ -5,17 +5,17 @@
     </p>
     <slider id="slider" scale="scale" class="span2"></slider>
 
-    <form role="form" action="{% url 'session.views.startCreateCorpus' %}">
+    <form role="form" action="/api/createcorpus" method="post">
 
         <div class="form-group">
             <label for="input_title">Titel</label>
-            <input ng-model="corpus.title" type="text" class="form-control" id="input_title" placeholder="Titel des Projekts">
+            <input ng-model="corpus.title" name="title" type="text" class="form-control" id="input_title" placeholder="Titel des Projekts" required="">
         </div>
 
         <div class="form-group">
             <label for="">Sprache</label>
-            <select id="select-language" data-placeholder="Sprache auswählen"
-                    ui-select2 ng-model="corpus.language">
+            <select id="select-language" name="language" data-placeholder="Sprache auswählen"
+                    ui-select2 ng-model="corpus.language" required="required">
                 <option value=""></option>
                 <option ng-repeat="lang in languages | orderBy:'name'" value="{{ lang.value }}">{{ lang.name }}</option>
             </select>
@@ -49,6 +49,7 @@
                             ng-bootstrap-slider
                             ng-model="numTweets"
                             id="input_slider_num_tweets"
+                            name="limit"
                             type="text"
                             class="slider"
                             value="20"
@@ -79,6 +80,7 @@
                     <input ng-bootstrap-slider
                            ng-model="numMinChars"
                            id="input_slider_min_chars"
+                           name="minChars"
                            type="text"
                            class="slider"
                            data-slider-min="0"
@@ -106,6 +108,7 @@
                     <input ng-bootstrap-slider
                            ng-model="numMinWords"
                            id="input_slider_min_words"
+                           name="minWords"
                            type="text"
                            class="slider"
                            data-slider-min="0"

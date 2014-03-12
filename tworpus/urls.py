@@ -15,5 +15,6 @@ urlpatterns = patterns('',
     url(r'^$', baseViews.home),
 
     url(r'^api/createcorpus', sessionViews.startCreateCorpus),
-    url(r'^api/progress', sessionViews.checkCorpusCreationProgress)
+    url(r'^api/progress', sessionViews.checkCorpusCreationProgress),
+    url(r'^api/activesessions', sessionViews.getActiveSessions)
 )

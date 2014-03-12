@@ -14,8 +14,6 @@ from nltk.tokenize.punkt import PunktWordTokenizer
 # https://code.google.com/p/pythonthreadpool/wiki/ThreadPool
 from nltk.tokenize.punkt import PunktWordTokenizer
 
-from ThreadPool import ThreadPool
-
 
 class TwitterFetcherProgressListener:
     """

@@ -17,17 +17,21 @@
             #corpus-creation-progress {
                 position: fixed;
                 width: 100%;
-                bottom: 0;
-                height: 100px;
-                background-color: lightblue;
-                -webkit-transition: height 1s;
+                bottom: 0px;
+                height: 50px;
+                margin-bottom: 0;
+                z-index: 1000;
+                min-height: 0;
+                padding: 0;
+
+                -webkit-transition: height 1s ease-out;
                 -moz-transition: height 1s;
                 -ms-transition: height 1s;
                 -o-transition: height 1s;
-                transition: height 1s;
+                transition: height 1s ease-out;
             }
-            #corpus-creation-progress.ng-hide {
-                height: 0;
+            #corpus-creation-progress.expanded {
+                height: 200px;
             }
         </style>
 
@@ -73,27 +77,23 @@
 
             <!-- Main content -->
             <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+
                 {% block content %}{% endblock content %}
                 <div ng-view></div>
 {#                {% include "includes/progressbar.html" %}#}
-
-                <div ng-controller="ProgressController">
-                    <div id="corpus-creation-progress" tw-corpus-progress tw-progresses="" ng-show="showProgressbar"
-                         ng-animate="{enter: 'animate-enter', leave: 'animate-leave'}">
-
-                    </div>
-                    {% verbatim %}{{ corpusCreationProcesses }}{% endverbatim %}
-                    {% verbatim %}{{ showProgressbar }}{% endverbatim %}
-                </div>
-
-
-
             </div>
             <!-- Main content end -->
         </div>
     </div>
 
     {% include "includes/modal.html" %}
+
+
+        <div ng-controller="ProgressController">
+            <div id="corpus-creation-progress" tw-corpus-progress tw-progresses=""
+                 ng-class="showProgressbar ? 'expanded' : ''" class="well">
+            </div>
+        </div>
 
     {% endblock body %}
 
@@ -122,26 +122,23 @@
         <script src="{% static 'bower_components/angular-bootstrap/ui-bootstrap-tpls.js' %}"></script>
         <script src="{% static 'bower_components/angular-ui-select2/src/select2.js' %}"></script>
 
-        <script src="{% static 'js/TworpusApp.js' %}"></script>
-        <script src="{% static 'js/Progressbar.js' %}"></script>
-
         <script>
-            $(function() {
+            // Init angular app
+            var tworpusApp = angular.module('tworpusApp', [
+                'ngRoute',
+                'ui',
+                'ui.bootstrap',
+                'ui.select2'
+            ]);
 
-                // Confirmation before quitting programm
-                $("#quit-application").click(function() {
-                    event.preventDefault();
-                    var modal = $("#modal");
-                    modal.modal();
-                    $("#btn-exit").click(function() {
-                        console.log("exit programm");
-                    });
-                });
-
-                // @TODO really need to dynamically inject url(s)?
-                var statusUrl = "{% url 'session.views.checkCorpusCreationProgress' %}";
+            tworpusApp.constant('socketId', "{{ sid }}");
+            tworpusApp.constant('urls', {
+                'statusUrl': "{% url 'session.views.checkCorpusCreationProgress' %}"
             });
         </script>
+
+        <script src="{% static 'js/TworpusApp.js' %}"></script>
+        <script src="{% static 'js/Progressbar.js' %}"></script>
 
     {% endblock javascripts %}
 

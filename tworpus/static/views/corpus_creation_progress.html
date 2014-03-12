@@ -1,1 +1,29 @@
-<h1>Corpus Progress</h1>
+<div>
+    <div class="pull-right" style="margin-right: 20px">
+        <a ng-click="$parent.toggleShowProgressbar()" href="">
+            <i ng-show="!$parent.showProgressbar" class="glyphicon glyphicon-chevron-up"></i>
+            <i ng-show="$parent.showProgressbar" class="glyphicon glyphicon-chevron-down"></i>
+        </a>
+    </div>
+
+    <div ng-repeat="session in $parent.activeSessions">
+
+        <div>
+            {{ session.title }}
+        </div>
+        <div class="progress progress-striped active" style="width: 90%; display: inline-block">
+            <div class="progress-bar" role="progressbar" aria-valuenow="45" aria-valuemin="0"
+                 aria-valuemax="100" style="width: 45%">
+                <span class="sr-only">45% Complete</span>
+            </div>
+        </div>
+
+        <div style="display: inline-block" class="pull-right">
+            <a href=""><i class="glyphicon glyphicon-pause"></i></a>
+            <a href=""><i class="glyphicon glyphicon-stop"></i></a>
+            <a href=""><i class="glyphicon glyphicon-play"></i></a>
+        </div>
+
+    </div>
+
+</div>

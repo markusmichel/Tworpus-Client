@@ -1,18 +1,17 @@
 tworpusApp
 
-    .directive('twCorpusProgress', ["corpusCreations", function(corpusCreations) {
+    .directive('twCorpusProgress', ["corpusCreations", function (corpusCreations) {
         return {
             templateUrl: '/static/views/corpus_creation_progress.html',
             replace: true,
             scope: {
                 progresses: "="
             },
-            link: function($scope, $elm, $attrs) {
-
+            link: function ($scope, $elm, $attrs) {
             },
 
-            controller: function($scope) {
-                corpusCreations.getProgress().success(function(data) {
+            controller: function ($scope) {
+                corpusCreations.getProgress().success(function (data) {
                     console.log("performed progress search in service", data);
                 })
             }
@@ -39,10 +38,23 @@ tworpusApp.controller('ProgressController', ['$scope', '$http', 'corpusCreations
     $scope.corpusCreationProcesses = corpusCreations.corpusCreations;
     $scope.corpusCreationProcesses.push("abc");
 
-    setInterval(function() {
+    $scope.$watch("showProgressbar", function (newValue, oldValue) {
+        console.log("sdlkfölsakfölaksdjlöakjdöl")
+    });
+
+    $scope.toggleShowProgressbar = function () {
+        console.log("click event")
         $scope.showProgressbar = !$scope.showProgressbar;
-        $scope.$apply();
-    }, 1000);
+    };
+
+    $http.get("/api/activesessions").success(function(data) {
+        $scope.activeSessions = data;
+    });
+
+
+//    setInterval(function() {
+//        $scope.toggleShowProgressbar();
+//    }, 2000);
 
 //    $http.get('/api/progress').success(function (data) {
 //        $scope.progress = data;

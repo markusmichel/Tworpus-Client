@@ -84,4 +84,6 @@ STATIC_URL = '/static/'
 
 
 # Custom variables
-BASE_PROJECT_DIR = BASE_DIR + os.sep + 'projects' + os.sep
+BASE_PROJECT_DIR = BASE_DIR + os.sep + 'projects'
+TWORPUS_BASE_URL = "http://localhost:3000"
+TWORPUS_FETCHAR_JAR = BASE_DIR + os.sep + "tworpus_fetcher.jar"
