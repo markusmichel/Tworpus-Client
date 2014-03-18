@@ -1,0 +1,13 @@
+{
+  "name": "tworpus",
+  "version": "0.1",
+  "dependencies": {
+  	"angular": "*",
+  	"angular-bootstrap": "*",
+  	"angular-cookies": "*",
+  	"angular-ui": "*",
+  	"angular-ui-select2": "*",
+  	"bootstrap": "*",
+  	"select2": "*"
+  }
+}
