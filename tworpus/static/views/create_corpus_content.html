@@ -5,7 +5,7 @@
     </p>
     <slider id="slider" scale="scale" class="span2"></slider>
 
-    <form role="form" action="/api/createcorpus" method="post">
+    <form role="form" method="post">
 
         <div class="form-group">
             <label for="input_title">Titel</label>
@@ -26,13 +26,13 @@
 
             <div class="row">
                 <div class="col-lg-3">
-                    <div class="well well-sm" ng-model="startDate">
+                    <div class="well well-sm" ng-model="corpus.startDate">
                         <datepicker starting-day="1" max="maxDate" show-weeks="showWeeks"></datepicker>
                     </div>
                 </div>
 
                 <div class="col-lg-3">
-                    <div class="well well-sm" ng-model="endDate">
+                    <div class="well well-sm" ng-model="corpus.endDate">
                         <datepicker starting-day="1" max="maxDate" show-weeks="showWeeks"></datepicker>
                     </div>
                 </div>
@@ -47,7 +47,7 @@
                 <div class="col-lg-4">
                     <input
                             ng-bootstrap-slider
-                            ng-model="numTweets"
+                            ng-model="corpus.numTweets"
                             id="input_slider_num_tweets"
                             name="limit"
                             type="text"
@@ -63,7 +63,7 @@
                 </div>
 
                 <div class="col-lg-4">
-                    <input type="number" ng-model="numTweets"
+                    <input type="number" ng-model="corpus.numTweets"
                            value="20" min="20" max="100000" step="20"
                            id="input_num_tweets" name="numTweets"
                            class="form-control col-lg-2" />
@@ -78,7 +78,7 @@
             <div class="row">
                 <div class="col-lg-4">
                     <input ng-bootstrap-slider
-                           ng-model="numMinChars"
+                           ng-model="corpus.numMinChars"
                            id="input_slider_min_chars"
                            name="minChars"
                            type="text"
@@ -92,7 +92,7 @@
                            data-slider-tooltip="show">
                 </div>
                 <div class="col-lg-4">
-                    <input type="number" ng-model="numMinChars"
+                    <input type="number" ng-model="corpus.numMinChars"
                            min="0" max="140" value="0" id="input_min_chars"
                            class="form-control col-lg-2" />
                 </div>
@@ -106,7 +106,7 @@
             <div class="row">
                 <div class="col-lg-4">
                     <input ng-bootstrap-slider
-                           ng-model="numMinWords"
+                           ng-model="corpus.numMinWords"
                            id="input_slider_min_words"
                            name="minWords"
                            type="text"
@@ -120,14 +120,14 @@
                            data-slider-tooltip="show">
                 </div>
                 <div class="col-lg-4">
-                    <input ng-model="numMinWords" type="number"
+                    <input ng-model="corpus.numMinWords" type="number"
                            min="0" max="100" value="0"
                            id="input_min_words" class="form-control col-lg-2" />
                 </div>
             </div>
         </div>
 
-        <button type="submit" class="btn btn-default">erstellen</button>
+        <button type="submit" class="btn btn-default" ng-click="startCreateCorpus()">erstellen</button>
 
     </form>
 </div>

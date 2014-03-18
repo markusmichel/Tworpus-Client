@@ -23,6 +23,7 @@
                 z-index: 1000;
                 min-height: 0;
                 padding: 0;
+                overflow-y: scroll;
 
                 -webkit-transition: height 1s ease-out;
                 -moz-transition: height 1s;
@@ -95,6 +96,7 @@
             </div>
         </div>
 
+
     {% endblock body %}
 
     {% block javascripts %}
@@ -115,6 +117,7 @@
 
         <script src="{% static 'bower_components/angular/angular.js' %}"></script>
         <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.12/angular-route.js"></script>
+        <script src="{% static 'bower_components/angular-cookies/angular-cookies.js' %}"></script>
         <script src="{% static 'bower_components/angular-ui/build/angular-ui.js' %}"></script>
         <script src="{% static 'bower_components/angular-ui/build/angular-ui-ieshiv.js' %}"></script>
         <script src="{% static 'bower_components/angular-bootstrap/ui-bootstrap.js' %}"></script>
@@ -126,19 +129,42 @@
             // Init angular app
             var tworpusApp = angular.module('tworpusApp', [
                 'ngRoute',
+                'ngCookies',
                 'ui',
                 'ui.bootstrap',
-                'ui.select2'
+                'ui.select2',
+
+                // custom modules
+                'createCorpus.services',
+                'notifications',
+                'tworpusApp.progress'
             ]);
 
+            tworpusApp.run(function ($rootScope, $http, $cookies) {
+                // set django csrf token
+                $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
+
+                // needed for django to recognize AjaxRequests
+                $http.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+            });
+
+            // Inject viariables generated from django
             tworpusApp.constant('socketId', "{{ sid }}");
             tworpusApp.constant('urls', {
-                'statusUrl': "{% url 'session.views.checkCorpusCreationProgress' %}"
+                'sessions': "{% url 'session.views.getSessions'  %}",
+                'session':  "{% url 'session.views.getSession'  %}",
+                'activeSessions': "{% url 'session.views.getActiveSessions'  %}",
+                'removeCorpus':   "{% url 'session.views.removeCorpus'  %}",
+                'startCreateCorpus': "{% url 'session.views.startCreateCorpus' %}",
+                'pauseCorpus': "{% url 'session.views.pauseCorpus' %}"
             });
         </script>
 
+        <script src="{% static 'js/create_corpus/services.js' %}"></script>
+        <script src="{% static 'js/progress/services.js' %}"></script>
+        <script src="{% static 'js/notifications.js' %}"></script>
         <script src="{% static 'js/TworpusApp.js' %}"></script>
-        <script src="{% static 'js/Progressbar.js' %}"></script>
+        <script src="{% static 'js/progress/Progressbar.js' %}"></script>
 
     {% endblock javascripts %}
 

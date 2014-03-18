@@ -10,11 +10,13 @@ urlpatterns = patterns('',
 
     url(r'^test/', visualizerViews.index),
 
-    url(r'^new/', sessionViews.createCorpus),
     url(r'^views/createcorpus/', sessionViews.createCorpusContent),
     url(r'^$', baseViews.home),
 
     url(r'^api/createcorpus', sessionViews.startCreateCorpus),
-    url(r'^api/progress', sessionViews.checkCorpusCreationProgress),
-    url(r'^api/activesessions', sessionViews.getActiveSessions)
+    url(r'^api/activesessions', sessionViews.getActiveSessions),
+    url(r'^api/sessions', sessionViews.getSessions),
+    url(r'^api/session', sessionViews.getSession),
+    url(r'^api/corpus/pause', sessionViews.pauseCorpus),
+    url(r'^api/corpus/remove', sessionViews.removeCorpus)
 )

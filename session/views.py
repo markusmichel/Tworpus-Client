@@ -1,4 +1,5 @@
 from Carbon import File
+import django
 from django.http import HttpResponse
 from django import http
 from django.template import RequestContext, loader
@@ -21,9 +22,6 @@ import TweetIO
 
 from session.models import Session
 
-# Current progress of corpus creation
-progress = -1
-isWorking = False
 
 class Task(Enum):
     idle = 0
@@ -37,13 +35,6 @@ class CreateCorpusForm(forms.Form):
     cc_myself = forms.BooleanField(required=False)
     language = forms.ChoiceField(widget=forms.ChoiceField())
 
-
-def createCorpus(request):
-    global controller
-    print "working" if controller.isWorking() else "IDLE"
-
-    return render(request)
-
 def createCorpusContent(request):
     """
     Returns just the content for corpus creation.
@@ -52,18 +43,6 @@ def createCorpusContent(request):
     from django.shortcuts import render_to_response
     return render_to_response("create_corpus_content.html")
 
-
-def startCreateCorpus_form_errors(request):
-    title  = request.POST["title"]
-    minWordCount  = request.POST["minWords"]
-    minCharsCount = request.POST["minChars"]
-    language = request.POST["language"]
-    numTweets = request.POST["limit"]
-
-    errors = []
-    errors.append("title")
-
-@csrf_exempt
 def startCreateCorpus(request):
     """
     Actually start to create a corpus
@@ -77,7 +56,7 @@ def startCreateCorpus(request):
     (_check_) Save CSV in local project folder
     @TODO: Maybe delete CSV file after creation progress
     (_check) Start tworpus_fetcher.jar to start fetching tweets
-    @TODO: Notify client that there's a work in progress
+    (_check_) Notify client that there's a work in progress
     """
 
 
@@ -93,12 +72,27 @@ def startCreateCorpus(request):
 
     idList = []
     if request.method == 'POST':
+        print request.body
+        values = json.loads(request.body)
+        print values["title"]
 
-        title  = request.POST["title"]
-        minWordCount  = request.POST["minWords"]
-        minCharsCount = request.POST["minChars"]
-        language = request.POST["language"]
-        numTweets = request.POST["limit"]
+        import uuid
+        title = str(uuid.uuid4())
+
+        # AJAX request: parse body
+        if request.is_ajax():
+            data = json.loads(request.body)
+            minWordCount  = int(data["numMinWords"])
+            minCharsCount = int(data["numMinChars"])
+            language      = str(data["language"])
+            numTweets     = int(data["numTweets"])
+
+        # "normal" POST request: parse request.POST
+        else:
+            minWordCount  = request.POST["minWords"]
+            minCharsCount = request.POST["minChars"]
+            language = request.POST["language"]
+            numTweets = request.POST["limit"]
 
         # @TODO: validation
         #errors = startCreateCorpus_form_errors(request)
@@ -119,14 +113,11 @@ def startCreateCorpus(request):
         session.minWordsPerTweet = minWordCount
         session.numTweets = numTweets
         session.folder = folderName
+        session.working = True
         session.save()
 
         # fetch and save csv list
         csv = tworpus_fetcher.getCsvListStr(minWordcount=minWordCount, minCharcount=minCharsCount, language=language, limit=numTweets)
-        # csvArr = csv.split('\n')
-        # if len(csvArr) > 0:
-        #     del csvArr[0]
-        # csv = '\n'.join(csvArr)
         csvFile = open(baseFolder + os.sep + "tweets.csv", "w")
         csvFile.write(csv)
         csvFilePath = csvFile.name
@@ -135,11 +126,14 @@ def startCreateCorpus(request):
         #if(len(idList) == 0):
         #    return http.HttpResponseServerError("Error fetching tweets")
 
-        # @TODO: create own reusable method (i.e. wen resuming a creation progress)
+        # @TODO: create own reusable method (i.e. when resuming a creation progress)
         # fetches tweets by calling fetcher jar
         fetcher = TweetIO.TweetsFetcher(tweetsCsvFile=csvFile.name, outputDir=baseFolder)
         fetcher.fetch()
         # @TODO: XML directory watcher
+
+        fetchersManager = TweetIO.getManager()
+        fetchersManager.add(fetcher, session.id)
 
         # Notify corpus creation initialization
         response_data = {}
@@ -148,15 +142,12 @@ def startCreateCorpus(request):
     else:
         return http.HttpResponseServerError("Error fetching tweets")
 
-
-@csrf_exempt
-def checkCorpusCreationProgress(request):
+def getSessions(request):
     """
-    @TODO: return a list of current creations in progress
+    Returns a list of all sessions (completed, working, active/inactive).
     """
-    response_data = {}
-    return HttpResponse(json.dumps(response_data), content_type="application/json")
-
+    sessions = [session.as_json() for session in Session.objects.all()]
+    return HttpResponse(json.dumps(sessions))
 
 def getActiveSessions(request):
     """
@@ -169,3 +160,56 @@ def getActiveSessions(request):
         activeSessionList.append(activeSession.as_json())
 
     return HttpResponse(json.dumps(activeSessionList))
+
+#-------------------------------------------------------
+# Corpus CRUD operations
+#-------------------------------------------------------
+
+def getSession(request):
+    """
+    Return one specific session by its id
+    """
+    id = int(request.GET["id"])
+    session = Session.objects.all().filter(id=id).first()
+
+    return HttpResponse(json.dumps(session.as_json()))
+
+def removeCorpus(request):
+    """
+    Deletes an finished or unfinished corpus from the database
+    and removes all downloaded files.
+    """
+    from django.core.exceptions import ValidationError
+    corpusid = None
+    try:
+        corpusid = request.GET["corpusid"] if request.method == "GET" else request.POST["corpusid"]
+        Session.objects.all().filter(id=corpusid).delete()
+    except:
+        # Title not found
+        return HttpResponse(status=400)
+
+    return HttpResponse(json.dumps(corpusid))
+
+def pauseCorpus(request):
+    """
+    Sets the corpus with a specific corpusid to NOT working
+    and cancels its' running subprocesses.
+    """
+    id = request.GET["id"]
+
+    fetchersManager = TweetIO.getManager()
+    fetchersManager.remove(id)
+
+    session = Session.objects.all().filter(id=id).first()
+    session.working = False
+    session.save()
+
+    return HttpResponse(json.dumps("success"), status=200)
+
+def resumeCorpus(request):
+    """
+    Resumes (=restarting subprocess) a corpus creation process.
+    @TODO: Assert that XML files won't be overridden.
+    @TODO: Check on which step to resume
+    """
+    pass

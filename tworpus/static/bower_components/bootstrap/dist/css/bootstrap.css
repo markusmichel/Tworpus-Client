@@ -7508,6 +7508,11 @@ button.close
 body
 {
     padding-top: 50px;
+    padding-bottom: 60px;
+}
+body.progressbar-expanded
+{
+    padding-bottom: 200px;
 }
 .alert-error
 {
@@ -7588,6 +7593,12 @@ body
 .main .page-header
 {
     margin-top: 0;
+}
+.progress
+{
+    display: inline-block;
+
+    width: 90%;
 }
 /*!
  * Slider for Bootstrap
