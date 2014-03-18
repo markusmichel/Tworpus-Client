@@ -59,6 +59,7 @@ class TweetsFetcher(FileSystemEventHandler):
         self.tweetsCsvFile = tweetsCsvFile
         self.outputDir = outputDir
         self.__updateListener = updateListener
+        self.__cacheDir = settings.XML_CACHE_DIR
 
     def fetch(self):
         event_handler = XmlFetcherEventHandler()
@@ -73,7 +74,12 @@ class TweetsFetcher(FileSystemEventHandler):
         # args = ['java', '-jar', settings.TWORPUS_FETCHAR_JAR, self.tweetsCsvFile, self.outputDir]
         # subprocess.call(['java', '-jar', settings.TWORPUS_FETCHAR_JAR, self.tweetsCsvFile, self.outputDir])
 
-        argsStr = "java -jar " + settings.TWORPUS_FETCHAR_JAR + " " + self.tweetsCsvFile + " " + self.outputDir
+        argsStr  = "java -jar " + settings.TWORPUS_FETCHAR_JAR + \
+                   " -input-file " + self.tweetsCsvFile + \
+                   " -xml-cache-folder " + self.__cacheDir + \
+                   " -xml-output-folder " + self.outputDir
+        # argsStr += " -override"
+
         args = shlex.split(argsStr)  # creates args array for subprocess
         self.__process = subprocess.Popen(args, shell=False)
         self.__process.communicate()  # blocks subprocess until finish

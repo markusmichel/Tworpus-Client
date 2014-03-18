@@ -9,3 +9,5 @@ projects/*
 
 tworpus/static/bower_components
 tworpus/static/bower_components/*
+
+xmlcache/*
