@@ -6,3 +6,5 @@ local_settings.py
 projects/*
 *.pyc
 *_bak.py
+
+tworpus/static/bower_components
