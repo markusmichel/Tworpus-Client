@@ -6,3 +6,6 @@ Tworpus-Client
 - $> npm install -g bower
 - $> cd tworpus/static/
 - $> bower install (für Windows: in git shell ausführen)
+
+Fallse sqlite3-Datenbank nicht existiert
+- &> python manage.py syncdb
