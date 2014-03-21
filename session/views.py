@@ -1,4 +1,3 @@
-from Carbon import File
 import django
 from django.http import HttpResponse
 from django import http
