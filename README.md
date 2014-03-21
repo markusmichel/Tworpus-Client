@@ -11,6 +11,7 @@ Aus den Tweets können Korpora erstellt werden.
 - `$> cp tworpus/static/bootstrap.less tworpus/static/bower_components/bootstrap/less/bootstrap.less`
 - `$> cd tworpus/static/bower_components/bootstrap`
 - `$> npm install -g grunt-cli`
+- `$> npm install`
 - `$> grunt`
 
 ## Falls sqlite3-Datenbank nicht existiert
