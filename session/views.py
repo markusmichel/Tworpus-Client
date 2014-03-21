@@ -43,6 +43,18 @@ def createCorpusContent(request):
     from django.shortcuts import render_to_response
     return render_to_response("create_corpus_content.html")
 
+
+
+class TweetsDownloadListener(TweetIO.FetcherProgressListener):
+    def onSuccess(self):
+        pass
+
+    def onError(self):
+        pass
+
+    def onFinish(self):
+        pass
+
 def startCreateCorpus(request):
     """
     Actually start to create a corpus
@@ -58,17 +70,6 @@ def startCreateCorpus(request):
     (_check) Start tworpus_fetcher.jar to start fetching tweets
     (_check_) Notify client that there's a work in progress
     """
-
-
-    # Reset progress
-    #global controller
-
-    #if(controller.isWorking()):
-    #    status = {}
-    #    status["message"] = "Kann keine weiteren Tweets herunterladen, da momentan schon eine Session erstellt wird. Bitte warten."
-    #    status["working"] = True
-    #    return HttpResponse(json.dumps(status), content_type="application/json")
-    #    #return http.HttpResponseServerError("Cannot fetch more tweets because fetcher is still active. Please wait.")
 
     idList = []
     if request.method == 'POST':
@@ -128,7 +129,8 @@ def startCreateCorpus(request):
 
         # @TODO: create own reusable method (i.e. when resuming a creation progress)
         # fetches tweets by calling fetcher jar
-        fetcher = TweetIO.TweetsFetcher(tweetsCsvFile=csvFile.name, outputDir=baseFolder)
+        listener = TweetIO.TweetProgressEventHandler(session.id)
+        fetcher = TweetIO.TweetsFetcher(tweetsCsvFile=csvFile.name, outputDir=baseFolder, updateListener=listener)
         fetcher.fetch()
         # @TODO: XML directory watcher
 

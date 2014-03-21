@@ -4,6 +4,7 @@ import subprocess
 import shlex
 import threading
 import os
+import sys
 import signal
 from tworpus import settings
 
@@ -19,6 +20,20 @@ def getManager():
     if __manager is None:
         __manager = FetchersManager()
     return __manager
+
+
+class FetcherProgressListener:
+    """
+
+    """
+    def onSuccess(self, values):
+        pass
+
+    def onError(self, values):
+        pass
+
+    def onFinish(self):
+        pass
 
 
 class FetchersManager():
@@ -48,13 +63,17 @@ class FetchersManager():
         self.fetchers.pop(str(id))
 
 
-class TweetsFetcher(FileSystemEventHandler):
+class TweetsFetcher():
     """
     Fetches and merges tweets as XML file(s).
     Process is done by jar file started through subprocess.
     """
-
     def __init__(self, tweetsCsvFile, outputDir, updateListener=None):
+        """
+        @type updateListener: FetcherProgressListener
+        """
+        # assert isinstance(updateListener, FetcherProgressListener)
+
         self.__process = None
         self.tweetsCsvFile = tweetsCsvFile
         self.outputDir = outputDir
@@ -62,30 +81,56 @@ class TweetsFetcher(FileSystemEventHandler):
         self.__cacheDir = settings.XML_CACHE_DIR
 
     def fetch(self):
-        event_handler = XmlFetcherEventHandler()
-        observer = Observer()
-        observer.schedule(event_handler, self.outputDir, recursive=True)
-        observer.start()
-
         thread = threading.Thread(target=self.__startJar)
         thread.start()
 
     def __startJar(self):
-        # args = ['java', '-jar', settings.TWORPUS_FETCHAR_JAR, self.tweetsCsvFile, self.outputDir]
-        # subprocess.call(['java', '-jar', settings.TWORPUS_FETCHAR_JAR, self.tweetsCsvFile, self.outputDir])
-
         argsStr  = "java -jar " + settings.TWORPUS_FETCHAR_JAR + \
                    " -input-file " + self.tweetsCsvFile + \
                    " -xml-cache-folder " + self.__cacheDir + \
                    " -xml-output-folder " + self.outputDir
         # argsStr += " -override"
+        # argsStr += " -csv-no-title"
 
         args = shlex.split(argsStr)  # creates args array for subprocess
-        self.__process = subprocess.Popen(args, shell=False)
-        self.__process.communicate()  # blocks subprocess until finish
+        self.__process = subprocess.Popen(args, shell=False, stdout=subprocess.PIPE)
 
-        # @TODO: emit finish
+        while True:
+            line = self.__process.stdout.readline()
+            if not line:
+                break
+
+            values = self.parseDownloadProgressFromLine(line)
+            if values is not None:
+                if values["result"] == "success":
+                    self.__updateListener.onSuccess(values)
+                elif values["result"] == "error":
+                    self.__updateListener.onError(values)
+
+            sys.stdout.flush()
+
+        self.__process.communicate()  # blocks subprocess until finish
+        self.__onFinish()
         print "FINISHED JAR PROGRAM"
+
+    def parseDownloadProgressFromLine(self, line):
+        """
+        Receives a string/line from the command line output of tworpus_fetcher.jar
+        and parses relevant information like failed tweets, successful tweets and source location.
+        """
+        line = str(line)
+        if not line.startswith("Fetch:"):
+            return None
+
+        line = line.strip("Fetch:").strip("\n")
+        values = line.split(",")
+
+        result = dict()
+        for val in values:
+            tupel = val.split("=")
+            result[str(tupel[0])] = tupel[1]
+
+        return result
 
     def cancel(self):
         """
@@ -97,49 +142,56 @@ class TweetsFetcher(FileSystemEventHandler):
     # internal progress callbacks
     def __onFinish(self):
         self.__process = None
+        if self.__updateListener is not None: self.__updateListener.onFinish()
     # end internal progress callbacks
 
-    # Watchdog callbacks
-    def on_created(self, event):
-        """
-        Overrides FileSystemEventHandler
-        """
-        super(XmlFetcherEventHandler, self).on_created(event)
 
-        if not event.is_directory:
-            if event.src_path.endswith(".xml"):
-                print "___XML FILE FOUND____"
+from session.models import Session
+class TweetProgressEventHandler(FetcherProgressListener):
 
-    def on_modified(self, event):
-        """
-        Overrides FileSystemEventHandler
-        """
-        super(XmlFetcherEventHandler, self).on_modified(event)
+    def __init__(self, corpusid):
+        self.__corpusid = corpusid
+        self.__session = Session.objects.all().filter(id=corpusid).first()
+        self.__lastProgressSent = 0
 
-        if not event.is_directory:
-            if event.src_path.endswith(".xml"):
-                print "___XML FILE FOUND____"
-    #Watchdog callbacks end
+    def onSuccess(self, values):
+        self.__onProgress(values)
+        print "success"
 
+    def onError(self, values):
+        self.__onProgress(values)
+        print "error"
 
-class XmlFetcherEventHandler(FileSystemEventHandler):
-    """
-    Directory change listener using watchdog.
-    """
+    def onFinish(self):
+        self.__session.working = False
+        self.__session.completed = True
+        self.__session.save()
 
-    noXmlFiles = 0
+    def __onProgress(self, values):
+        self.__session.progress = (float(values["failed"]) + float(values["succeeded"])) / float(values["total"]) * 100
+        self.__session.save()
 
-    def on_created(self, event):
-        super(XmlFetcherEventHandler, self).on_created(event)
+        from tworpus import tworpus_user_id
+        from StringIO import StringIO
+        import urllib, httplib, json
 
-        if not event.is_directory:
-            if event.src_path.endswith(".xml"):
-                print "___XML FILE FOUND____"
+        self.__lastProgressSent += 1
 
+        if self.__lastProgressSent is 10:
+            self.__lastProgressSent = 0
 
-    def on_modified(self, event):
-        super(XmlFetcherEventHandler, self).on_modified(event)
+            # sessions = [session.as_json() for session in Session.objects.all()]
 
-        if not event.is_directory:
-            if event.src_path.endswith(".xml"):
-                print "___XML FILE FOUND____"
+            id = tworpus_user_id.getUid()
+            # url = "http://localhost:3000/api/v1/sockets/emit/" + str(id)
+            urlQuery = "/api/v1/sockets/emit/progress/" + str(id)
+
+            io = StringIO()
+            statusJsonString = json.dumps(self.__session.as_json(), io)
+            data = {}
+            data["status"] = statusJsonString
+            statusJsonString = urllib.urlencode(data)
+
+            httpConn = httplib.HTTPConnection('localhost:3000')
+            headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain"}
+            httpConn.request('POST', urlQuery, statusJsonString, headers)

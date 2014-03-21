@@ -15,8 +15,18 @@ angular.module("tworpusApp.progress", ["tworpusApp.progress.services"])
         };
     }])
 
-    .controller('ProgressController', ['$scope', '$rootScope', '$http', 'corpusCreations', 'urls',
-        function ($scope, $rootScope, $http, corpusCreations, urls) {
+    .filter('unfinished', function() {
+        return function(processes) {
+            var filtered = [];
+            angular.forEach(processes, function(process) {
+                if(process.completed === false) filtered.push(process);
+            });
+            return filtered;
+        };
+    })
+
+    .controller('ProgressController', ['$scope', '$rootScope', '$http', '$filter', 'corpusCreations', 'urls',
+        function ($scope, $rootScope, $http, $filter, corpusCreations, urls) {
             $scope.corpusCreationProcesses = corpusCreations.corpusCreationProcesses;
             $scope.showProgressbar = false;
 
@@ -24,15 +34,11 @@ angular.module("tworpusApp.progress", ["tworpusApp.progress.services"])
             var update = function () {
                 corpusCreations.fetchAll()
                     .then(function () {
-                        $scope.corpusCreationProcesses = corpusCreations.corpusCreationProcesses;
+//                        $scope.corpusCreationProcesses = corpusCreations.corpusCreationProcesses;
                         console.log("updated: ", $scope.corpusCreationProcesses)
                     });
             };
             update();
-
-            $scope.$watch("corpusCreationProcesses", function () {
-                console.log("CHANGE");
-            }, true);
 
             // Show progressbar when CreateCorpusController emits start
             $rootScope.$on("corpus:create:start", function () {
@@ -76,15 +82,20 @@ angular.module("tworpusApp.progress", ["tworpusApp.progress.services"])
             $scope.pause = function (id) {
                 console.log("pause corpus ", id);
                 $http.get(urls.pauseCorpus + "?id=" + id)
-                    .then(function() {
+                    .then(function () {
                         update();
                     });
             };
 
+
+            var that = this;
             // @TODO: Prozesse der Direktive übergeben. Diese überwacht dann die Prozesse und stellt die Progressbars dar oder nicht
-            $scope.$watch("corpusCreationProcesses", function (newValue) {
-                console.log("changed")
-                if ($scope.corpusCreationProcesses.length == 0) {
+            $scope.$watchCollection("corpusCreationProcesses", function (newValue) {
+                console.log("Corpus creation processes changed", $scope.corpusCreationProcesses)
+
+                var filtered = $filter('unfinished')($scope.corpusCreationProcesses);
+
+                if (filtered.length == 0) {
                     console.log("empty");
                     $scope.showProgressbar = false;
                 }
@@ -92,40 +103,40 @@ angular.module("tworpusApp.progress", ["tworpusApp.progress.services"])
         }])
 ;
 
-//    setInterval(function() {
-//        $scope.toggleShowProgressbar();
-//    }, 2000);
-
-//    $http.get('/api/progress').success(function (data) {
-//        $scope.progress = data;
-//    });
-//    var id = $("#sid").data("sessionid");
-//    var socket = io.connect('http://localhost:3000');
-//    socket.emit("connect", id);
-//    socket.on('corpuscreation_progress', function (data) {
-//        var status = JSON.parse(data);
-//        $scope.progress = status;
-//        console.log("set new status: ", status);
+//setInterval(function () {
+//    $scope.toggleShowProgressbar();
+//}, 2000);
 //
-//        // 1 = download tweets
-//        // 2 = save tweets to file
-//        switch (status.task) {
-//            case 1:
-//                var currentStep = status.steps[0],
-//                    totalFetched = currentStep.numFetched + currentStep.numFailed,
-//                    percent = totalFetched / currentStep.numTotal * 100;
+//$http.get('/api/progress').success(function (data) {
+//    $scope.progress = data;
+//});
+//var id = $("#sid").data("sessionid");
+//var socket = io.connect('http://localhost:3000');
+//socket.emit("connect", id);
+//socket.on('corpuscreation_progress', function (data) {
+//    var status = JSON.parse(data);
+//    $scope.progress = status;
+//    console.log("set new status: ", status);
 //
-//                $scope.percent = percent;
-//                $scope.style = function(value) {
-//                    return { "width": percent + "%" };
-//                }
-//                break;
-//            case 2:
-//                var currentStep = status.steps[1];
-//                $("#progress-progress").text("Speichere tweet " + currentStep.numSaved + " / " + currentStep.numTotal);
-//                if (currentStep.numSaved === currentStep.numTotal) $("form").trigger("corpusCreationFinished");
-//                break;
-//        }
+//    // 1 = download tweets
+//    // 2 = save tweets to file
+//    switch (status.task) {
+//        case 1:
+//            var currentStep = status.steps[0],
+//                totalFetched = currentStep.numFetched + currentStep.numFailed,
+//                percent = totalFetched / currentStep.numTotal * 100;
 //
-//        $scope.$apply();
-//    });
+//            $scope.percent = percent;
+//            $scope.style = function (value) {
+//                return { "width": percent + "%" };
+//            }
+//            break;
+//        case 2:
+//            var currentStep = status.steps[1];
+//            $("#progress-progress").text("Speichere tweet " + currentStep.numSaved + " / " + currentStep.numTotal);
+//            if (currentStep.numSaved === currentStep.numTotal) $("form").trigger("corpusCreationFinished");
+//            break;
+//    }
+//
+//    $scope.$apply();
+//});

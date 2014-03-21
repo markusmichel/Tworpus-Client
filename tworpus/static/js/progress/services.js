@@ -1,10 +1,21 @@
 angular.module("tworpusApp.progress.services", [])
-    .service('corpusCreations', ['$http', 'urls', function ($http, urls) {
+    .service('corpusCreations', ['$http', 'urls', 'socketId', function ($http, urls, socketId) {
         var that = this;
-
         this.corpusCreationProcesses = [];
 
-        this.pause = function(id) {
+       // @TODO: extract id
+        var socket = io.connect('http://localhost:3000');
+        socket.emit("connect", socketId);
+
+        socket.on('corpuscreation_progress', function (data) {
+            var process = JSON.parse(data);
+
+            that.fetchAll();
+//            angular.copy([data], that.corpusCreationProcesses);
+            console.log("STATUS UPDATE: ", process, that.corpusCreationProcesses);
+        });
+
+        this.pause = function (id) {
 
         };
 
@@ -12,7 +23,7 @@ angular.module("tworpusApp.progress.services", [])
             return $http
                 .get(urls.sessions)
                 .success(function (data) {
-                    that.corpusCreationProcesses = data;
+                    angular.copy(data, that.corpusCreationProcesses);
                 });
         };
 
@@ -20,21 +31,8 @@ angular.module("tworpusApp.progress.services", [])
             return $http
                 .get(urls.sessions)
                 .success(function (data) {
-                    that.corpusCreationProcesses = data;
+                    angular.copy(data, that.corpusCreationProcesses);
                 });
         };
     }])
 ;
-
-
-// brainstorm progress service
-/*
- - Progress(bar) besteht aus:
- title, numTweets, numChars, numWords, startDate, endDate, id
- working (bool), completed (bool)
- @TODO: progress (x/y Tweets gedownloaded), Name des aktuellen Schritts, ?Schritt-Nummer / Schritte insgesamt?
-
- - Service:
- Liste ALLER erstellten Korpora
- Filter um unvollständige/arbeitende Prozesse zu finden
- */
