@@ -3,6 +3,15 @@ Tworpus-Client
 Ermöglicht das Abfragen großer Mengen an aktuellen und alten Tweets. 
 Aus den Tweets können Korpora erstellt werden.
 
+## Benötigte PyCharm/Python Packages:
+- `setuptools`
+- `pip`
+- `Django`
+- `nltk`
+- `beautifulsoup4`
+- `watchdog` (?)
+
+
 ## Installation
 - git clone https://github.com/markusmichel/Tworpus-Client.git
 - `$> npm install -g bower`
