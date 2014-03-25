@@ -183,7 +183,8 @@
             'createCorpus.services',
             'notifications',
             'tworpusApp.progress',
-            'tworpusApp.cache'
+            'tworpusApp.cache',
+            'navigation'
         ]);
 
         tworpusApp.run(function ($rootScope, $http, $cookies) {
@@ -215,6 +216,7 @@
     <script src="{% static 'js/Corpora.js' %}"></script>
     <script src="{% static 'js/cache/cache.js' %}"></script>
     <script src="{% static 'js/progress/Progressbar.js' %}"></script>
+    <script src="{% static 'js/navigation/navigation.js' %}"></script>
 
 {% endblock javascripts %}
 
