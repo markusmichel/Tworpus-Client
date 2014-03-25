@@ -1,21 +1,43 @@
 <!DOCTYPE html>
 <html ng-app="tworpusApp">
 
-<head>
-    {% load staticfiles %}
-    <link rel="stylesheet" href="{% static 'bower_components/bootstrap/dist/css/bootstrap.css' %}"/>
-    <link rel="stylesheet" href="{% static 'components/select2-3.4.5/select2.css' %}"/>
-    <link rel="stylesheet" href="{% static 'components/select2-bootstrap.css' %}"/>
-    <link rel="stylesheet" href="{% static 'components/datepicker/css/datepicker.css' %}"/>
-    <link rel="stylesheet" href="{% static 'components/pnotify-1.2.0/jquery.pnotify.default.css' %}"/>
-    <link rel="stylesheet"
-          href="{% static 'components/pnotify-1.2.0/use for pines style icons/jquery.pnotify.default.icons.css' %}"/>
-    <link rel="stylesheet" href="{% static 'bower_components/angular-ui/build/angular-ui.css' %}"/>
+    <head>
+        {% load staticfiles %}
+        <link href='http://fonts.googleapis.com/css?family=Oswald' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="{% static 'bower_components/bootstrap/dist/css/bootstrap.css' %}" />
+        <link rel="stylesheet" href="{% static 'components/select2-3.4.5/select2.css' %}" />
+        <link rel="stylesheet" href="{% static 'components/select2-bootstrap.css' %}" />
+        <link rel="stylesheet" href="{% static 'components/datepicker/css/pikaday.css' %}" />
+        <link rel="stylesheet" href="{% static 'components/pnotify-1.2.0/jquery.pnotify.default.css' %}" />
+        <link rel="stylesheet" href="{% static 'components/pnotify-1.2.0/use for pines style icons/jquery.pnotify.default.icons.css' %}" />
+        <link rel="stylesheet" href="{% static 'bower_components/angular-ui/build/angular-ui.css' %}" />
+        <link rel="stylesheet" href="{% static 'components/style.css' %}" />
 
-    <title></title>
+        <title></title>
 
-    <style>
-        #corpus-creation-progress {
+        <style>
+            #corpus-creation-progress {
+                position: fixed;
+                width: 100%;
+                bottom: 0px;
+                height: 50px;
+                margin-bottom: 0;
+                z-index: 1000;
+                min-height: 0;
+                padding: 0;
+                overflow-y: scroll;
+
+                -webkit-transition: height 1s ease-out;
+                -moz-transition: height 1s;
+                -ms-transition: height 1s;
+                -o-transition: height 1s;
+                transition: height 1s ease-out;
+            }
+            #corpus-creation-progress.expanded {
+                height: 200px;
+            }
+
+            #corpus-creation-progress {
             position: fixed;
             width: 100%;
             bottom: 0px;
@@ -52,9 +74,9 @@
         .progressbar-container.ng-leave.ng-leave-active {
             opacity: 0;
         }
-    </style>
+        </style>
 
-</head>
+    </head>
 
 
 <body style="">
@@ -62,7 +84,7 @@
 {% block body %}
 
     <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-        <div class="container-fluid">
+        <div class="container-fluid center-content">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
                     <span class="sr-only">Toggle navigation</span>
@@ -70,7 +92,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="#">{% block project_title %}TWORPUS{% endblock project_title %}</a>
+                <a class="navbar-brand" href="#">{% block project_title %}Tworpus{% endblock project_title %}</a>
             </div>
 
             <!-- Navbar top -->
@@ -107,13 +129,12 @@
 
     {% include "includes/modal.html" %}
 
-
-    <div ng-controller="ProgressController">
-        <div id="corpus-creation-progress" tw-corpus-progress tw-progresses=""
-             ng-class="showProgressbar ? 'expanded' : ''" class="well">
+        <div ng-controller="ProgressController">
+            <div id="corpus-creation-progress" tw-corpus-progress tw-progresses=""
+                 ng-class="showProgressbar ? 'expanded' : ''" class="well">
+            </div>
         </div>
     </div>
-
 
 {% endblock body %}
 
@@ -144,6 +165,8 @@
     <script src="http://code.angularjs.org/1.0.8/i18n/angular-locale_de-de.js"></script>
     <script src="{% static 'bower_components/angular-bootstrap/ui-bootstrap-tpls.js' %}"></script>
     <script src="{% static 'bower_components/angular-ui-select2/src/select2.js' %}"></script>
+    <script src="{% static 'components/datepicker/js/moment-min.js' %}"></script>
+        <script src="{% static 'components/datepicker/js/pikaday.js' %}"></script>
 
     <script>
         // Init angular app
