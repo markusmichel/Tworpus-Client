@@ -14,3 +14,4 @@ tworpus/static/bower_components/*
 xmlcache/*
 
 *.pyc
+*.sqlite3
