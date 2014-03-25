@@ -21,10 +21,10 @@ tworpusApp
             $scope.slider.config.maxTweetLength = 140;
 
             $scope.languages = [
-                {name: "deutsch", value: "de"},
-                {name: "englisch", value: "en"},
-                {name: "spanisch", value: "es"},
-                {name: "französisch", value: "fr"}
+                {name: "german", value: "de"},
+                {name: "english", value: "en"},
+                {name: "spanish", value: "es"},
+                {name: "french", value: "fr"}
             ];
 
             $scope.startCreateCorpus = function () {
@@ -45,7 +45,7 @@ tworpusApp
     .directive('ngBootstrapSlider', function () {
         // uses http://www.eyecon.ro/bootstrap-slider/
         return {
-            restrict: 'ABC',
+            restrict: 'A',
             scope: {
                 ngModel: "="
             },
@@ -58,7 +58,7 @@ tworpusApp
 
                 slider.on('slide', function (e) {
                     var val = $(this).val();
-                    $scope.ngModel = parseInt(val);
+                    $scope.corpus.ngModel = parseInt(val);
                     $scope.$apply();
                 });
             },
@@ -71,16 +71,43 @@ tworpusApp
         }
     })
 
-    .controller('SelectDateRangeController', ['$scope', function ($scope) {
-        $scope.maxDate = new Date();
-        $scope.startDate = new Date();
-        $scope.endDate = new Date();
+    .directive('twDate', function() {
 
-        $scope.$watch('startDate', function (newValue, oldValue) {
-            if (newValue > $scope.endDate) $scope.startDate = $scope.endDate;
-        });
+        return {
+            restrict: 'A',
+            scope: {
+                ngModel: "="
+            },
+            require: 'ngModel',
 
-        $scope.$watch('endDate', function (newValue, oldValue) {
-            if (newValue < $scope.startDate) $scope.endDate = $scope.startDate;
-        });
-    }]);
+            link: function($scope, elm, attrs) {
+
+                $scope.ngModel = new Date();
+                var picker = new Pikaday({
+                    field: elm[0],
+                    bound: false,
+                    onSelect: function(date) {
+                        $scope.ngModel = date || new Date();
+                        $scope.$apply();
+                    }
+                });
+
+                $scope.$watch('ngModel', function(newValue, oldValue) {
+                        picker.setDate(newValue, true);
+                });
+            }
+        }
+    })
+
+    .controller('twDateRangeController', ["$scope",
+        function ($scope) {
+            $scope.$watch('corpus.startDate', function (newValue, oldValue) {
+                if (!$scope.corpus) return;
+                if (newValue > $scope.corpus.endDate) $scope.corpus.startDate = $scope.corpus.endDate;
+            });
+
+            $scope.$watch('corpus.endDate', function (newValue, oldValue) {
+                if (!$scope.corpus) return;
+                if (newValue < $scope.corpus.startDate) $scope.corpus.endDate = $scope.corpus.startDate;
+            });
+        }]);
