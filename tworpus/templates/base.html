@@ -36,14 +36,52 @@
             #corpus-creation-progress.expanded {
                 height: 200px;
             }
+
+            #corpus-creation-progress {
+            position: fixed;
+            width: 100%;
+            bottom: 0px;
+            height: 50px;
+            margin-bottom: 0;
+            z-index: 1000;
+            min-height: 0;
+            padding: 0;
+            overflow-y: scroll;
+
+            -webkit-transition: height 1s ease-out;
+            -moz-transition: height 1s;
+            -ms-transition: height 1s;
+            -o-transition: height 1s;
+            transition: height 1s ease-out;
+        }
+
+        #corpus-creation-progress.expanded {
+            height: 200px;
+        }
+
+        .progressbar-container.ng-leave,
+        .progressbar-container.ng-enter {
+            -webkit-transition: all linear .5s;
+            -moz-transition: all linear .5s;
+            -ms-transition: all linear .5s;
+            -o-transition: all linear .5s;
+            transition: all linear .5s;
+        }
+
+        .progressbar-container.ng-leave {
+            opacity: 1;
+        }
+        .progressbar-container.ng-leave.ng-leave-active {
+            opacity: 0;
+        }
         </style>
 
     </head>
 
 
 <body style="">
-    <div id="sid" class="hidden" data-sessionid="{{ sid }}">{{ sid }}</div>
-    {% block body %}
+<div id="sid" class="hidden" data-sessionid="{{ sid }}">{{ sid }}</div>
+{% block body %}
 
     <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         <div class="container-fluid center-content">
@@ -83,7 +121,7 @@
 
                 {% block content %}{% endblock content %}
                 <div ng-view></div>
-{#                {% include "includes/progressbar.html" %}#}
+                {#                {% include "includes/progressbar.html" %}#}
             </div>
             <!-- Main content end -->
         </div>
@@ -96,77 +134,84 @@
                  ng-class="showProgressbar ? 'expanded' : ''" class="well">
             </div>
         </div>
+    </div>
 
-    {% endblock body %}
+{% endblock body %}
 
-    {% block javascripts %}
-        <script src="{% static 'bower_components/jquery/dist/jquery.min.js' %}"></script>
-        <script src="http://localhost:3000/socket.io/socket.io.js"></script>
-        <script src="{% static 'bower_components/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+{% block javascripts %}
+    <script src="{% static 'bower_components/jquery/dist/jquery.min.js' %}"></script>
+    <script src="{% static 'bower_components/underscore/underscore.js' %}"></script>
+{#    <script src="http://localhost:3000/socket.io/socket.io.js"></script>#}
+    <script src="{% static 'bower_components/bootstrap/dist/js/bootstrap.min.js' %}"></script>
 
-        <script src="{% static 'components/datepicker/js/moment-min.js' %}"></script>
+    <script src="{% static 'components/datepicker/js/moment-min.js' %}"></script>
+    <script src="{% static 'components/datepicker/js/pikaday.js' %}"></script>
+    <script src="{% static 'components/select2-3.4.5/select2.min.js' %}"></script>
+    <script src="{% static 'components/select2-3.4.5/select2_locale_de.js' %}"></script>
+    <script src="{% static 'components/pnotify-1.2.0/jquery.pnotify.min.js' %}"></script>
+    <script src="{% static 'components/slider/js/bootstrap-slider.js' %}"></script>
+
+    <!-- Angular -->
+    {#        <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.12/angular.min.js"></script>#}
+
+    <script src="{% static 'bower_components/angular/angular.js' %}"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.12/angular-route.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.13/angular-animate.js"></script>
+    <script src="{% static 'bower_components/angular-cookies/angular-cookies.js' %}"></script>
+    <script src="{% static 'bower_components/angular-ui/build/angular-ui.js' %}"></script>
+    <script src="{% static 'bower_components/angular-ui/build/angular-ui-ieshiv.js' %}"></script>
+    <script src="{% static 'bower_components/angular-bootstrap/ui-bootstrap.js' %}"></script>
+    <script src="http://code.angularjs.org/1.0.8/i18n/angular-locale_de-de.js"></script>
+    <script src="{% static 'bower_components/angular-bootstrap/ui-bootstrap-tpls.js' %}"></script>
+    <script src="{% static 'bower_components/angular-ui-select2/src/select2.js' %}"></script>
+    <script src="{% static 'components/datepicker/js/moment-min.js' %}"></script>
         <script src="{% static 'components/datepicker/js/pikaday.js' %}"></script>
-        <script src="{% static 'components/select2-3.4.5/select2.min.js' %}"></script>
-        <script src="{% static 'components/select2-3.4.5/select2_locale_de.js' %}"></script>
-        <script src="{% static 'components/pnotify-1.2.0/jquery.pnotify.min.js' %}"></script>
-        <script src="{% static 'components/slider/js/bootstrap-slider.js' %}"></script>
 
-        <!-- Angular -->
-{#        <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.12/angular.min.js"></script>#}
+    <script>
+        // Init angular app
+        var tworpusApp = angular.module('tworpusApp', [
+            'ngRoute',
+            'ngCookies',
+            'ngAnimate',
+            'ui',
+            'ui.bootstrap',
+            'ui.select2',
 
-        <script src="{% static 'bower_components/angular/angular.js' %}"></script>
-        <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.12/angular-route.js"></script>
-        <script src="{% static 'bower_components/angular-cookies/angular-cookies.js' %}"></script>
-        <script src="{% static 'bower_components/angular-ui/build/angular-ui.js' %}"></script>
-        <script src="{% static 'bower_components/angular-ui/build/angular-ui-ieshiv.js' %}"></script>
-        <script src="{% static 'bower_components/angular-bootstrap/ui-bootstrap.js' %}"></script>
-        <script src="http://code.angularjs.org/1.0.8/i18n/angular-locale_de-de.js"></script>
-        <script src="{% static 'bower_components/angular-bootstrap/ui-bootstrap-tpls.js' %}"></script>
-        <script src="{% static 'bower_components/angular-ui-select2/src/select2.js' %}"></script>
+            // custom modules
+            'createCorpus.services',
+            'notifications',
+            'tworpusApp.progress'
+        ]);
 
-        <script>
-            // Init angular app
-            var tworpusApp = angular.module('tworpusApp', [
-                'ngRoute',
-                'ngCookies',
-                'ui',
-                'ui.bootstrap',
-                'ui.select2',
+        tworpusApp.run(function ($rootScope, $http, $cookies) {
+            // set django csrf token
+            $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
 
-                // custom modules
-                'createCorpus.services',
-                'notifications',
-                'tworpusApp.progress'
-            ]);
+            // needed for django to recognize AjaxRequests
+            $http.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+        });
 
-            tworpusApp.run(function ($rootScope, $http, $cookies) {
-                // set django csrf token
-                $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
+        // Inject viariables generated from django
+        tworpusApp.constant('socketId', "{{ sid }}");
+        tworpusApp.constant('urls', {
+            'sessions': "{% url 'session.views.getSessions'  %}",
+            'session': "{% url 'session.views.getSession'  %}",
+            'activeSessions': "{% url 'session.views.getActiveSessions'  %}",
+            'removeCorpus': "{% url 'session.views.removeCorpus'  %}",
+            'startCreateCorpus': "{% url 'session.views.startCreateCorpus' %}",
+            'pauseCorpus': "{% url 'session.views.pauseCorpus' %}"
+        });
+    </script>
 
-                // needed for django to recognize AjaxRequests
-                $http.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
-            });
+    <script src="{% static 'js/create_corpus/services.js' %}"></script>
+    <script src="{% static 'js/progress/services.js' %}"></script>
+    <script src="{% static 'js/notifications.js' %}"></script>
+    <script src="{% static 'js/TworpusApp.js' %}"></script>
+    <script src="{% static 'js/Visualizations.js' %}"></script>
+    <script src="{% static 'js/progress/Progressbar.js' %}"></script>
 
-            // Inject viariables generated from django
-            tworpusApp.constant('socketId', "{{ sid }}");
-            tworpusApp.constant('urls', {
-                'sessions': "{% url 'session.views.getSessions'  %}",
-                'session':  "{% url 'session.views.getSession'  %}",
-                'activeSessions': "{% url 'session.views.getActiveSessions'  %}",
-                'removeCorpus':   "{% url 'session.views.removeCorpus'  %}",
-                'startCreateCorpus': "{% url 'session.views.startCreateCorpus' %}",
-                'pauseCorpus': "{% url 'session.views.pauseCorpus' %}"
-            });
-
-        </script>
-
-        <script src="{% static 'js/create_corpus/services.js' %}"></script>
-        <script src="{% static 'js/progress/services.js' %}"></script>
-        <script src="{% static 'js/notifications.js' %}"></script>
-        <script src="{% static 'js/TworpusApp.js' %}"></script>
-        <script src="{% static 'js/progress/Progressbar.js' %}"></script>
-
-    {% endblock javascripts %}
+{% endblock javascripts %}
+>>>>>>> test_dan
 
 </body>
 </html>

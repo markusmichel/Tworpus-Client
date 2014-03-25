@@ -8,6 +8,7 @@
   	"angular-ui": "*",
   	"angular-ui-select2": "*",
   	"bootstrap": "*",
-  	"select2": "*"
+  	"select2": "*",
+	"underscore": "*"
   }
 }

@@ -86,13 +86,15 @@ def startCreateCorpus(request):
             minCharsCount = int(data["numMinChars"])
             language      = str(data["language"])
             numTweets     = int(data["numTweets"])
+            title         = int(data["title"])
 
         # "normal" POST request: parse request.POST
         else:
             minWordCount  = request.POST["minWords"]
             minCharsCount = request.POST["minChars"]
-            language = request.POST["language"]
-            numTweets = request.POST["limit"]
+            language      = request.POST["language"]
+            numTweets     = request.POST["limit"]
+            title         = request.POST["limit"]
 
         # @TODO: validation
         #errors = startCreateCorpus_form_errors(request)
@@ -118,11 +120,9 @@ def startCreateCorpus(request):
 
         # fetch and save csv list
         csv = tworpus_fetcher.getCsvListStr(minWordcount=minWordCount, minCharcount=minCharsCount, language=language, limit=numTweets)
-        csvFile = open(os.path.join(baseFolder,"tweets.csv"), "w")
+        csvFile = open(os.path.join(baseFolder, "tweets.csv"), "w")
         csv = csv.replace("\r","")
         csvFile.write(csv)
-
-        csvFilePath = csvFile.name
 
         ## Throw error if there are no tweets to fetch
         #if(len(idList) == 0):
@@ -156,13 +156,8 @@ def getActiveSessions(request):
     """
     Returns a list of corpus creations in progress (currently working or already finished).
     """
-    activeSessionsObjects = Session.objects.all().filter(completed=False)
-    activeSessionList = []
-
-    for activeSession in activeSessionsObjects:
-        activeSessionList.append(activeSession.as_json())
-
-    return HttpResponse(json.dumps(activeSessionList))
+    sessions = [session.as_json() for session in Session.objects.all().filter(completed=False)]
+    return HttpResponse(json.dumps(sessions))
 
 #-------------------------------------------------------
 # Corpus CRUD operations
