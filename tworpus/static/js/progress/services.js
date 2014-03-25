@@ -28,7 +28,6 @@ angular.module("tworpusApp.progress.services", [])
             if (unfinishedProcesses.length === 0) return;
 
             angular.forEach(unfinishedProcesses, function (process) {
-                console.log("fetch...");
                 that.fetch(process.id);
             });
 
@@ -57,7 +56,7 @@ angular.module("tworpusApp.progress.services", [])
                     console.log("current processes: ", that.corpusCreationProcesses);
                     angular.forEach(data, function (session, index) {
                         var oldProcess = that.corpusCreationProcesses[session.id];
-                        if (typeof oldProcess === "undefined") that.corpusCreationProcesses.push(session);
+                        if (typeof oldProcess === "undefined") that.corpusCreationProcesses[session.id] = session;
                     });
                 });
         };
