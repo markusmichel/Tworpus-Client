@@ -72,12 +72,6 @@ def startCreateCorpus(request):
 
     idList = []
     if request.method == 'POST':
-        print request.body
-        values = json.loads(request.body)
-        print values["title"]
-
-        import uuid
-        title = str(uuid.uuid4())
 
         # AJAX request: parse body
         if request.is_ajax():
@@ -86,7 +80,7 @@ def startCreateCorpus(request):
             minCharsCount = int(data["numMinChars"])
             language      = str(data["language"])
             numTweets     = int(data["numTweets"])
-            title         = int(data["title"])
+            title         = str(data["title"])
 
         # "normal" POST request: parse request.POST
         else:
