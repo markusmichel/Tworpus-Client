@@ -84,7 +84,7 @@ STATIC_URL = '/static/'
 
 
 # Custom variables
-BASE_PROJECT_DIR = BASE_DIR + os.sep + 'projects'
-XML_CACHE_DIR = BASE_DIR + os.sep + 'xmlcache'
+BASE_PROJECT_DIR = os.path.join(BASE_DIR, 'projects')
+XML_CACHE_DIR = os.path.join(BASE_DIR, 'xmlcache')
 TWORPUS_BASE_URL = "http://localhost:3000"
-TWORPUS_FETCHAR_JAR = BASE_DIR + os.sep + "tworpus_fetcher.jar"
+TWORPUS_FETCHAR_JAR = os.path.join(BASE_DIR, "tworpus_fetcher.jar")

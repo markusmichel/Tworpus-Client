@@ -8,10 +8,13 @@
 
     <div ng-repeat="session in $parent.corpusCreationProcesses
         | filter:{completed: false}
-        | orderBy:['-created', 'title']">
+        | orderBy:['-created', 'title']"
+         class="progressbar-container"
+            >
 
         <div>
             {{ session.id }}
+            {{ $index }}
             {{ session.title }}
             completed: "{{ session.completed }}"
             {{ session.created | date:'dd.MM.yyyy HH:mm' }}
@@ -30,7 +33,8 @@
             <!--<a href=""><i class="glyphicon glyphicon-stop"></i></a>-->
 
             <span ng-if="session.working">
-                <a href="" ng-click="$parent.$parent.$parent.pause(session.id)"><i class="glyphicon glyphicon-pause"></i></a>
+                <a href="" ng-click="$parent.$parent.$parent.pause(session.id)"><i
+                        class="glyphicon glyphicon-pause"></i></a>
             </span>
             <span ng-if="!session.working">
                 <a href=""><i class="glyphicon glyphicon-play"></i></a>
