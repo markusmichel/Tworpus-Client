@@ -1,12 +1,12 @@
 
 pieChartConfig = {
-    width: 300,
-    height: 300,
+    width: 200,
+    height: 200,
     radius: 100,
-    colors: ["#DFFB3F", "#ED5565"]
+    colors: ["#DFFB3F", "#ED5565", "#EBEBEB"]
 };
 
-createPieChart = function(tweetsFetched, tweetsFailed) {
+createPieChart = function(tweetsFetched, selector) {
 
     var w = pieChartConfig.width;
     var h = pieChartConfig.height;
@@ -14,12 +14,16 @@ createPieChart = function(tweetsFetched, tweetsFailed) {
 
     var color = d3.scale.category20c();
 
-    data = [
-        {"label":tweetsFetched, "value":tweetsFetched},
-        {"label":tweetsFailed, "value":tweetsFailed}
+    var data = [
+        {"label":tweetsFetched.fetched, "value":tweetsFetched.fetched},
+        {"label":tweetsFetched.failed, "value":tweetsFetched.failed}
     ];
 
-    var vis = d3.select(".corpusPieChart")
+    if (tweetsFetched.pending != 0) {
+     data.push({"label":tweetsFetched.pending, "value":tweetsFetched.pending})
+    }
+
+    var vis = d3.select(selector.get(0))
         .append("svg:svg")
         .data([data])
         .attr("width", w)
@@ -56,7 +60,6 @@ tworpusApp
     .controller("CorporaController",["$scope", "corpusCreations", function($scope, corpusCreations){
         $scope.corpusCreations = corpusCreations.corpusCreationProcesses;
         corpusCreations.fetchAll();
-
     }])
 
     .directive("twCreateCorporaView", [function() {
@@ -74,11 +77,49 @@ tworpusApp
                 if (!corpusItem) return;
 
                 console.log(corpusItem);
-                var title = $('<div></div>').text(corpusItem.title);
-                var pieChartDiv = $('<div></div>').addClass('corpusPieChart');
-                elm.append(title)
-                    .append(pieChartDiv);
-                createPieChart(corpusItem.tweetsFetched,corpusItem.tweetsFailed);
+
+                var title = $('<div></div>')
+                    .text(corpusItem.title)
+                    .addClass('corpus-view-title');
+
+                var created = $('<div></div>').text("Created at: " + moment(corpusItem.created).format('MM/DD/YYYY'));
+                var minCharsPerTweet = $('<div></div>').text("Min Chars/Tweet: " + corpusItem.minCharsPerTweet);
+                var minWordsPerTweet = $('<div></div>').text("Min Words/Tweet: " + corpusItem.minWordsPerTweet);
+                var lang = $('<div></div>').text("Language: " + corpusItem.language);
+
+                var details = $('<div></div')
+                    .addClass('corpus-view-details')
+                    .append(lang)
+                    .append(minCharsPerTweet)
+                    .append(minWordsPerTweet)
+                    .append(created);
+
+                var outerDetails = $('<div></div')
+                    .addClass('corpus-view-outer-details')
+                    .append(details);
+
+
+                elm
+                    .append(title)
+                    .append(outerDetails)
+                    .hover(function(el) {
+                        details.animate({
+                            top: 0
+                        })
+                    }, function() {
+                        details.animate({
+                            top: 200
+                        })
+
+                    });
+
+                var tweetsFetchedStats = {
+                    fetched: corpusItem.tweetsFetched,
+                    failed: corpusItem.tweetsFailed,
+                    pending: corpusItem.numTweets - corpusItem.tweetsFetched - corpusItem.tweetsFailed
+                };
+
+                createPieChart(tweetsFetchedStats, elm);
             }
         }
     }]);
