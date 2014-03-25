@@ -4,4 +4,4 @@ tworpusApp
         $scope.corpusCreations = corpusCreations.corpusCreationProcesses;
         corpusCreations.fetchAll();
 
-}])
+}]);

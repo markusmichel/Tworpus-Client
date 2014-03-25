@@ -1,47 +1,48 @@
 <!DOCTYPE html>
 <html ng-app="tworpusApp">
 
-<head>
-    {% load staticfiles %}
-    <link href='http://fonts.googleapis.com/css?family=Oswald' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" href="{% static 'bower_components/bootstrap/dist/css/bootstrap.css' %}"/>
-    <link rel="stylesheet" href="{% static 'components/select2-3.4.5/select2.css' %}"/>
-    <link rel="stylesheet" href="{% static 'components/select2-bootstrap.css' %}"/>
-    <link rel="stylesheet" href="{% static 'components/datepicker/css/pikaday.css' %}"/>
-    <link rel="stylesheet" href="{% static 'components/pnotify-1.2.0/jquery.pnotify.default.css' %}"/>
-    <link rel="stylesheet"
-          href="{% static 'components/pnotify-1.2.0/use for pines style icons/jquery.pnotify.default.icons.css' %}"/>
-    <link rel="stylesheet" href="{% static 'bower_components/angular-ui/build/angular-ui.css' %}"/>
-    <link rel="stylesheet" href="{% static 'components/style.css' %}"/>
+    <head>
+        {% load staticfiles %}
+        <link href='http://fonts.googleapis.com/css?family=Oswald' rel='stylesheet' type='text/css'>
 
-    <title></title>
+        <link rel="stylesheet" href="{% static 'components/select2-3.4.5/select2.css' %}" />
+        <link rel="stylesheet" href="{% static 'components/select2-bootstrap.css' %}" />
+        <link rel="stylesheet" href="{% static 'components/datepicker/css/pikaday.css' %}" />
+        <link rel="stylesheet" href="{% static 'components/pnotify-1.2.0/jquery.pnotify.default.css' %}" />
+        <link rel="stylesheet" href="{% static 'components/pnotify-1.2.0/use for pines style icons/jquery.pnotify.default.icons.css' %}" />
+        <link rel="stylesheet" href="{% static 'bower_components/angular-ui/build/angular-ui.css' %}" />
+        <link rel="stylesheet" href="{% static 'bower_components/bootstrap/dist/css/bootstrap.css' %}" />
 
-    <style>
-        #corpus-creation-progress {
+        <title></title>
+
+
+
+        <style>
+            #corpus-creation-progress {
+                position: fixed;
+                width: 100%;
+                bottom: 0;
+                height: 50px;
+                margin-bottom: 0;
+                z-index: 1000;
+                min-height: 0;
+                padding: 0;
+                overflow-y: scroll;
+
+                -webkit-transition: height 1s ease-out;
+                -moz-transition: height 1s;
+                -ms-transition: height 1s;
+                -o-transition: height 1s;
+                transition: height 1s ease-out;
+            }
+            #corpus-creation-progress.expanded {
+                height: 200px;
+            }
+
+            #corpus-creation-progress {
             position: fixed;
             width: 100%;
-            bottom: 0px;
-            height: 50px;
-            margin-bottom: 0;
-            z-index: 1000;
-            min-height: 0;
-            padding: 0;
-            overflow-y: scroll;
-
-            -webkit-transition: height 1s ease-out;
-            -moz-transition: height 1s;
-            -ms-transition: height 1s;
-            -o-transition: height 1s;
-            transition: height 1s ease-out;
-        }
-        #corpus-creation-progress.expanded {
-            height: 200px;
-        }
-
-        #corpus-creation-progress {
-            position: fixed;
-            width: 100%;
-            bottom: 0px;
+            bottom: 0;
             height: 50px;
             margin-bottom: 0;
             z-index: 1000;
@@ -110,7 +111,7 @@
         <div class="row">
 
             <!-- Nav sidebar -->
-            <div class="col-sm-3 col-md-2 sidebar">
+            <div class="col-sm-3 col-md-1 sidebar">
                 {% block nav_sidebar %}
                     {% include "includes/sidebar_nav.html" %}
                 {% endblock nav_sidebar %}
@@ -118,7 +119,7 @@
             <!-- Nav sidebar end -->
 
             <!-- Main content -->
-            <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-1 main">
 
                 {% block content %}{% endblock content %}
                 <div ng-view></div>
