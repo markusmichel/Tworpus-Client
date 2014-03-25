@@ -2,6 +2,7 @@ from django.conf.urls import patterns, include, url
 from visualizer import views as visualizerViews
 from session import views as sessionViews
 import views as baseViews
+from session import views_cache as cacheViews
 
 urlpatterns = patterns('',
     # Examples:
@@ -18,5 +19,8 @@ urlpatterns = patterns('',
     url(r'^api/sessions', sessionViews.getSessions),
     url(r'^api/session', sessionViews.getSession),
     url(r'^api/corpus/pause', sessionViews.pauseCorpus),
-    url(r'^api/corpus/remove', sessionViews.removeCorpus)
+    url(r'^api/corpus/remove', sessionViews.removeCorpus),
+
+    url(r'^api/corpus/cache/status', cacheViews.cacheStatus),
+    url(r'^api/corpus/cache/clear', cacheViews.clearCache)
 )
