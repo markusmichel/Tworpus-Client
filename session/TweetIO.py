@@ -157,10 +157,12 @@ class TweetProgressEventHandler(FetcherProgressListener):
         self.__lastProgressSent = 0
 
     def onSuccess(self, values):
+        self.__session.tweetsFetched += 1
         self.__onProgress(values)
         print "success"
 
     def onError(self, values):
+        self.__session.tweetsFailed += 1
         self.__onProgress(values)
         print "error"
 

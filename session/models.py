@@ -10,6 +10,10 @@ class Session(models.Model):
     language = models.CharField(max_length=5)
     created = models.DateTimeField(auto_now_add=True)
 
+    # actual tweet numbers
+    tweetsFetched = models.IntegerField(default=0)
+    tweetsFailed  = models.IntegerField(default=0)
+
     # progress indicators
     working = models.BooleanField(default=False)
     completed = models.BooleanField(default=False)
@@ -30,5 +34,7 @@ class Session(models.Model):
             "completed": self.completed,
             "created": self.created.isoformat(),
             "progress": self.progress,
-            "working": self.working
+            "working": self.working,
+            "tweetsFetched": self.tweetsFetched,
+            "tweetsFailed": self.tweetsFailed
         }

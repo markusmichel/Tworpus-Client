@@ -1,0 +1,27 @@
+<p>
+    BESCHREIBUNG HIER REIN
+</p>
+
+
+<div class="row">
+    <div class="col-lg-5">
+        <table class="table table-condensed">
+            <thead>
+                <th>Number of files</th>
+                <th>Size</th>
+            </thead>
+            <tbody>
+            <tr>
+                <td>{{ numFiles }}</td>
+                <td>{{ size | bytes: 4 }}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div>
+    <button class="btn btn-danger" ng-click="clearCache()">
+        clear cache
+    </button>
+</div>

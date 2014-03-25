@@ -30,9 +30,12 @@ angular.module("tworpusApp.progress.services", [])
                 .success(function (data) {
                     var index = $filter('indexOfCorpusid')(that.corpusCreationProcesses, data.id),
                         session = that.corpusCreationProcesses[index];
-                    session.progress = data.progress;
-                    session.completed = data.completed;
-                    session.working = data.working;
+                    session.progress        = data.progress;
+                    session.completed       = data.completed;
+                    session.working         = data.working;
+                    session.tweetsFetched   = data.tweetsFetched;
+                    session.tweetsFailed    = data.tweetsFailed;
+                    console.log("SESSION: ", session);
                 });
         };
 

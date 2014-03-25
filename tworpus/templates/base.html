@@ -74,9 +74,9 @@
         .progressbar-container.ng-leave.ng-leave-active {
             opacity: 0;
         }
-        </style>
+    </style>
 
-    </head>
+</head>
 
 
 <body style="">
@@ -165,7 +165,7 @@
     <script src="{% static 'bower_components/angular-bootstrap/ui-bootstrap-tpls.js' %}"></script>
     <script src="{% static 'bower_components/angular-ui-select2/src/select2.js' %}"></script>
     <script src="{% static 'components/datepicker/js/moment-min.js' %}"></script>
-        <script src="{% static 'components/datepicker/js/pikaday.js' %}"></script>
+    <script src="{% static 'components/datepicker/js/pikaday.js' %}"></script>
 
     <script>
         // Init angular app
@@ -180,7 +180,8 @@
             // custom modules
             'createCorpus.services',
             'notifications',
-            'tworpusApp.progress'
+            'tworpusApp.progress',
+            'tworpusApp.cache'
         ]);
 
         tworpusApp.run(function ($rootScope, $http, $cookies) {
@@ -199,7 +200,9 @@
             'activeSessions': "{% url 'session.views.getActiveSessions'  %}",
             'removeCorpus': "{% url 'session.views.removeCorpus'  %}",
             'startCreateCorpus': "{% url 'session.views.startCreateCorpus' %}",
-            'pauseCorpus': "{% url 'session.views.pauseCorpus' %}"
+            'pauseCorpus': "{% url 'session.views.pauseCorpus' %}",
+            'clearCache': "{% url 'session.views_cache.clearCache' %}",
+            'cacheStatus': "{% url 'session.views_cache.cacheStatus' %}"
         });
     </script>
 
@@ -208,6 +211,7 @@
     <script src="{% static 'js/notifications.js' %}"></script>
     <script src="{% static 'js/TworpusApp.js' %}"></script>
     <script src="{% static 'js/Corpora.js' %}"></script>
+    <script src="{% static 'js/cache/cache.js' %}"></script>
     <script src="{% static 'js/progress/Progressbar.js' %}"></script>
 
 {% endblock javascripts %}
