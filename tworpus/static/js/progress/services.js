@@ -3,18 +3,6 @@ angular.module("tworpusApp.progress.services", [])
         var that = this;
         this.corpusCreationProcesses = [];
 
-        // @TODO: extract id
-//        var socket = io.connect('http://localhost:3000');
-//        socket.emit("connect", socketId);
-
-//        socket.on('corpuscreation_progress', function (data) {
-//            var process = JSON.parse(data);
-
-//            console.log("STATUS UPDATE: ", process, that.corpusCreationProcesses);
-//            that.fetch(process.id);
-//            angular.copy([data], that.corpusCreationProcesses);
-//        });
-
         this.pause = function (id) {
 
         };
@@ -45,7 +33,6 @@ angular.module("tworpusApp.progress.services", [])
                     session.progress = data.progress;
                     session.completed = data.completed;
                     session.working = data.working;
-                    console.log("fetched", session);
                 });
         };
 
@@ -73,11 +60,11 @@ angular.module("tworpusApp.progress.services", [])
                         notify("Korpus <b>" + removed.title + " </b>wurde entfernt");
                     })
                     .error(function () {
-                        notify("Korpus " + removed.title + " konte nicht geköscht werden");
+                        notify("Corpus " + removed.title + " couldn't be removed");
                     });
             } else {
                 // Should never happen
-                notify("Element konnte nicht gefunden werden");
+                notify("Element could not be found");
             }
         }
     }])
