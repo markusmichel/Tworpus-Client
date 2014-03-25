@@ -7,6 +7,10 @@ tworpusApp
                     templateUrl: '/static/views/create_corpus_content.html',
                     controller: 'CreateCorpusController'
                 }).
+                when('/visualization', {
+                    templateUrl: '/static/views/visualization.html',
+                    controller: 'VisualizationsController'
+                }).
                 otherwise({
                     redirectTo: '/createcorpus'
                 });
