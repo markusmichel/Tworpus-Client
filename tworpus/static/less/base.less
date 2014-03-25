@@ -50,6 +50,10 @@ body.progressbar-expanded {
     width: 1343px;
     margin: 0 auto;
 }
+
+a:focus {
+  outline: none;
+}
 /*
 * Sidebar
 */
@@ -81,16 +85,18 @@ body.progressbar-expanded {
     margin-bottom: 20px;
     margin-left: -20px;
 }
+
 .nav-sidebar > li > a {
-    color: #000;
+    color: #333333;
     text-align: right;
     margin-bottom: 10px;
     font-size: 16px;
 }
 
-.nav-sidebar > .active > a {
+.nav > li > a:hover, .nav > li > a:focus {
     color: #000;
     background-color: #DFFB3F;
+    outline: none;
 }
 
 /*
@@ -118,10 +124,28 @@ body.progressbar-expanded {
 .datepicker-label {
   text-align: center;
   width: 240px;
+  color: #333333;
+  font-weight: bold;
 }
 
 .pika-single {
   z-index: 1 !important;
+}
+
+.is-selected .pika-button {
+  background-color: #DFFB3F;
+  color: #333333;
+  box-shadow: 0 1px 3px #8EA314 inset;
+}
+
+/*
+* Slider
+*/
+
+.slider-handle {
+  box-shadow: 0 1px 3px #8EA314 inset !important;
+  background: #DFFB3F none !important;
+  opacity: 1 !important;
 }
 
 
