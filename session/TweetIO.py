@@ -92,6 +92,8 @@ class TweetsFetcher():
         # argsStr += " -override"
         # argsStr += " -csv-no-title"
 
+        #setting the correct path for windows
+        argsStr = argsStr.replace("\\","/")
         args = shlex.split(argsStr)  # creates args array for subprocess
         self.__process = subprocess.Popen(args, shell=False, stdout=subprocess.PIPE)
 

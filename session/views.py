@@ -121,8 +121,8 @@ def startCreateCorpus(request):
         # fetch and save csv list
         csv = tworpus_fetcher.getCsvListStr(minWordcount=minWordCount, minCharcount=minCharsCount, language=language, limit=numTweets)
         csvFile = open(os.path.join(baseFolder, "tweets.csv"), "w")
+        csv = csv.replace("\r","")
         csvFile.write(csv)
-        csvFilePath = csvFile.name
 
         ## Throw error if there are no tweets to fetch
         #if(len(idList) == 0):
