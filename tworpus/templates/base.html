@@ -11,7 +11,6 @@
         <link rel="stylesheet" href="{% static 'components/pnotify-1.2.0/jquery.pnotify.default.css' %}" />
         <link rel="stylesheet" href="{% static 'components/pnotify-1.2.0/use for pines style icons/jquery.pnotify.default.icons.css' %}" />
         <link rel="stylesheet" href="{% static 'bower_components/angular-ui/build/angular-ui.css' %}" />
-        <link rel="stylesheet" href="{% static 'components/style.css' %}" />
 
         <title></title>
 
@@ -40,7 +39,7 @@
             #corpus-creation-progress {
             position: fixed;
             width: 100%;
-            bottom: 0px;
+            bottom: 0;
             height: 50px;
             margin-bottom: 0;
             z-index: 1000;
@@ -109,7 +108,7 @@
         <div class="row">
 
             <!-- Nav sidebar -->
-            <div class="col-sm-3 col-md-2 sidebar">
+            <div class="col-sm-3 col-md-1 sidebar">
                 {% block nav_sidebar %}
                     {% include "includes/sidebar_nav.html" %}
                 {% endblock nav_sidebar %}
@@ -117,7 +116,7 @@
             <!-- Nav sidebar end -->
 
             <!-- Main content -->
-            <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-1 main">
 
                 {% block content %}{% endblock content %}
                 <div ng-view></div>
