@@ -96,9 +96,9 @@ tworpusApp
 
                 var tweetsFetched = $('<div></div>')
                     .addClass('corpus-view-details-tweets')
-                    .append($('<div></div>').text("Tweets fetched: " + corpusItem.numTweets))
-                    .append($('<div></div>').text("Tweets fetched: " + corpusItem.tweetsFailed))
-                    .append($('<div></div>').text("Tweets fetched: " + corpusItem.tweetsFetched));
+                    .append($('<div></div>').text("Total tweets: " + corpusItem.numTweets))
+                    .append($('<div></div>').text("Tweets fetched: " + corpusItem.tweetsFetched))
+                    .append($('<div></div>').text("Tweets failed: " + corpusItem.tweetsFailed));
 
 
                 var lang = $('<div></div>')
