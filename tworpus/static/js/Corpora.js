@@ -2,7 +2,7 @@
 pieChartConfig = {
     width: 250,
     height: 250,
-    colors: ["#DFFB3F", "#ED5565", "#EBEBEB"]
+    colors: ["#379A8C", "#ED5564", "#EBEBEB"]
 };
 
 var createPieChart = function(selector) {
