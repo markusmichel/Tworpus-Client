@@ -108,7 +108,6 @@ angular.module("tworpusApp.progress", ["tworpusApp.progress.services"])
                     });
             };
 
-
             var that = this;
             // @TODO: Prozesse der Direktive übergeben. Diese überwacht dann die Prozesse und stellt die Progressbars dar oder nicht
             $scope.$watchCollection("corpusCreationProcesses", function (newValue) {
