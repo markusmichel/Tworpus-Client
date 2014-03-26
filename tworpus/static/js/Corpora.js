@@ -1,8 +1,8 @@
 
 pieChartConfig = {
-    width: 200,
-    height: 200,
-    radius: 100,
+    width: 250,
+    height: 250,
+    radius: 125,
     colors: ["#DFFB3F", "#ED5565", "#EBEBEB"]
 };
 
@@ -74,43 +74,77 @@ tworpusApp
             link: function($scope, elm, attrs) {
 
                 var corpusItem = $scope.ngModel;
-                if (!corpusItem) return;
-
-                console.log(corpusItem);
+                if (!corpusItem) {
+                    $(elm).parent().remove();
+                    return;
+                }
 
                 var title = $('<div></div>')
                     .text(corpusItem.title)
                     .addClass('corpus-view-title');
 
-                var created = $('<div></div>').text("Created at: " + moment(corpusItem.created).format('MM/DD/YYYY'));
-                var minCharsPerTweet = $('<div></div>').text("Min Chars/Tweet: " + corpusItem.minCharsPerTweet);
-                var minWordsPerTweet = $('<div></div>').text("Min Words/Tweet: " + corpusItem.minWordsPerTweet);
-                var lang = $('<div></div>').text("Language: " + corpusItem.language);
+                var created = $('<div></div>')
+                    .addClass('corpus-view-details-created')
+                    .text("Created at: " + moment(corpusItem.created).format('MM/DD/YYYY'));
+
+
+                var minPerTweet = $('<div></div>')
+                    .addClass('corpus-view-details-minimum')
+                    .append($('<div></div>').text("Min Chars/Tweet: " + corpusItem.minCharsPerTweet))
+                    .append($('<div></div>').text("Min Words/Tweet: " + corpusItem.minWordsPerTweet));
+
+
+                var tweetsFetched = $('<div></div>')
+                    .addClass('corpus-view-details-tweets')
+                    .append($('<div></div>').text("Total tweets: " + corpusItem.numTweets))
+                    .append($('<div></div>').text("Tweets fetched: " + corpusItem.tweetsFetched))
+                    .append($('<div></div>').text("Tweets failed: " + corpusItem.tweetsFailed));
+
+
+                var lang = $('<div></div>')
+                    .addClass('corpus-view-details-language')
+                    .text("Language: " + corpusItem.language);
 
                 var details = $('<div></div')
                     .addClass('corpus-view-details')
                     .append(lang)
-                    .append(minCharsPerTweet)
-                    .append(minWordsPerTweet)
-                    .append(created);
+                    .append(minPerTweet)
+                    .append(created)
+                    .append(tweetsFetched);
 
                 var outerDetails = $('<div></div')
                     .addClass('corpus-view-outer-details')
                     .append(details);
 
+                var deleteBtn = $('<div></div')
+                    .addClass('corpus-view-buttonbar-delete');
+
+                var renewBtn = $('<div></div')
+                    .addClass('corpus-view-buttonbar-renew');
+
+                var exportBtn = $('<div></div')
+                    .addClass('corpus-view-buttonbar-export');
+
+                var buttonbar = $('<div></div')
+                    .append(deleteBtn)
+                    .append(renewBtn)
+                    .append(exportBtn)
+                    .addClass('corpus-view-buttonbar');
+
+                var outerButtonbar = $('<div></div')
+                    .addClass('corpus-view-outer-buttonbar')
+                    .append(buttonbar);
 
                 elm
                     .append(title)
                     .append(outerDetails)
+                    .append(outerButtonbar)
                     .hover(function(el) {
-                        details.animate({
-                            top: 0
-                        })
+                        details.addClass('move-in');
+                        buttonbar.addClass('move-in');
                     }, function() {
-                        details.animate({
-                            top: 200
-                        })
-
+                        details.removeClass('move-in');
+                        buttonbar.removeClass('move-in');
                     });
 
                 var tweetsFetchedStats = {
