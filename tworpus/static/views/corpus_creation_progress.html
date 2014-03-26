@@ -7,10 +7,6 @@
     </div>
 
     <div class="progress-bar-content">
-        <a href=""><i class="glyphicon glyphicon-play"></i></a>
-        <a href="" ng-click="$parent.$parent.$parent.pause(session.id)"><i
-                class="glyphicon glyphicon-pause"></i></a>
-
         <div ng-repeat="session in $parent.corpusCreationProcesses
             | filter:{completed: false}
             | orderBy:['-created', 'title']"
@@ -37,15 +33,16 @@
                 </a>
                 <!--<a href=""><i class="glyphicon glyphicon-stop"></i></a>-->
 
-            <span ng-if="session.working">
-                <a href="" ng-click="$parent.$parent.$parent.pause(session.id)"><i
-                        class="glyphicon glyphicon-pause"></i></a>
-            </span>
-            <span ng-if="!session.working">
-                <a href="" ng-click="$parent.$parent.$parent.resume(session.id)">
-                    <i class="glyphicon glyphicon-play"></i>
-                </a>
-            </span>
+                <span ng-if="session.working">
+                    <a href="" ng-click="$parent.$parent.$parent.pause(session.id)">
+                        <i class="glyphicon glyphicon-pause"></i>
+                    </a>
+                </span>
+                <span ng-if="!session.working">
+                    <a href="" ng-click="$parent.$parent.$parent.resume(session.id)">
+                        <i class="glyphicon glyphicon-play"></i>
+                    </a>
+                </span>
 
             </div>
         </div>
