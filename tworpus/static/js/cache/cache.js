@@ -1,12 +1,14 @@
 angular
-    .module("tworpusApp.cache", [])
+    .module("tworpusApp.cache", ['ngAnimate'])
 
     .controller("CacheController", ["$scope", "$http", "urls", "notify", function ($scope, $http, urls, notify) {
         $scope.clearCache = function () {
+            $scope.showClearConfirmation = false;
             $http
                 .post(urls.clearCache)
                 .success(function () {
                     notify("Cache cleared");
+                    update();
                 })
                 .error(function () {
                     notify("Failed to clear cache");
@@ -14,7 +16,6 @@ angular
         };
 
         var update = function () {
-            console.log("UPDATE::::");
             $http
                 .get(urls.cacheStatus)
                 .success(function (data) {
@@ -29,6 +30,8 @@ angular
         $scope.$on("$destroy", function () {
             clearInterval(updateInterval);
         });
+
+        $scope.showClearConfirmation = false;
     }])
 
     .filter('bytes', function () {

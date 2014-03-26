@@ -1,14 +1,52 @@
-<p>
-    BESCHREIBUNG HIER REIN
-</p>
+<style>
+    .alert a {
+        color: black;
+        margin-left: 20px;
+    }
+
+    .alert a.small {
+        color: black;
+        font-size: 12pt;
+    }
+
+    .alert a.big {
+        color: black;
+        font-size: 16pt;
+    }
+
+    #clear-cache-confirmation {
+        position: absolute;
+        margin-top: 10px;
+    }
+
+    #clear-cache-confirmation.ng-hide-remove,
+    #clear-cache-confirmation.ng-hide-add {
+        -webkit-transition: all ease-out .8s;
+        -moz-transition: all ease-out .8s;
+        -ms-transition: all ease-out .8s;
+        -o-transition: all ease-out .8s;
+        transition: all ease-out .8s;
+    }
+
+    #clear-cache-confirmation.ng-hide-remove,
+    #clear-cache-confirmation.ng-hide-add-active {
+        display: block !important;
+        left: -500px;
+    }
+
+    #clear-cache-confirmation.ng-hide-remove-active {
+        display: block !important;
+        left: 0;
+    }
+</style>
 
 
 <div class="row">
     <div class="col-lg-5">
         <table class="table table-condensed">
             <thead>
-                <th>Number of files</th>
-                <th>Size</th>
+            <th>Number of files</th>
+            <th>Size</th>
             </thead>
             <tbody>
             <tr>
@@ -17,11 +55,40 @@
             </tr>
             </tbody>
         </table>
+
+        <div>
+            <button class="btn btn-danger" ng-click="showClearConfirmation = true">
+                clear cache
+            </button>
+
+            <div style="position: relative; width: 100%; height: 75px; overflow: hidden">
+                <div class="alert alert-danger" id="clear-cache-confirmation" ng-show="showClearConfirmation === true">
+                    Are you sure?
+                    <a href="" class="big" ng-click="showClearConfirmation = false">no, keep it </a>
+                    <a href="" class="small" ng-click="clearCache()">yes, clear</a>
+                </div>
+            </div>
+
+        </div>
     </div>
+
+
+    <div class="col-lg-6 col-lg-offset-1">
+        <p>
+            BESCHREIBUNG HIER REIN
+
+        <ul>
+            <li>Sinn und Zweck des Caches</li>
+            <li>Mehrfach benötigte Tweets müssen nicht mehrfach heruntergeladen werden</li>
+            <li>Nachteil: belegen zusätzlichen Speicherplatz</li>
+            <li>Unter Umständen werden sie nicht mehr benötigt</li>
+            <li>Möglichkeit des Löschens um Speicherplatz freizugeben</li>
+        </ul>
+        </p>
+    </div>
+
 </div>
 
-<div>
-    <button class="btn btn-danger" ng-click="clearCache()">
-        clear cache
-    </button>
-</div>
+
+
+

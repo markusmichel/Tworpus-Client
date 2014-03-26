@@ -40,10 +40,7 @@ angular.module("tworpusApp.progress", ["tworpusApp.progress.services"])
     .filter('indexOfCorpusid', function () {
         return function (processes, id) {
             var index = null;
-
-            console.log("id to search = ", id);
             for(var i in processes) {
-                console.log("id = ", processes[i].id);
                 if (processes[i].id === id) {
                     index = i;
                     break;

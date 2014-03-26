@@ -7,20 +7,31 @@ angular.module("tworpusApp.progress.services", [])
 
         };
 
-        var isPolling = false;
+        var isPolling = false,
+            // Minimum tries until exit polling
+            pollCounter = 0;
         this.longPoll = function () {
+            if(isPolling) return;
+            else doPoll();
+        };
+
+        var doPoll = function() {
             isPolling = true;
-            var unfinishedProcesses = $filter('unfinished')(this.corpusCreationProcesses);
+            var unfinishedProcesses = $filter('unfinished')(that.corpusCreationProcesses);
 
             // Exit if there are no more processes to watch
-            if (unfinishedProcesses.length === 0) return;
+            if (unfinishedProcesses.length === 0 && ++pollCounter >= 3) {
+                isPolling = false;
+                pollCounter = 0;
+                return;
+            }
 
             angular.forEach(unfinishedProcesses, function (process) {
                 that.fetch(process.id);
             });
 
             setTimeout(function () {
-                that.longPoll();
+                doPoll();
             }, 200);
         };
 
