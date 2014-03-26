@@ -7,6 +7,9 @@
     </div>
 
     <div class="progress-bar-content">
+<a href=""><i class="glyphicon glyphicon-play"></i></a>
+                            <a href="" ng-click="$parent.$parent.$parent.pause(session.id)"><i
+                            class="glyphicon glyphicon-pause"></i></a>
         <div ng-repeat="session in $parent.corpusCreationProcesses
             | filter:{completed: false}
             | orderBy:['-created', 'title']"
