@@ -154,7 +154,10 @@ a:focus {
 
 .corpus-view {
   display: inline-block;
-  margin: 20px 20px 0 20px;
+  margin: 40px 40px 0;
+  position: relative;
+  width: 250px;
+  height: 285px;
 }
 
 .corpus-view-title {
@@ -163,36 +166,99 @@ a:focus {
   font-size: 16px;
   margin: 0 0 10px 0;
   cursor: default;
+  height: 25px;
 }
 
 .corpus-view-details {
-  background-color: #FFFFFF;
-  height: 200px;
+  height: 235px;
   position: relative;
-  width: 200px;
-  top: 200px;
+  width: 250px;
+  top: 235px;
   padding: 20px;
-  border: 1px solid #333333;
+  background-color: #252E2A;
+  color: #fff;
+  .transition(top 500ms);
+}
+
+.corpus-view-outer-details {
+  width: 250px;
+  height: 235px;
+  position: absolute;
+  overflow: hidden;
+  top: 50px;
 }
 
 .corpus-view-details > * {
   font-weight: bold;
-  margin-bottom: 5px;
+  margin-bottom: 14px;
   cursor: default;
+  padding-left: 40px;
 }
 
-
-.corpus-view-outer-details {
-  width: 200px;
-  height: 200px;
+.corpus-view-outer-buttonbar {
+  width: 250px;
+  height: 50px;
   position: absolute;
   overflow: hidden;
+  top: 0;
 }
 
+.corpus-view-buttonbar {
+  background-color: #fff;
+  height: 50px;
+  position: relative;
+  width: 250px;
+  top: -50px;
+  .transition(top 500ms);
+}
 
+.corpus-view-buttonbar > * {
+  width: 35px;
+  height: 35px;
+  display: inline-block;
+  margin: 0 20px;
+}
 
+.move-in {
+  top: 0;
+}
 
+.corpus-view-details-created {
+  background: transparent url(../../../../res/corpus-view/time.png) no-repeat left center;
+}
 
+.corpus-view-details-minimum {
+  background: transparent url(../../../../res/corpus-view/adjustment.png) no-repeat left center;
+}
 
+.corpus-view-details-tweets {
+  background: transparent url(../../../../res/corpus-view/storage.png) no-repeat left center;
+}
 
+.corpus-view-details-language {
+  background: transparent url(../../../../res/corpus-view/language.png) no-repeat left center;
+}
 
+.corpus-view-buttonbar-delete {
+   background: transparent url(../../../../res/corpus-view/delete.png) no-repeat center center;
+}
+
+.corpus-view-buttonbar-delete:hover {
+   background: transparent url(../../../../res/corpus-view/delete-hover.png) no-repeat center center;
+}
+
+.corpus-view-buttonbar-export {
+   background: transparent url(../../../../res/corpus-view/export.png) no-repeat center center;
+}
+
+.corpus-view-buttonbar-export:hover {
+   background: transparent url(../../../../res/corpus-view/export-hover.png) no-repeat center center;
+}
+
+.corpus-view-buttonbar-renew {
+   background: transparent url(../../../../res/corpus-view/reload.png) no-repeat center center;
+}
+
+.corpus-view-buttonbar-renew:hover {
+   background: transparent url(../../../../res/corpus-view/reload-hover.png) no-repeat center center;
+}
