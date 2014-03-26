@@ -37,7 +37,9 @@
                         class="glyphicon glyphicon-pause"></i></a>
             </span>
             <span ng-if="!session.working">
-                <a href=""><i class="glyphicon glyphicon-play"></i></a>
+                <a href="" ng-click="$parent.$parent.$parent.resume(session.id)">
+                    <i class="glyphicon glyphicon-play"></i>
+                </a>
             </span>
 
         </div>

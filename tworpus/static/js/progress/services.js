@@ -41,6 +41,8 @@ angular.module("tworpusApp.progress.services", [])
                 .success(function (data) {
                     var index = $filter('indexOfCorpusid')(that.corpusCreationProcesses, data.id),
                         session = that.corpusCreationProcesses[index];
+
+                    // @TODO: null check
                     session.progress        = data.progress;
                     session.completed       = data.completed;
                     session.working         = data.working;
@@ -58,6 +60,8 @@ angular.module("tworpusApp.progress.services", [])
                     angular.forEach(data, function (session, index) {
                         var oldProcess = that.corpusCreationProcesses[session.id];
                         if (typeof oldProcess === "undefined") that.corpusCreationProcesses[session.id] = session;
+
+                        // @TODO: update session if is defined
                     });
                 });
         };

@@ -1,6 +1,8 @@
 import django
 from django.http import HttpResponse
 from django import http
+import shutil
+from uuid import uuid4
 from django.template import RequestContext, loader
 
 # csrf: https://docs.djangoproject.com/en/dev/ref/contrib/csrf/#unprotected-view-needs-the-csrf-token
@@ -81,6 +83,8 @@ def startCreateCorpus(request):
             language      = str(data["language"])
             numTweets     = int(data["numTweets"])
             title         = str(data["title"])
+            startDate     = str(data["startDateTimestamp"])
+            endDate       = str(data["endDateTimestamp"])
 
         # "normal" POST request: parse request.POST
         else:
@@ -88,15 +92,12 @@ def startCreateCorpus(request):
             minCharsCount = request.POST["minChars"]
             language      = request.POST["language"]
             numTweets     = request.POST["limit"]
-            title         = request.POST["limit"]
-
-        # @TODO: validation
-        #errors = startCreateCorpus_form_errors(request)
-        #if len(errors) > 0:
-        #    return http.HttpResponseServerError()
+            title         = request.POST["title"]
+            startDate     = request.POST["startDate"]
+            endDate       = request.POST["endDate"]
 
         # create project folder
-        folderName = title #@TODO change foldername
+        folderName = str(uuid4())
         baseFolder = os.path.join(settings.BASE_PROJECT_DIR, folderName)
         if not os.path.isdir(baseFolder):
             os.makedirs(baseFolder)
@@ -112,24 +113,19 @@ def startCreateCorpus(request):
         session.save()
 
         # fetch and save csv list
-        csv = tworpus_fetcher.getCsvListStr(minWordcount=minWordCount, minCharcount=minCharsCount, language=language, limit=numTweets)
+        csv = tworpus_fetcher.getCsvListStr(
+            minWordcount=minWordCount, minCharcount=minCharsCount,
+            language=language, limit=numTweets,
+            startDate=startDate, endDate=endDate
+        )
         csvFile = open(os.path.join(baseFolder, "tweets.csv"), "w")
         csv = csv.replace("\r","")
         csvFile.write(csv)
 
-        ## Throw error if there are no tweets to fetch
+        # @TODO: Throw error if there are no tweets to fetch
         #if(len(idList) == 0):
         #    return http.HttpResponseServerError("Error fetching tweets")
-
-        # @TODO: create own reusable method (i.e. when resuming a creation progress)
-        # fetches tweets by calling fetcher jar
-        listener = TweetIO.TweetProgressEventHandler(session.id)
-        fetcher = TweetIO.TweetsFetcher(tweetsCsvFile=csvFile.name, outputDir=baseFolder, updateListener=listener)
-        fetcher.fetch()
-        # @TODO: XML directory watcher
-
-        fetchersManager = TweetIO.getManager()
-        fetchersManager.add(fetcher, session.id)
+        invokeCorpusCreation(csvFile=csvFile, session=session, folder=baseFolder)
 
         # Notify corpus creation initialization
         response_data = {}
@@ -137,6 +133,17 @@ def startCreateCorpus(request):
         return HttpResponse(json.dumps(response_data), content_type="application/json")
     else:
         return http.HttpResponseServerError("Error fetching tweets")
+
+def invokeCorpusCreation(csvFile, folder, session):
+    """
+    fetches tweets by calling fetcher jar
+    """
+    listener = TweetIO.TweetProgressEventHandler(session.id)
+    fetcher = TweetIO.TweetsFetcher(tweetsCsvFile=csvFile.name, outputDir=folder, updateListener=listener)
+    fetcher.fetch()
+
+    fetchersManager = TweetIO.getManager()
+    fetchersManager.add(fetcher, session.id)
 
 def getSessions(request):
     """
@@ -174,7 +181,13 @@ def removeCorpus(request):
     corpusid = None
     try:
         corpusid = request.GET["corpusid"] if request.method == "GET" else request.POST["corpusid"]
-        Session.objects.all().filter(id=corpusid).delete()
+        session = Session.objects.all().filter(id=corpusid).first()
+        folder = os.path.join(settings.BASE_PROJECT_DIR, session.folder)
+        session.delete()
+
+        manager = TweetIO.getManager()
+        manager.remove(corpusid)
+        shutil.rmtree(folder)
     except:
         # Title not found
         return HttpResponse(status=400)
@@ -203,4 +216,15 @@ def resumeCorpus(request):
     @TODO: Assert that XML files won't be overridden.
     @TODO: Check on which step to resume
     """
-    pass
+    id = request.GET["id"]
+    session = Session.objects.all().filter(id=id).first()
+    session.working = True
+    session.completed = False
+    session.save()
+
+    folderPath = os.path.join(settings.BASE_PROJECT_DIR, session.folder)
+    csvFile = open(os.path.join(folderPath, "tweets.csv"))
+
+    invokeCorpusCreation(folder=folderPath, csvFile=csvFile, session=session)
+
+    return HttpResponse(json.dumps("success"), status=200)

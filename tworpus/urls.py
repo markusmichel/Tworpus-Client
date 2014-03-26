@@ -20,6 +20,7 @@ urlpatterns = patterns('',
     url(r'^api/session', sessionViews.getSession),
     url(r'^api/corpus/pause', sessionViews.pauseCorpus),
     url(r'^api/corpus/remove', sessionViews.removeCorpus),
+    url(r'^api/corpus/resume', sessionViews.resumeCorpus),
 
     url(r'^api/corpus/cache/status', cacheViews.cacheStatus),
     url(r'^api/corpus/cache/clear', cacheViews.clearCache)

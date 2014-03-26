@@ -35,6 +35,9 @@ class FetcherProgressListener:
     def onFinish(self):
         pass
 
+    def onCancel(self):
+        pass
+
 
 class FetchersManager():
     """
@@ -44,11 +47,9 @@ class FetchersManager():
 
     def __init__(self):
         self.fetchers = dict()
-        self.fetchers["test"] = "foo"
 
     def add(self, fetcher, id):
         self.fetchers[str(id)] = fetcher
-        print self.fetchers
 
     def get(self, id):
         # if id in self.fetchers:
@@ -79,6 +80,7 @@ class TweetsFetcher():
         self.outputDir = outputDir
         self.__updateListener = updateListener
         self.__cacheDir = settings.XML_CACHE_DIR
+        self.__canceled = False
 
     def fetch(self):
         thread = threading.Thread(target=self.__startJar)
@@ -112,7 +114,8 @@ class TweetsFetcher():
             sys.stdout.flush()
 
         self.__process.communicate()  # blocks subprocess until finish
-        self.__onFinish()
+        self.__onFinish() if self.__canceled is not True else self.__updateListener.onCancel()
+
         print "FINISHED JAR PROGRAM"
 
     def parseDownloadProgressFromLine(self, line):
@@ -138,6 +141,7 @@ class TweetsFetcher():
         """
         Terminates running tasks if there are any
         """
+        self.__canceled = True
         if self.__process is not None:
             os.kill(self.__process.pid, signal.SIGTERM)
 
@@ -166,36 +170,25 @@ class TweetProgressEventHandler(FetcherProgressListener):
         self.__onProgress(values)
         print "error"
 
+    def onCancel(self):
+        self.__session.working = False
+        self.__session.completed = False
+        self.__session.save()
+        print "cancel"
+
     def onFinish(self):
         self.__session.working = False
         self.__session.completed = True
         self.__session.save()
+        print "on finish"
 
     def __onProgress(self, values):
-        self.__session.progress = (float(values["failed"]) + float(values["succeeded"])) / float(values["total"]) * 100
-        self.__session.save()
-
-        from tworpus import tworpus_user_id
-        from StringIO import StringIO
-        import urllib, httplib, json
+        progress = (float(values["failed"]) + float(values["succeeded"])) / float(values["total"]) * 100
+        if progress > self.__session.progress:
+            self.__session.progress = progress
+            self.__session.save()
 
         self.__lastProgressSent += 1
 
         if self.__lastProgressSent is 10:
             self.__lastProgressSent = 0
-
-            # sessions = [session.as_json() for session in Session.objects.all()]
-
-            id = tworpus_user_id.getUid()
-            # url = "http://localhost:3000/api/v1/sockets/emit/" + str(id)
-            urlQuery = "/api/v1/sockets/emit/progress/" + str(id)
-
-            io = StringIO()
-            statusJsonString = json.dumps(self.__session.as_json(), io)
-            data = {}
-            data["status"] = statusJsonString
-            statusJsonString = urllib.urlencode(data)
-
-            httpConn = httplib.HTTPConnection('localhost:3000')
-            headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain"}
-            httpConn.request('POST', urlQuery, statusJsonString, headers)

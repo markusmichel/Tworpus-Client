@@ -2,7 +2,7 @@ from django.db import models
 from datetime import datetime
 
 class Session(models.Model):
-    title = models.CharField(max_length=200, unique=True)
+    title = models.CharField(max_length=200, unique=False)
     folder = models.CharField(max_length=200)
     minWordsPerTweet = models.IntegerField(default=0)
     minCharsPerTweet = models.IntegerField(default=0)

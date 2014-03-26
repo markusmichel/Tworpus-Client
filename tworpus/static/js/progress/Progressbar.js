@@ -84,7 +84,6 @@ angular.module("tworpusApp.progress", ["tworpusApp.progress.services"])
             };
 
             // Completely removes a corpus
-            // @TODO: extract service
             $scope.removeCorpus = function (id) {
                 corpusCreations.remove(id);
             };
@@ -92,10 +91,20 @@ angular.module("tworpusApp.progress", ["tworpusApp.progress.services"])
             // Pause a specific coprus creation process.
             // Specified by the session's id.
             $scope.pause = function (id) {
-                console.log("pause corpus ", id);
                 $http.get(urls.pauseCorpus + "?id=" + id)
                     .then(function () {
                         update();
+                    });
+            };
+
+            $scope.resume = function(id) {
+                $http
+                    .get(urls.resumeCorpus + "?id=" + id)
+                    .then(function() {
+                        corpusCreations
+                            .fetch(id)
+                            .then(corpusCreations.longPoll())
+                        ;
                     });
             };
 
@@ -105,7 +114,7 @@ angular.module("tworpusApp.progress", ["tworpusApp.progress.services"])
             $scope.$watchCollection("corpusCreationProcesses", function (newValue) {
                 console.log("Corpus creation processes changed", $scope.corpusCreationProcesses);
 
-                var unfinishedProcesses = $filter('unfinished')(corpusCreations.corpusCreationProcesses);
+                var unfinishedProcesses = $filter('working')(corpusCreations.corpusCreationProcesses);
                 if(unfinishedProcesses.length > 0) {
                     corpusCreations.longPoll();
                 }
