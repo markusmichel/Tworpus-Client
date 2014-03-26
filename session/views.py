@@ -97,10 +97,9 @@ def startCreateCorpus(request):
 
         # create project folder
         folderName = title #@TODO change foldername
-        baseFolder = settings.BASE_PROJECT_DIR + os.sep + folderName
-        xmlFolder = baseFolder + os.sep + "xml"
-        if not os.path.isdir(xmlFolder):
-            os.makedirs(xmlFolder)
+        baseFolder = os.path.join(settings.BASE_PROJECT_DIR, folderName)
+        if not os.path.isdir(baseFolder):
+            os.makedirs(baseFolder)
 
         # save values to database
         session = Session.objects.create(title=title)

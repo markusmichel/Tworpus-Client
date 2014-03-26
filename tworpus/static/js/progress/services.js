@@ -17,7 +17,7 @@ angular.module("tworpusApp.progress.services", [])
 
         var doPoll = function() {
             isPolling = true;
-            var unfinishedProcesses = $filter('unfinished')(that.corpusCreationProcesses);
+            var unfinishedProcesses = $filter('working')(that.corpusCreationProcesses);
 
             // Exit if there are no more processes to watch
             if (unfinishedProcesses.length === 0 && ++pollCounter >= 3) {

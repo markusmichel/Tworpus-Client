@@ -25,6 +25,16 @@ angular.module("tworpusApp.progress", ["tworpusApp.progress.services"])
         };
     })
 
+    .filter('working', function () {
+        return function (processes) {
+            var filtered = [];
+            angular.forEach(processes, function (process) {
+                if (process.working === true) filtered.push(process);
+            });
+            return filtered;
+        };
+    })
+
     .filter('corpusid', function () {
         return function (processes, id) {
             var filtered = null;
