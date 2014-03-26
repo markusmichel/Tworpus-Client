@@ -6,18 +6,17 @@ pieChartConfig = {
     colors: ["#DFFB3F", "#ED5565", "#EBEBEB"]
 };
 
-createPieChart = function(tweetsFetched, selector) {
+var createPieChart = function(tweetsFetched, selector) {
 
     var w = pieChartConfig.width;
     var h = pieChartConfig.height;
     var r = pieChartConfig.radius;
 
-    var color = d3.scale.category20c();
+    var data = [{"label":tweetsFetched.fetched, "value":tweetsFetched.fetched},];
 
-    var data = [
-        {"label":tweetsFetched.fetched, "value":tweetsFetched.fetched},
-        {"label":tweetsFetched.failed, "value":tweetsFetched.failed}
-    ];
+    if (tweetsFetched.failed != 0) {
+     data.push({"label":tweetsFetched.failed, "value":tweetsFetched.failed})
+    }
 
     if (tweetsFetched.pending != 0) {
      data.push({"label":tweetsFetched.pending, "value":tweetsFetched.pending})
@@ -52,8 +51,79 @@ createPieChart = function(tweetsFetched, selector) {
                     return "translate(" + arc.centroid(d) + ")";
                 })
         .attr("text-anchor", "middle")
+        .attr("font-weight", "bold")
         .text(function(d, i) { return data[i].label; });
  };
+
+var createCorpusView = function(item, elm) {
+    var title = $('<div></div>')
+                .text(item.title)
+                .addClass('corpus-view-title');
+
+            var created = $('<div></div>')
+                .addClass('corpus-view-details-created')
+                .text("Created at: " + moment(item.created).format('MM/DD/YYYY'));
+
+
+            var minPerTweet = $('<div></div>')
+                .addClass('corpus-view-details-minimum')
+                .append($('<div></div>').text("Min Chars/Tweet: " + item.minCharsPerTweet))
+                .append($('<div></div>').text("Min Words/Tweet: " + item.minWordsPerTweet));
+
+
+            var tweetsFetched = $('<div></div>')
+                .addClass('corpus-view-details-tweets')
+                .append($('<div></div>').text("Total tweets: " + item.numTweets))
+                .append($('<div></div>').text("Tweets fetched: " + item.tweetsFetched))
+                .append($('<div></div>').text("Tweets failed: " + item.tweetsFailed));
+
+
+            var lang = $('<div></div>')
+                .addClass('corpus-view-details-language')
+                .text("Language: " + item.language);
+
+            var details = $('<div></div')
+                .addClass('corpus-view-details')
+                .append(lang)
+                .append(minPerTweet)
+                .append(created)
+                .append(tweetsFetched);
+
+            var outerDetails = $('<div></div')
+                .addClass('corpus-view-outer-details')
+                .append(details);
+
+            var deleteBtn = $('<div></div')
+                .addClass('corpus-view-buttonbar-delete');
+
+            var renewBtn = $('<div></div')
+                .addClass('corpus-view-buttonbar-renew');
+
+            var exportBtn = $('<div></div')
+                .addClass('corpus-view-buttonbar-export');
+
+            var buttonbar = $('<div></div')
+                .append(deleteBtn)
+                .append(renewBtn)
+                .append(exportBtn)
+                .addClass('corpus-view-buttonbar');
+
+            var outerButtonbar = $('<div></div')
+                .addClass('corpus-view-outer-buttonbar')
+                .append(buttonbar);
+
+            elm
+                .append(title)
+                .append(outerDetails)
+                .append(outerButtonbar)
+                .hover(function(el) {
+                    details.addClass('move-in');
+                    buttonbar.addClass('move-in');
+                }, function() {
+                    details.removeClass('move-in');
+                    buttonbar.removeClass('move-in');
+                });
+};
 
 tworpusApp
 
@@ -62,7 +132,7 @@ tworpusApp
         corpusCreations.fetchAll();
     }])
 
-    .directive("twCreateCorporaView", [function() {
+    .directive("twCreateCorporaView", ["corpusCreations", "$filter", function(corpusCreations, $filter) {
 
         return {
             restrict: 'A',
@@ -79,81 +149,20 @@ tworpusApp
                     return;
                 }
 
-                var title = $('<div></div>')
-                    .text(corpusItem.title)
-                    .addClass('corpus-view-title');
-
-                var created = $('<div></div>')
-                    .addClass('corpus-view-details-created')
-                    .text("Created at: " + moment(corpusItem.created).format('MM/DD/YYYY'));
-
-
-                var minPerTweet = $('<div></div>')
-                    .addClass('corpus-view-details-minimum')
-                    .append($('<div></div>').text("Min Chars/Tweet: " + corpusItem.minCharsPerTweet))
-                    .append($('<div></div>').text("Min Words/Tweet: " + corpusItem.minWordsPerTweet));
-
-
-                var tweetsFetched = $('<div></div>')
-                    .addClass('corpus-view-details-tweets')
-                    .append($('<div></div>').text("Total tweets: " + corpusItem.numTweets))
-                    .append($('<div></div>').text("Tweets fetched: " + corpusItem.tweetsFetched))
-                    .append($('<div></div>').text("Tweets failed: " + corpusItem.tweetsFailed));
-
-
-                var lang = $('<div></div>')
-                    .addClass('corpus-view-details-language')
-                    .text("Language: " + corpusItem.language);
-
-                var details = $('<div></div')
-                    .addClass('corpus-view-details')
-                    .append(lang)
-                    .append(minPerTweet)
-                    .append(created)
-                    .append(tweetsFetched);
-
-                var outerDetails = $('<div></div')
-                    .addClass('corpus-view-outer-details')
-                    .append(details);
-
-                var deleteBtn = $('<div></div')
-                    .addClass('corpus-view-buttonbar-delete');
-
-                var renewBtn = $('<div></div')
-                    .addClass('corpus-view-buttonbar-renew');
-
-                var exportBtn = $('<div></div')
-                    .addClass('corpus-view-buttonbar-export');
-
-                var buttonbar = $('<div></div')
-                    .append(deleteBtn)
-                    .append(renewBtn)
-                    .append(exportBtn)
-                    .addClass('corpus-view-buttonbar');
-
-                var outerButtonbar = $('<div></div')
-                    .addClass('corpus-view-outer-buttonbar')
-                    .append(buttonbar);
-
-                elm
-                    .append(title)
-                    .append(outerDetails)
-                    .append(outerButtonbar)
-                    .hover(function(el) {
-                        details.addClass('move-in');
-                        buttonbar.addClass('move-in');
-                    }, function() {
-                        details.removeClass('move-in');
-                        buttonbar.removeClass('move-in');
-                    });
-
                 var tweetsFetchedStats = {
                     fetched: corpusItem.tweetsFetched,
                     failed: corpusItem.tweetsFailed,
                     pending: corpusItem.numTweets - corpusItem.tweetsFetched - corpusItem.tweetsFailed
                 };
 
+                createCorpusView(corpusItem, elm);
                 createPieChart(tweetsFetchedStats, elm);
+
+                $scope.processes = corpusCreations.corpusCreationProcesses;
+                $scope.$watch("processes", function(newValue, oldValue) {
+                     var workingCorpus = $filter('working')(newValue);
+                     if (workingCorpus.length > 0) console.log(workingCorpus);
+                }, true);
             }
         }
     }]);

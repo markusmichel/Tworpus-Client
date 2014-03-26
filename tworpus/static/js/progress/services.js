@@ -46,7 +46,6 @@ angular.module("tworpusApp.progress.services", [])
                     session.working         = data.working;
                     session.tweetsFetched   = data.tweetsFetched;
                     session.tweetsFailed    = data.tweetsFailed;
-                    console.log("SESSION: ", session);
                 });
         };
 
@@ -54,7 +53,6 @@ angular.module("tworpusApp.progress.services", [])
             return $http
                 .get(urls.sessions)
                 .success(function (data) {
-                    console.log("current processes: ", that.corpusCreationProcesses);
                     angular.forEach(data, function (session, index) {
                         var oldProcess = that.corpusCreationProcesses[session.id];
                         if (typeof oldProcess === "undefined") that.corpusCreationProcesses[session.id] = session;
