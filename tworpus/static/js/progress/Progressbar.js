@@ -111,8 +111,6 @@ angular.module("tworpusApp.progress", ["tworpusApp.progress.services"])
             var that = this;
             // @TODO: Prozesse der Direktive übergeben. Diese überwacht dann die Prozesse und stellt die Progressbars dar oder nicht
             $scope.$watchCollection("corpusCreationProcesses", function (newValue) {
-                console.log("Corpus creation processes changed", $scope.corpusCreationProcesses);
-
                 var unfinishedProcesses = $filter('working')(corpusCreations.corpusCreationProcesses);
                 if(unfinishedProcesses.length > 0) {
                     corpusCreations.longPoll();
