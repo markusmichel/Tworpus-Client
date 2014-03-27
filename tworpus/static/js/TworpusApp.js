@@ -27,6 +27,7 @@ tworpusApp
             $scope.slider.config = {};
             $scope.slider.config.minTweetLength = 0;
             $scope.slider.config.maxTweetLength = 140;
+            $scope.corpus = {};
 
             $scope.languages = [
                 {name: "german", value: "de"},
@@ -79,46 +80,38 @@ tworpusApp
         }
     })
 
-    .directive('twDate', function() {
+    .directive('twDate', function () {
         return {
             restrict: 'A',
             scope: {
-                ngModel: "="
+                ngModel: "=",
+                minDate: "=",
+                maxDate: "="
             },
             require: 'ngModel',
 
-            link: function($scope, elm, attrs) {
-                var isStartDate = (elm.find('.start-date').length > 0) ? true : false;
-
+            link: function ($scope, elm, attrs) {
                 var picker = new Pikaday({
                     field: elm[0],
                     bound: false,
-                    onSelect: function(date) {
+                    onSelect: function (date) {
                         $scope.ngModel = date || new Date();
-                        //startPicker.setMinDate(moment());
-                        //endPicker.setMinDate(moment());
-
-                        if (!isStartDate) {
-                             console.log(isStartDate);
-
-                        }
                         $scope.$apply();
                     }
                 });
 
-                if (isStartDate) {
-                    var today = moment();
-                    var tenDaysAgo = today.add('days', -10);
-                    picker.setMaxDate(moment());
-                    $scope.ngModel = new Date(tenDaysAgo.format());
-                } else {
-                    var today = moment();
-                    picker.setMaxDate(today);
-                    $scope.ngModel = new Date(today.format());
-                }
+                $scope.$watch('ngModel', function (newValue, oldValue) {
+                    picker.setDate(newValue, true);
+                });
 
-                $scope.$watch('ngModel', function(newValue, oldValue) {
-                        picker.setDate(newValue, true);
+                $scope.$watch("minDate", function(newValue) {
+                    picker.setMinDate(newValue);
+                    picker.setDate($scope.ngModel, true); // need setDate to update Datepicker
+                });
+
+                $scope.$watch("maxDate", function(newValue) {
+                    picker.setMaxDate(newValue);
+                    picker.setDate($scope.ngModel, true); // need setDate to update Datepicker
                 });
             }
         }
@@ -127,13 +120,29 @@ tworpusApp
     .controller('twDateRangeController', ["$scope",
         function ($scope) {
 
+            // initialize start and end dates
+            $scope.startDate = {};
+            $scope.endDate = {
+                maxDate: new Date()
+            };
+
+            var startDate = new Date();
+            startDate.setTime(startDate.getTime() - (24*60*60*1000) * 10);
+            $scope.$parent.corpus.startDate = startDate;
+            $scope.$parent.corpus.endDate  = new Date();
+
+
             $scope.$watch('corpus.startDate', function (newValue, oldValue) {
                 if (!$scope.corpus) return;
                 if (newValue > $scope.corpus.endDate) $scope.corpus.startDate = $scope.corpus.endDate;
+
+                $scope.endDate.minDate = newValue;
             });
 
             $scope.$watch('corpus.endDate', function (newValue, oldValue) {
                 if (!$scope.corpus) return;
                 if (newValue < $scope.corpus.startDate) $scope.corpus.endDate = $scope.corpus.startDate;
+
+                $scope.startDate.maxDate = newValue;
             });
         }]);
