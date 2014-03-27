@@ -1,3 +1,30 @@
 <div class="corpus-view" ng-repeat="session in corpusCreations | orderBy : 'created' : true ">
-    <div tw-create-corpora-view ng-model='session'></div>
+    <div tw-create-corpora-view ng-model='session'>
+
+        <div class="corpus-view-title">{{ session.title }}</div>
+
+        <div class="corpus-view-outer-details">
+            <div class="corpus-view-details">
+                <div class="corpus-view-details-language">Language: {{ session.language }}</div>
+                <div class="corpus-view-details-minimum">
+                    <div>Min Chars/Tweet: {{  session.minCharsPerTweet }}</div>
+                    <div>Min Words/Tweet: {{  session.minWordsPerTweet }}</div>
+                </div>
+                <div class="corpus-view-details-created"></div>
+                <div class="corpus-view-details-tweets">
+                    <div>Total tweets: {{  session.numTweets }}</div>
+                    <div class="corpus-view-details-tweets-fetched">Tweets fetched: {{  session.tweetsFetched }}</div>
+                    <div class="corpus-view-details-tweets-failed">Tweets failed: {{  session.tweetsFailed }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="corpus-view-outer-buttonbar">
+            <div class="corpus-view-buttonbar">
+                <div class="corpus-view-buttonbar-delete" ng-click="remove(session.id)"></div>
+                <div class="corpus-view-buttonbar-renew"></div>
+                <div class="corpus-view-buttonbar-export"></div>
+            </div>
+        </div>
+    </div>
 </div>

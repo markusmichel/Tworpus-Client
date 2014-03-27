@@ -67,8 +67,8 @@ angular.module("tworpusApp.progress.services", [])
         };
 
         this.remove = function (id) {
-            var index = $filter('indexOfCorpusid')(this.corpusCreationProcesses, id),
-                removed = this.corpusCreationProcesses.splice(index, 1),
+            var index = $filter('indexOfCorpusid')(that.corpusCreationProcesses, id),
+                removed = that.corpusCreationProcesses.splice(index, 1),
                 url = urls.removeCorpus + "?corpusid=" + id;
 
             if (removed.length > 0) {
