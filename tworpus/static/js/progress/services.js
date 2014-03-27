@@ -36,6 +36,7 @@ angular.module("tworpusApp.progress.services", [])
         };
 
         this.fetch = function (id) {
+            id = new String(id);
             return $http
                 .get(urls.session + "?id=" + id)
                 .success(function (data) {
@@ -56,9 +57,10 @@ angular.module("tworpusApp.progress.services", [])
                 .get(urls.sessions)
                 .success(function (data) {
                     angular.forEach(data, function (session, index) {
-                        var oldProcess = that.corpusCreationProcesses[session.id];
-                        if (typeof oldProcess === "undefined") that.corpusCreationProcesses[session.id] = session;
-
+                        var oldProcess = $filter('indexOfCorpusid')(that.corpusCreationProcesses, session.id);
+                        if (oldProcess === null) {
+                            that.corpusCreationProcesses.push(session);
+                        }
                         // @TODO: update session if is defined
                     });
                 });
