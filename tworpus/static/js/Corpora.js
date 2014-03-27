@@ -1,5 +1,5 @@
 
-pieChartConfig = {
+var pieChartConfig = {
     width: 250,
     height: 250,
     innerRadius: 80,
@@ -76,7 +76,6 @@ var updateCorpusView = function(item, el) {
 
     var details = el.find('.corpus-view-details');
     var buttonbar = el.find('.corpus-view-buttonbar');
-
 
     el.hover(function() {
             details.addClass('move-in');

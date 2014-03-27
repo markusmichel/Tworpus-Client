@@ -95,7 +95,13 @@ tworpusApp
                     bound: false,
                     onSelect: function(date) {
                         $scope.ngModel = date || new Date();
+                        //startPicker.setMinDate(moment());
+                        //endPicker.setMinDate(moment());
 
+                        if (!isStartDate) {
+                             console.log(isStartDate);
+
+                        }
                         $scope.$apply();
                     }
                 });
