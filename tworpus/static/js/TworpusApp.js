@@ -88,16 +88,28 @@ tworpusApp
             require: 'ngModel',
 
             link: function($scope, elm, attrs) {
+                var isStartDate = (elm.find('.start-date').length > 0) ? true : false;
 
-                $scope.ngModel = new Date();
                 var picker = new Pikaday({
                     field: elm[0],
                     bound: false,
                     onSelect: function(date) {
                         $scope.ngModel = date || new Date();
+
                         $scope.$apply();
                     }
                 });
+
+                if (isStartDate) {
+                    var today = moment();
+                    var tenDaysAgo = today.add('days', -10);
+                    picker.setMaxDate(moment());
+                    $scope.ngModel = new Date(tenDaysAgo.format());
+                } else {
+                    var today = moment();
+                    picker.setMaxDate(today);
+                    $scope.ngModel = new Date(today.format());
+                }
 
                 $scope.$watch('ngModel', function(newValue, oldValue) {
                         picker.setDate(newValue, true);
@@ -108,6 +120,7 @@ tworpusApp
 
     .controller('twDateRangeController', ["$scope",
         function ($scope) {
+
             $scope.$watch('corpus.startDate', function (newValue, oldValue) {
                 if (!$scope.corpus) return;
                 if (newValue > $scope.corpus.endDate) $scope.corpus.startDate = $scope.corpus.endDate;
