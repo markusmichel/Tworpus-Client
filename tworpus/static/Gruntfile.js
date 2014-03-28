@@ -7,6 +7,7 @@ module.exports = function (grunt) {
 
     grunt.loadNpmTasks('grunt-contrib-less');
     grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.loadNpmTasks('grunt-contrib-copy');
 
     // Project configuration.
     grunt.initConfig({
@@ -25,6 +26,15 @@ module.exports = function (grunt) {
                 files: 'less/*.less',
                 tasks: 'less'
             }
+        },
+
+        copy: {
+            fonts: {
+                expand: true,
+                src: 'bower_components/bootstrap/fonts/*',
+                dest: 'dist/fonts/',
+                flatten: true
+            }
         }
     });
 
@@ -38,7 +48,7 @@ module.exports = function (grunt) {
     grunt.registerTask('dist', ['clean', 'dist-css', 'copy:fonts', 'dist-js', 'dist-docs']);
 
     // Default task.
-    grunt.registerTask('default', ['less']);
+    grunt.registerTask('default', ['less', 'copy:fonts']);
 
     // Task for updating the npm packages used by the Travis build.
     grunt.registerTask('update-shrinkwrap', ['exec:npmUpdate', 'exec:npmShrinkWrap', '_update-shrinkwrap']);
