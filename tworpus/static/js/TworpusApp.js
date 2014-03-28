@@ -30,11 +30,17 @@ tworpusApp
             $scope.corpus = {};
 
             $scope.languages = [
-                {name: "german", value: "de"},
-                {name: "english", value: "en"},
-                {name: "spanish", value: "es"},
-                {name: "french", value: "fr"}
+                {name: "German", value: "de"},
+                {name: "English", value: "en"},
+                {name: "Spanish", value: "es"},
+                {name: "French", value: "fr"},
+                {name: "Italian", value: "it"},
+                {name: "Dutch", value: "nl"},
+                {name: "Portuguese", value: "pt"},
+                {name: "Turkish", value: "tr"}
             ];
+
+            "en", "de", "es", "fr", "it", "nl", "pt", "tr"
 
             $scope.startCreateCorpus = function () {
                 // Starts corpus creation through corpusCreationService if form is valid
@@ -44,8 +50,19 @@ tworpusApp
                         .success(function () {
                             notify("Korpus <b>" + $scope.corpus.title + " </b>wird erstellt");
                             $rootScope.$emit("corpus:create:start");
-                        }).error(function () {
-                            notify("Bitte angaben korrigieren", "error");
+                        }).error(function (data, status) {
+                            console.log("data: ", data)
+                            console.log("statu: ", status)
+
+                            switch(status) {
+                                case 409:
+                                    notify("No tweets found to fetch. Try to be less specific.", "error");
+                                    break;
+                                default:
+                                    notify("Failed to fetch tweets.", "error");
+                                    break;
+                            }
+
                         });
                 }
             };
@@ -119,17 +136,23 @@ tworpusApp
 
     .controller('twDateRangeController', ["$scope",
         function ($scope) {
+            var oneDayInMillis = (24*60*60*1000);
+
+            var startDate = new Date();
+            startDate.setTime(startDate.getTime() - oneDayInMillis * 10);
+            $scope.$parent.corpus.startDate = startDate;
+
+            var endDate = new Date();
+            endDate.setHours(23);
+            endDate.setMinutes(59);
+            endDate.setTime(endDate.getTime() + oneDayInMillis);
+            $scope.$parent.corpus.endDate  = endDate;
 
             // initialize start and end dates
             $scope.startDate = {};
             $scope.endDate = {
-                maxDate: new Date()
+                maxDate: endDate
             };
-
-            var startDate = new Date();
-            startDate.setTime(startDate.getTime() - (24*60*60*1000) * 10);
-            $scope.$parent.corpus.startDate = startDate;
-            $scope.$parent.corpus.endDate  = new Date();
 
 
             $scope.$watch('corpus.startDate', function (newValue, oldValue) {
