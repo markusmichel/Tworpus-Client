@@ -40,8 +40,6 @@ tworpusApp
                 {name: "Turkish", value: "tr"}
             ];
 
-            "en", "de", "es", "fr", "it", "nl", "pt", "tr"
-
             $scope.startCreateCorpus = function () {
                 // Starts corpus creation through corpusCreationService if form is valid
                 var isValid = $("form").get(0).checkValidity();
