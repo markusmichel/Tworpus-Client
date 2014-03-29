@@ -8,6 +8,11 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-less');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-copy');
+    grunt.loadNpmTasks('grunt-contrib-concat');
+    grunt.loadNpmTasks('grunt-contrib-jshint');
+    grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-contrib-cssmin');
+    grunt.loadNpmTasks('grunt-csscomb');
 
     // Project configuration.
     grunt.initConfig({
@@ -21,10 +26,13 @@ module.exports = function (grunt) {
             }
         },
 
-        watch: {
-            less: {
-                files: 'less/*.less',
-                tasks: 'less'
+        cssmin: {
+            minify: {
+                expand: true,
+                cwd: 'dist/css/',
+                src: ['*.css', '!*.min.css'],
+                dest: 'dist/css/',
+                ext: '.min.css'
             }
         },
 
@@ -35,6 +43,42 @@ module.exports = function (grunt) {
                 dest: 'dist/fonts/',
                 flatten: true
             }
+        },
+
+        concat: {
+            options: {
+                separator: ';'
+            },
+            dist: {
+                src: [
+                    'js/TworpusApp.js',
+                    'js/**/*service.js',
+                    'js/**/*.js'
+                ],
+                dest: 'dist/js/tworpus.js'
+            }
+        },
+
+        jshint: {
+            all: [
+                'Gruntfile.js',
+                'js/**/*.js'
+            ]
+        },
+
+        uglify: {
+            all: {
+                files: {
+                    'dist/js/tworpus.min.js': '<%= concat.dist.dest %>'
+                }
+            }
+        },
+
+        watch: {
+            lessTest: {
+                files: 'less/*.less',
+                tasks: 'dist-css'
+            }
         }
     });
 
@@ -42,17 +86,11 @@ module.exports = function (grunt) {
     grunt.registerTask('dist-js', ['concat', 'uglify']);
 
     // CSS distribution task.
-    grunt.registerTask('dist-css', ['less', 'cssmin', 'csscomb', 'usebanner']);
+    grunt.registerTask('dist-css', ['less', 'cssmin']);
 
     // Full distribution task.
-    grunt.registerTask('dist', ['clean', 'dist-css', 'copy:fonts', 'dist-js', 'dist-docs']);
+    grunt.registerTask('dist', ['dist-css', 'copy:fonts', 'dist-js']);
 
     // Default task.
-    grunt.registerTask('default', ['less', 'copy:fonts']);
-
-    // Task for updating the npm packages used by the Travis build.
-    grunt.registerTask('update-shrinkwrap', ['exec:npmUpdate', 'exec:npmShrinkWrap', '_update-shrinkwrap']);
-    grunt.registerTask('_update-shrinkwrap', function () {
-        updateShrinkwrap.call(this, grunt);
-    });
+    grunt.registerTask('default', ['less', 'copy:fonts', 'concat', 'uglify', 'jshint']);
 };
