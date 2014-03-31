@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="{% static 'components/joyride-master/css/joyride-2.1.css' %}" />
     <link rel="stylesheet" href="{% static 'components/pnotify-1.2.0/jquery.pnotify.default.css' %}" />
     <link rel="stylesheet" href="{% static 'components/pnotify-1.2.0/use for pines style icons/jquery.pnotify.default.icons.css' %}" />
-    <link rel="stylesheet" href="{% static 'dist/css/bootstrap.css' %}"
+    <link rel="stylesheet" href="{% static 'dist/css/bootstrap.css' %}" />
     <link rel="stylesheet" href="{% static 'bower_components/angular-ui/build/angular-ui.css' %}" />
     />
 
@@ -127,8 +127,29 @@
     </div>
     <ol id="joyRideTipContent">
         <li data-id="input_title">
-            <h2>Titel</h2>
-            <p>Geben Sie ihrem Korpus einen Titel!</p>
+            <h2>Stop #1</h2>
+            <p>Enter a project title for creating your corpus</p>
+        </li>
+        <li data-id="select-language-id" data-button="Next">
+            <h2>Stop #2</h2>
+            <p>Choose a language to filter your results</p>
+        </li>
+
+        <li data-id="timepickerID" data-button="Next">
+            <h2>Stop #3</h2>
+            <p>Select a start and end date to determine the timespan</p>
+        </li>
+        <li data-id="sliderTestID" data-button="Next" data-options="tipLocation:right">
+            <h2>Stop #4</h2>
+            <p>Adjust the sliders for your preferred settings</p>
+        </li>
+        <li data-id="doitBtnID"data-options="tipLocation:top;tipAnimation:fade">
+            <h2>Stop #5</h2>
+            <p>Create the corpus</p>
+        </li>
+        <li>
+            <h2>VOILA</h2>
+            <p>Ok. You just created a corpus. For more informations about it select "View corpora"</p>
         </li>
     </ol>
 {% endblock body %}
@@ -139,10 +160,6 @@
     {#    <script src="http://localhost:3000/socket.io/socket.io.js"></script>#}
     <script src="{% static 'bower_components/bootstrap/dist/js/bootstrap.min.js' %}"></script>
 
-    <script src="{% static 'components/joyride-master/js/jquery-1.10.1.js' %}"></script>
-    <script src="{% static 'components/joyride-master/js/jquery.joyride-2.1.js' %}"></script>
-    <script src="{% static 'components/joyride-master/js/jquery.cookie.js' %}"></script>
-    <script src="{% static 'components/joyride-master/js/modernizr.mq.js' %}"></script>
 
     <script src="{% static 'components/datepicker/js/moment-min.js' %}"></script>
     <script src="{% static 'components/datepicker/js/pikaday.js' %}"></script>
@@ -165,6 +182,10 @@
     <script src="http://code.angularjs.org/1.0.8/i18n/angular-locale_de-de.js"></script>
     <script src="{% static 'bower_components/angular-bootstrap/ui-bootstrap-tpls.js' %}"></script>
     <script src="{% static 'bower_components/angular-ui-select2/src/select2.js' %}"></script>
+
+    <script src="{% static 'components/joyride-master/js/jquery.joyride-2.1.js' %}"></script>
+    <script src="{% static 'components/joyride-master/js/jquery.cookie.js' %}"></script>
+    <script src="{% static 'components/joyride-master/js/modernizr.mq.js' %}"></script>
 
     <script>
         // Init angular app
@@ -222,11 +243,6 @@
             setTimeout(function() {
                 $("#joyRideTipContent").joyride({
                 autostart : true,
-                postStepCallback : function (index, tip) {
-                    if (index == 2) {
-                        $(this).joyride('set_li', false, 1);
-                    }
-                },
                 modal : true,
                 expose : true
             });
