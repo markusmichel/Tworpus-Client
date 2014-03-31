@@ -8,7 +8,7 @@
             <input ng-model="corpus.title" name="title" type="text" class="form-control" id="input_title" placeholder="Project title" required="">
         </div>
 
-        <div class="form-group">
+        <div class="form-group" id="select-language-id">
             <label for="">Language</label>
             <select id="select-language" name="language" data-placeholder="Select language"
                     ui-select2 ng-model="corpus.language" required="required">
@@ -21,7 +21,7 @@
             <label for="">Period of time</label>
 
             <div class="row">
-                <div class="col-lg-3">
+                <div class="col-lg-3" id="timepickerID">
                         <div tw-date ng-model="$parent.corpus.startDate" min-date="startDate.minDate" max-date="startDate.maxDate">
                             <div class="datepicker-label start-date">From</div>
                         </div>
@@ -35,7 +35,7 @@
             </div>
         </div>
 
-        <div class="form-group">
+        <div class="form-group" id="sliderTestID">
             <label for="input_slider_num_tweets">Number of Tweets</label>
             <br/>
 
@@ -123,7 +123,7 @@
             </div>
         </div>
 
-        <button type="submit" class="btn btn-default" ng-click="startCreateCorpus()">Do it!</button>
+        <button id="doitBtnID" type="submit" class="btn btn-default" ng-click="startCreateCorpus()">Do it!</button>
 
     </form>
 </div>

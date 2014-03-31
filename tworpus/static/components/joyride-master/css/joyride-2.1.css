@@ -9,13 +9,14 @@ body {
 
 /* Default styles for the container */
 .joyride-tip-guide {
+  cursor: default;
   position: absolute;
   background: #000;
-  background: rgba(0,0,0,0.8);
+  background: rgba(37,46,42,0.8);
   display: none;
   color: #fff;
-  width: 300px;
-  z-index: 101;
+  min-width: 300px;
+  z-index: 1010;
   top: 0; /* keeps the page from scrolling when calculating position */
   left: 0;
   font-family: "HelveticaNeue", "Helvetica Neue", "Helvetica", Helvetica, Arial, Lucida, sans-serif;
@@ -51,7 +52,6 @@ body {
   left: 22px;
   width: 0;
   height: 0;
-  border: solid 14px;
   border: solid 14px;
 }
 
@@ -151,7 +151,6 @@ body {
 .joyride-tip-guide a {
   color: rgb(255,255,255);
   text-decoration: none;
-  border-bottom: dotted 1px rgba(255,255,255,0.6);
 }
 .joyride-tip-guide a:hover {
   color: rgba(255,255,255,0.8);
@@ -164,36 +163,29 @@ body {
   padding: 6px 18px 4px;
   font-size: 13px;
   text-decoration: none;
-  color: rgb(255,255,255);
-  border: solid 1px rgb(0,60,180);
-  background: rgb(0,99,255);
-  background: -moz-linear-gradient(top, rgb(0,99,255) 0%, rgb(0,85,214) 100%);
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgb(0,99,255)), color-stop(100%,rgb(0,85,214)));
-  background: -webkit-linear-gradient(top, rgb(0,99,255) 0%,rgb(0,85,214) 100%);
-  background: -o-linear-gradient(top, rgb(0,99,255) 0%,rgb(0,85,214) 100%);
-  background: -ms-linear-gradient(top, rgb(0,99,255) 0%,rgb(0,85,214) 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#0063ff', endColorstr='#0055d6',GradientType=0 );
-  background: linear-gradient(top, rgb(0,99,255) 0%,rgb(0,85,214) 100%);
-  text-shadow: 0 -1px 0 rgba(0,0,0,0.5);
-  -webkit-border-radius: 2px;
-     -moz-border-radius: 2px;
-          border-radius: 2px;
-  -webkit-box-shadow: 0px 1px 0px rgba(255,255,255,0.3) inset;
-     -moz-box-shadow: 0px 1px 0px rgba(255,255,255,0.3) inset;
-          box-shadow: 0px 1px 0px rgba(255,255,255,0.3) inset;
+  color: #000000;
+  font-family: 'Oswald', Arial, Verdana, sans-serif;
+  cursor: pointer;
+  background: rgb(223,251,63);
+  background: -moz-linear-gradient(top, rgb(223,251,63) 0%, rgb(142,163,20) 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgb(223,251,63)), color-stop(100%,rgb(142,163,20)));
+  background: -webkit-linear-gradient(top, rgb(223,251,63) 0%,rgb(142,163,20) 100%);
+  background: -o-linear-gradient(top, rgb(223,251,63) 0%,rgb(142,163,20) 100%);
+  background: -ms-linear-gradient(top, rgb(223,251,63) 0%,rgb(142,163,20) 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#2b80ff', endColorstr='#1d66d3',GradientType=0 );
+  background: linear-gradient(top, rgb(223,251,63) 0%,rgb(142,163,20) 100%);
 }
 
 .joyride-next-tip:hover {
   color: rgb(255,255,255) !important;
-  border: solid 1px rgb(0,60,180) !important;
-  background: rgb(43,128,255);
-  background: -moz-linear-gradient(top, rgb(43,128,255) 0%, rgb(29,102,211) 100%);
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgb(43,128,255)), color-stop(100%,rgb(29,102,211)));
-  background: -webkit-linear-gradient(top, rgb(43,128,255) 0%,rgb(29,102,211) 100%);
-  background: -o-linear-gradient(top, rgb(43,128,255) 0%,rgb(29,102,211) 100%);
-  background: -ms-linear-gradient(top, rgb(43,128,255) 0%,rgb(29,102,211) 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#2b80ff', endColorstr='#1d66d3',GradientType=0 );
-  background: linear-gradient(top, rgb(43,128,255) 0%,rgb(29,102,211) 100%);
+  background: rgb(147,158,83);
+  background: -moz-linear-gradient(top, rgb(147,158,83) 0%, rgb(104,120,8) 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgb(147,158,83)), color-stop(100%,rgb(104,120,8)));
+  background: -webkit-linear-gradient(top, rgb(147,158,83) 0%,rgb(104,120,8) 100%);
+  background: -o-linear-gradient(top, rgb(147,158,83) 0%,rgb(104,120,8) 100%);
+  background: -ms-linear-gradient(top, rgb(147,158,83) 0%,rgb(104,120,8) 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#0063ff', endColorstr='#0055d6',GradientType=0 );
+  background: linear-gradient(top, rgb(147,158,83) 0%,rgb(104,120,8) 100%);
 }
 
 .joyride-timer-indicator-wrap {
