@@ -93,8 +93,7 @@ tworpusApp
         $scope.remove = corpusCreations.remove;
 
         $scope.download = function(id) {
-            var win=window.open(urls.downloadCorpus + "?id=" + id, '_blank');
-            win.focus();
+            window.location = urls.downloadCorpus + "?id=" + id;
         };
 
         $scope.recreate = function(id) {
@@ -106,7 +105,6 @@ tworpusApp
                         corpusCreations.longPoll();
                     });
                 });
-            window.location = urls.downloadCorpus + "?id=" + id;
         };
 
         corpusCreations.fetchAll();
