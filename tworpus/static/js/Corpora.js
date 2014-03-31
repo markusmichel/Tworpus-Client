@@ -93,6 +93,9 @@ tworpusApp
         $scope.remove = corpusCreations.remove;
 
         $scope.download = function(id) {
+            var index = $filter('indexOfCorpusid')(corpusCreations.corpusCreationProcesses, id),
+                        session = corpusCreations.corpusCreationProcesses[index];
+            if (session.working) return;
             window.location = urls.downloadCorpus + "?id=" + id;
         };
 
@@ -134,6 +137,8 @@ tworpusApp
                 var tweetsFetched = el.find('.corpus-view-details-tweets-fetched');
                 var tweetsFailed = el.find('.corpus-view-details-tweets-failed');
                 var renewButton = el.find('.corpus-view-buttonbar-renew');
+                var exportButton = el.find('.corpus-view-buttonbar-export');
+                var title = el.find('.corpus-view-title');
 
                 updateCorpusView(corpusItem, el);
                 var pieChart = createPieChart(elm);
@@ -159,13 +164,16 @@ tworpusApp
                     }
 
                     if (item.working && !renewButton.hasClass('disabled')) {
+                        title.toggleClass('working');
                         renewButton.toggleClass('disabled');
+                        exportButton.toggleClass('disabled');
 
                     }
                     if (!item.working && renewButton.hasClass('disabled')) {
+                        title.toggleClass('working');
                         renewButton.toggleClass('disabled');
+                        exportButton.toggleClass('disabled');
                     }
-
                 }, true);
             }
         }

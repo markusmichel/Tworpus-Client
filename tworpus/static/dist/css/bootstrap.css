@@ -5812,6 +5812,10 @@ body {
   padding-top: 70px;
   padding-bottom: 60px;
   line-height: 1.618;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 body.progressbar-expanded {
   padding-bottom: 200px;
@@ -6000,6 +6004,7 @@ a:focus {
   position: relative;
   width: 250px;
   height: 285px;
+  overflow: hidden;
 }
 .corpus-view-title {
   text-align: center;
@@ -6008,6 +6013,13 @@ a:focus {
   margin: 0 0 10px 0;
   cursor: default;
   height: 25px;
+  padding: 0 32px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.corpus-view-title.working {
+  background: transparent url(../../res/corpus-view/hourglass.png) no-repeat left center;
 }
 .corpus-view-details {
   height: 235px;
@@ -6087,6 +6099,10 @@ a:focus {
 .corpus-view-buttonbar-export:hover {
   background: transparent url(../../res/corpus-view/export-hover.png) no-repeat center center;
 }
+.corpus-view-buttonbar-export.disabled {
+  background: transparent url(../../res/corpus-view/export-disabled.png) no-repeat center center;
+  cursor: default;
+}
 .corpus-view-buttonbar-renew {
   background: transparent url(../../res/corpus-view/reload.png) no-repeat center center;
 }
@@ -6095,6 +6111,7 @@ a:focus {
 }
 .corpus-view-buttonbar-renew.disabled {
   background: transparent url(../../res/corpus-view/reload-disabled.png) no-repeat center center;
+  cursor: default;
 }
 /*
 * Settings Site

@@ -28,7 +28,6 @@
 }
 
 /* Hide for mobile, show later */
-
 @media (max-width: 768px) {
   .navbar-brand {
         margin: 12px 0 0 22px;
@@ -40,12 +39,12 @@
 
 }
 
-
 /* Move down content because we have a fixed navbar that is 70px tall */
 body {
   padding-top: 70px;
   padding-bottom: 60px;
   line-height: 1.618;
+  .user-select(none);
 }
 
 body.progressbar-expanded {
@@ -180,7 +179,6 @@ a:focus {
 /*
 * Sidebar
 */
-
 .nav-sidebar {
     margin-right: -21px; /* 20px padding + 1px border */
     margin-bottom: 20px;
@@ -245,13 +243,13 @@ a:focus {
 /*
 * Corpus View
 */
-
 .corpus-view {
   display: inline-block;
   margin: 0 40px 40px 40px;
   position: relative;
   width: 250px;
   height: 285px;
+    overflow: hidden;
 }
 
 .corpus-view-title {
@@ -261,6 +259,14 @@ a:focus {
   margin: 0 0 10px 0;
   cursor: default;
   height: 25px;
+  padding: 0 32px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.corpus-view-title.working {
+  background: transparent url(../../res/corpus-view/hourglass.png) no-repeat left center;
 }
 
 .corpus-view-details {
@@ -354,6 +360,11 @@ a:focus {
    background: transparent url(../../res/corpus-view/export-hover.png) no-repeat center center;
 }
 
+.corpus-view-buttonbar-export.disabled {
+   background: transparent url(../../res/corpus-view/export-disabled.png) no-repeat center center;
+   cursor: default;
+}
+
 .corpus-view-buttonbar-renew {
    background: transparent url(../../res/corpus-view/reload.png) no-repeat center center;
 }
@@ -364,6 +375,7 @@ a:focus {
 
 .corpus-view-buttonbar-renew.disabled {
    background: transparent url(../../res/corpus-view/reload-disabled.png) no-repeat center center;
+   cursor: default;
 }
 
 /*
