@@ -5883,10 +5883,14 @@ body.progressbar-expanded {
   padding-left: 25px;
 }
 .collapsed-seperator {
-  border-bottom: 1px solid #fff;
+  border-bottom: 2px dashed #fff;
   margin-left: 11px;
   margin-right: 11px;
   margin-top: 35px;
+}
+.sidebar-seperator {
+  border-bottom: 2px dashed #252E2A;
+  margin: 10px 15px 10px;
 }
 .navbar-toggle {
   margin-top: 18px;
@@ -6088,6 +6092,47 @@ a:focus {
 }
 .corpus-view-buttonbar-renew:hover {
   background: transparent url(../../res/corpus-view/reload-hover.png) no-repeat center center;
+}
+/*
+* Settings Site
+*/
+.alert a {
+  color: black;
+  margin-left: 20px;
+}
+.alert a.small {
+  color: black;
+  font-size: 12pt;
+}
+.alert a.big {
+  color: black;
+  font-size: 16pt;
+}
+#clear-cache-confirmation {
+  position: absolute;
+  margin-top: 10px;
+}
+#clear-cache-confirmation.ng-hide-remove,
+#clear-cache-confirmation.ng-hide-add {
+  -webkit-transition: all ease-out 0.8s;
+  -moz-transition: all ease-out 0.8s;
+  -ms-transition: all ease-out 0.8s;
+  -o-transition: all ease-out 0.8s;
+  transition: all ease-out 0.8s;
+}
+#clear-cache-confirmation.ng-hide-remove,
+#clear-cache-confirmation.ng-hide-add-active {
+  display: block !important;
+  left: -500px;
+}
+#clear-cache-confirmation.ng-hide-remove-active {
+  display: block !important;
+  left: 0;
+}
+.btn-danger {
+  background-color: #ED5565;
+  border-color: #D43F3A;
+  color: #FFFFFF;
 }
 /*
 * Joyride Corpus View Example
