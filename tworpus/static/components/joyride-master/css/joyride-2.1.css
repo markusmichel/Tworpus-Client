@@ -15,7 +15,7 @@ body {
   background: rgba(37,46,42,0.8);
   display: none;
   color: #fff;
-  width: 300px;
+  min-width: 300px;
   z-index: 1010;
   top: 0; /* keeps the page from scrolling when calculating position */
   left: 0;
@@ -52,7 +52,6 @@ body {
   left: 22px;
   width: 0;
   height: 0;
-  border: solid 14px;
   border: solid 14px;
 }
 

@@ -34,7 +34,7 @@
         'timer'   : '<div class="joyride-timer-indicator-wrap"><span class="joyride-timer-indicator"></span></div>',
         'tip'     : '<div class="joyride-tip-guide"><span class="joyride-nub"></span></div>',
         'wrapper' : '<div class="joyride-content-wrapper"></div>',
-        'button'  : '<a href="#" class="joyride-next-tip"></a>'
+        'button'  : '<a class="joyride-next-tip"></a>'
       }
     },
 
@@ -132,12 +132,11 @@
 
       tip_template : function (opts) {
         var $blank, content;
-
         opts.tip_class = opts.tip_class || '';
 
         $blank = $(settings.template.tip).addClass(opts.tip_class);
         content = $.trim($(opts.li).html()) +
-          methods.button_text(opts.button_text) +
+          methods.button_text(opts.button_text, opts.button_link) +
           settings.template.link +
           methods.timer_instance(opts.index);
 
@@ -159,10 +158,10 @@
         return txt;
       },
 
-      button_text : function (txt) {
+      button_text : function (txt, link) {
         if (settings.nextButton) {
           txt = $.trim(txt) || 'Next';
-          txt = methods.outerHTML($(settings.template.button).append(txt)[0]);
+          txt = methods.outerHTML($(settings.template.button).attr('href', link).append(txt)[0]);
         } else {
           txt = '';
         }
@@ -172,14 +171,15 @@
       create : function (opts) {
         // backwards compatability with data-text attribute
         var buttonText = opts.$li.attr('data-button') || opts.$li.attr('data-text'),
+          buttonLink = opts.$li.attr('data-href') || '#',
           tipClass = opts.$li.attr('class'),
           $tip_content = $(methods.tip_template({
             tip_class : tipClass,
             index : opts.index,
+            button_link : buttonLink,
             button_text : buttonText,
             li : opts.$li
           }));
-
         $(settings.tipContainer).append($tip_content);
       },
 

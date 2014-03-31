@@ -14,60 +14,12 @@
     <link rel="stylesheet" href="{% static 'dist/css/bootstrap.css' %}" />
     <link rel="stylesheet" href="{% static 'bower_components/angular-ui/build/angular-ui.css' %}" />
 
-    <title></title>
+    <title>Tworpus</title>
 
-        <style>
-            #corpus-creation-progress {
-                position: fixed;
-                width: 100%;
-                bottom: 0;
-                height: 50px;
-                margin-bottom: 0;
-                z-index: 1000;
-                min-height: 0;
-                padding: 0;
-
-                -webkit-transition: height 1s ease-out;
-                -moz-transition: height 1s;
-                -ms-transition: height 1s;
-                -o-transition: height 1s;
-                transition: height 1s ease-out;
-            }
-            #corpus-creation-progress.expanded {
-                height: 200px;
-            }
-
-        .progressbar-container.ng-leave,
-        .progressbar-container.ng-enter {
-            -webkit-transition: all linear .5s;
-            -moz-transition: all linear .5s;
-            -ms-transition: all linear .5s;
-            -o-transition: all linear .5s;
-            transition: all linear .5s;
-        }
-
-        .progressbar-container.ng-leave {
-            opacity: 1;
-        }
-        .progressbar-container.ng-leave.ng-leave-active {
-            opacity: 0;
-        }
-
-        .progress-bar-content {
-            overflow-y: auto;
-            height: 50px;
-            padding: 20px;
-        }
-
-        #corpus-creation-progress.expanded .progress-bar-content {
-            height: 200px;
-        }
-    </style>
 
 </head>
 
-
-<body style="">
+<body >
 <div id="sid" class="hidden" data-sessionid="{{ sid }}">{{ sid }}</div>
 {% block body %}
 
@@ -105,7 +57,7 @@
             <!-- Nav sidebar end -->
 
             <!-- Main content -->
-            <div class="col-sm-9 col-sm-offset-3 col-md-14 col-md-offset-2 main">
+            <div class="col-sm-9 col-sm-offset-3 col-md-14 col-md-offset-2 main" id="main">
 
                 {% block content %}{% endblock content %}
                 <div ng-view></div>
@@ -124,32 +76,42 @@
         </div>
     </div>
 
-    </div>
     <ol id="joyRideTipContent">
         <li data-id="input_title">
-            <h2>Stop #1</h2>
+            <h2>Step #1</h2>
             <p>Enter a project title for creating your corpus</p>
         </li>
-        <li data-id="select-language-id" data-button="Next">
-            <h2>Stop #2</h2>
+        <li data-id="select-language-id">
+            <h2>Step #2</h2>
             <p>Choose a language to filter your results</p>
         </li>
-
-        <li data-id="timepickerID" data-button="Next">
-            <h2>Stop #3</h2>
+        <li data-id="timepickerID">
+            <h2>Step #3</h2>
             <p>Select a start and end date to determine the timespan</p>
         </li>
-        <li data-id="sliderTestID" data-button="Next" data-options="tipLocation:right">
-            <h2>Stop #4</h2>
+        <li data-id="sliderTestID" data-options="tipLocation:right">
+            <h2>Step #4</h2>
             <p>Adjust the sliders for your preferred settings</p>
         </li>
-        <li data-id="doitBtnID"data-options="tipLocation:top;tipAnimation:fade">
-            <h2>Stop #5</h2>
+        <li data-id="doitBtnID" data-options="tipLocation:top;tipAnimation:fade">
+            <h2>Step #5</h2>
             <p>Create the corpus</p>
         </li>
-        <li>
+        <li data-button="View corpora" data-href="#/corpora" data-options="tipLocation:top;tipAnimation:fade">
             <h2>VOILA</h2>
-            <p>Ok. You just created a corpus. For more informations about it select "View corpora"</p>
+            <p>Ok. You just created a corpus. For more information about it select "View corpora"</p>
+        </li>
+        <li data-options="tipLocation:top;tipAnimation:fade">
+            <h2>Step #6</h2>
+            <p>View the corpus</p>
+            <p>Hover over it to see stats</p>
+            <div class="corpus-view-example-chart"></div>
+            <div class="corpus-view-example-stats"></div>
+            <div style="clear: both;"></div>
+        </li>
+            <li data-button="Close" data-options="tipLocation:top;tipAnimation:fade">
+            <h2>Have fun !</h2>
+            <p>Now you know how to use Tworpus</p>
         </li>
     </ol>
 {% endblock body %}
@@ -240,24 +202,27 @@
 {#    <script src="{% static 'dist/js/tworpus.js' %}"></script>#}
 
     <script>
+        tworpusApp.startJoyride = function() {
+             setTimeout(function() {
+                $("#joyRideTipContent").joyride({
+                autostart : true,
+                modal : true,
+                expose : true
+            });
+            }, 500);
+        };
+
+        $('#help').click(tworpusApp.startJoyride);
+
         if (!localStorage.getItem('firstStart')) {
             localStorage.setItem('firstStart', true);
 
             $(window).load(function(){
-                setTimeout(function() {
-                    $("#joyRideTipContent").joyride({
-                    autostart : true,
-                    modal : true,
-                    expose : true
-                });
-                }, 500);
+               tworpusApp.startJoyride();
             });
         }
     </script>
 
 {% endblock javascripts %}
-
-
-
 </body>
 </html>
