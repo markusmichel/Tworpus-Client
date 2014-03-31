@@ -2,6 +2,13 @@ import nltk
 import xml.dom.minidom as dom
 import codecs
 
+
+
+import nltk.data
+sent_detector = nltk.data.load('tokenizers/punkt/english.pickle')
+
+
+
 file = open("tweets.xml")
 tree = dom.parse(file)
 i = 0
@@ -11,20 +18,41 @@ for tweet in tree.firstChild.childNodes:
 
     try:
         textNodes = tweet.getElementsByTagName("text")
-
-        x = tree.createElement("foo")
+        posTagsNode = tree.createElement("posTags")
 
         for textNode in textNodes:
-            textValue = textNode.firstChild.nodeValue
-            tokenized = nltk.word_tokenize(textValue)
-            tokenizedNode = tree.createTextNode(' '.join(word for word in tokenized))
+            text = textNode.firstChild.nodeValue
 
-            pos = nltk.pos_tag(tokenized)
-            print tokenizedNode.nodeValue
-            x.appendChild(tokenizedNode)
-            tweet.appendChild(x)
+            #print('\n-----\n'.join(sent_detector.tokenize(text.strip())))
 
-            #print textNode.firstChild.nodeValue
+            textSentence = sent_detector.tokenize(text.strip())
+
+            textId = 0
+
+            for sentence in textSentence:
+
+                sentenceNode = tree.createElement("sentence")
+                sentenceNode.setAttribute("id", str(textId))
+
+                tokenized = nltk.word_tokenize(sentence)
+
+                pos = nltk.pos_tag(tokenized)
+
+                posId = 0
+                for posTuple in pos:
+                    posNode = tree.createElement("word")
+                    posNode.setAttribute("pos", posTuple[1])
+                    posNode.setAttribute("id", str(posId))
+                    posValueNode = tree.createTextNode(posTuple[0])
+                    posNode.appendChild(posValueNode)
+                    sentenceNode.appendChild(posNode)
+                    posId += 1
+
+                posTagsNode.appendChild(sentenceNode)
+                textId += 1
+
+            tweet.appendChild(posTagsNode)
+
             i += 1
             print i
 

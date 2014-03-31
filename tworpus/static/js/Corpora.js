@@ -1,152 +1,96 @@
 
-pieChartConfig = {
+var pieChartConfig = {
     width: 250,
     height: 250,
+    innerRadius: 80,
     colors: ["#379A8C", "#ED5564", "#EBEBEB"]
 };
 
 var createPieChart = function(selector) {
-        return d3.select(selector.get(0))
-                    .append('svg')
-                    .attr("width", pieChartConfig.width)
-                    .attr("height", pieChartConfig.height)
-                    .append("svg:g")
-                    .attr("transform", "translate(" + pieChartConfig.width/2 + "," + pieChartConfig.height/2 + ")");
+    return d3.select(selector.get(0))
+                .append('svg')
+                .attr("width", pieChartConfig.width)
+                .attr("height", pieChartConfig.height)
+                .append("svg:g")
+                .attr("transform", "translate(" + pieChartConfig.width/2 + "," + pieChartConfig.height/2 + ")");
 };
 
 var updatePieChart = function(chart, data) {
-                var radius = Math.min(pieChartConfig.width, pieChartConfig.height) / 2;
+    var radius = Math.min(pieChartConfig.width, pieChartConfig.height) / 2;
 
-                var pie = d3.layout.pie()
-                        .startAngle(1.1*Math.PI)
-                        .endAngle(3.1*Math.PI)
-                        .sort(null)
-                        .value(function(d) { return d; });
+    var pie = d3.layout.pie()
+            .startAngle(1.1*Math.PI)
+            .endAngle(3.1*Math.PI)
+            .sort(null)
+            .value(function(d) { return d; });
 
-                var arc = d3.svg.arc()
-                        .outerRadius(radius)
-                        .innerRadius(radius - 100);
+    var arc = d3.svg.arc()
+            .outerRadius(radius)
+            .innerRadius(radius - pieChartConfig.innerRadius);
 
-                function arcTween(a) {
-                          var i = d3.interpolate(this._current, a);
-                          this._current = i(0);
-                          return function(t) {
-                            return arc(i(t));
-                        };
-                }
+    function arcTween(a) {
+              var i = d3.interpolate(this._current, a);
+              this._current = i(0);
+              return function(t) {
+                return arc(i(t));
+            };
+    }
 
-                var path = chart.selectAll("path").data(pie(data));
-                var text = chart.selectAll("text").data(pie(data));
+    function textTween(d) {
+            d.innerRadius = 0;
+            d.outerRadius = radius;
+            return "translate(" + arc.centroid(d) + ")";
+    }
 
-                path.enter()
-                    .append("path")
-                    .attr("fill", function(d, i) {  return pieChartConfig.colors[i]; } )
-                    .attr("d", arc)
-                    .each(function(d) { this._current = d; });
+    var path = chart.selectAll("path").data(pie(data));
+    var text = chart.selectAll("text").data(pie(data));
 
-                text.enter()
-                    .append("text")
-                    .attr("transform", function(d) {
-                            d.innerRadius = 0;
-                            d.outerRadius = radius;
-                            return "translate(" + arc.centroid(d) + ")";
-                     })
-                    .attr("text-anchor", "middle")
-                    .attr("font-weight", "bold");
+    path.enter()
+        .append("path")
+        .attr("fill", function(d, i) {  return pieChartConfig.colors[i]; } )
+        .attr("d", arc)
+        .each(function(d) { this._current = d; });
 
-                path.transition().duration(750).attrTween("d", arcTween);
-                text.transition().duration(750).attr("transform", function(d) {
-                        d.innerRadius = 0;
-                        d.outerRadius = radius;
-                        return "translate(" + arc.centroid(d) + ")";
-                    });
-                text.text(function(d, i) {
-                    if (data[i] == 0) return null;
-                    return data[i];
-                });
+    text.enter()
+        .append("text")
+        .attr("transform", textTween)
+        .attr("text-anchor", "middle")
+        .attr("font-weight", "bold");
 
-                path.exit().remove();
-                text.exit().remove();
-        };
+    path.transition().attrTween("d", arcTween);
+    text.transition().attr("transform", textTween);
 
-var createCorpusView = function(item, elm) {
-    var title = $('<div></div>')
-                .text(item.title)
-                .addClass('corpus-view-title');
+    text.text(function(d, i) {
+        if (data[i] == 0) return null;
+        return data[i];
+    });
 
-            var created = $('<div></div>')
-                .addClass('corpus-view-details-created')
-                .text("Created at: " + moment(item.created).format('MM/DD/YYYY'));
+    path.exit().remove();
+    text.exit().remove();
+};
 
+var updateCorpusView = function(item, el) {
 
-            var minPerTweet = $('<div></div>')
-                .addClass('corpus-view-details-minimum')
-                .append($('<div></div>').text("Min Chars/Tweet: " + item.minCharsPerTweet))
-                .append($('<div></div>').text("Min Words/Tweet: " + item.minWordsPerTweet));
+    var created = el.find('.corpus-view-details-created');
+    created.text(moment(item.created).format('MM/DD/YYYY'));
 
+    var details = el.find('.corpus-view-details');
+    var buttonbar = el.find('.corpus-view-buttonbar');
 
-            var tweetsFetched = $('<div></div>').text("Tweets fetched: " + item.tweetsFetched);
-            var tweetsFailed = $('<div></div>').text("Tweets failed: " + item.tweetsFailed);
-
-            var tweetsStats = $('<div></div>')
-                .addClass('corpus-view-details-tweets')
-                .append($('<div></div>').text("Total tweets: " + item.numTweets))
-                .append(tweetsFetched)
-                .append(tweetsFailed);
-
-            var lang = $('<div></div>')
-                .addClass('corpus-view-details-language')
-                .text("Language: " + item.language);
-
-            var details = $('<div></div')
-                .addClass('corpus-view-details')
-                .append(lang)
-                .append(minPerTweet)
-                .append(created)
-                .append(tweetsStats);
-
-            var outerDetails = $('<div></div')
-                .addClass('corpus-view-outer-details')
-                .append(details);
-
-            var deleteBtn = $('<div></div')
-                .addClass('corpus-view-buttonbar-delete');
-
-            var renewBtn = $('<div></div')
-                .addClass('corpus-view-buttonbar-renew');
-
-            var exportBtn = $('<div></div')
-                .addClass('corpus-view-buttonbar-export');
-
-            var buttonbar = $('<div></div')
-                .append(deleteBtn)
-                .append(renewBtn)
-                .append(exportBtn)
-                .addClass('corpus-view-buttonbar');
-
-            var outerButtonbar = $('<div></div')
-                .addClass('corpus-view-outer-buttonbar')
-                .append(buttonbar);
-
-            elm
-                .append(title)
-                .append(outerDetails)
-                .append(outerButtonbar)
-                .hover(function(el) {
-                    details.addClass('move-in');
-                    buttonbar.addClass('move-in');
-                }, function() {
-                    details.removeClass('move-in');
-                    buttonbar.removeClass('move-in');
-                });
-
-            return [tweetsFetched, tweetsFailed];
+    el.hover(function() {
+            details.addClass('move-in');
+            buttonbar.addClass('move-in');
+        }, function() {
+            details.removeClass('move-in');
+            buttonbar.removeClass('move-in');
+        });
 };
 
 tworpusApp
 
     .controller("CorporaController",["$scope", "corpusCreations", function($scope, corpusCreations){
         $scope.corpusCreations = corpusCreations.corpusCreationProcesses;
+        $scope.remove = corpusCreations.remove;
         corpusCreations.fetchAll();
     }])
 
@@ -167,7 +111,11 @@ tworpusApp
                     return;
                 }
 
-                var tweetsFields = createCorpusView(corpusItem, elm);
+                var el = $(elm);
+                var tweetsFetched = el.find('.corpus-view-details-tweets-fetched');
+                var tweetsFailed = el.find('.corpus-view-details-tweets-failed');
+
+                updateCorpusView(corpusItem, el);
                 var pieChart = createPieChart(elm);
 
                 updatePieChart(pieChart, [
@@ -181,8 +129,8 @@ tworpusApp
 
                     if (item.progress <= 100) {
 
-                        tweetsFields[0].text("Tweets fetched: " + item.tweetsFetched);
-                        tweetsFields[1].text("Tweets failed: " + item.tweetsFailed);
+                        tweetsFetched.text("Tweets fetched: " + item.tweetsFetched);
+                        tweetsFailed.text("Tweets failed: " + item.tweetsFailed);
 
                         updatePieChart(pieChart, [
                             item.tweetsFetched,

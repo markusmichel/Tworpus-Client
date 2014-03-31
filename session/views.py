@@ -63,13 +63,8 @@ def startCreateCorpus(request):
     - download information file from tworpus server
     - fetch actual tweets from twitter
 
-    (_check_) check if project title is unique
-    @TODO: check if there is already a creation in progress and throw error if so
-    (_check_) Fetch tweets from TWORPUS as CVS
-    (_check_) Save CSV in local project folder
-    @TODO: Maybe delete CSV file after creation progress
-    (_check) Start tworpus_fetcher.jar to start fetching tweets
-    (_check_) Notify client that there's a work in progress
+    Status codes:
+    - 409: No tweets found to fetch
     """
 
     idList = []
@@ -102,16 +97,6 @@ def startCreateCorpus(request):
         if not os.path.isdir(baseFolder):
             os.makedirs(baseFolder)
 
-        # save values to database
-        session = Session.objects.create(title=title)
-        session.language = language
-        session.minCharsPerTweet = minCharsCount
-        session.minWordsPerTweet = minWordCount
-        session.numTweets = numTweets
-        session.folder = folderName
-        session.working = True
-        session.save()
-
         # fetch and save csv list
         csv = tworpus_fetcher.getCsvListStr(
             minWordcount=minWordCount, minCharcount=minCharsCount,
@@ -122,9 +107,20 @@ def startCreateCorpus(request):
         csv = csv.replace("\r","")
         csvFile.write(csv)
 
-        # @TODO: Throw error if there are no tweets to fetch
-        #if(len(idList) == 0):
-        #    return http.HttpResponseServerError("Error fetching tweets")
+        # check if there are any tweets to fetch
+        if len(csv) < 30:
+            return HttpResponse(status=409)
+
+        # save values to database
+        session = Session.objects.create(title=title)
+        session.language = language
+        session.minCharsPerTweet = minCharsCount
+        session.minWordsPerTweet = minWordCount
+        session.numTweets = numTweets
+        session.folder = folderName
+        session.working = True
+        session.save()
+
         invokeCorpusCreation(csvFile=csvFile, session=session, folder=baseFolder)
 
         # Notify corpus creation initialization

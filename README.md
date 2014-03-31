@@ -17,11 +17,16 @@ Aus den Tweets können Korpora erstellt werden.
 - `$> npm install -g bower`
 - `$> cd tworpus/static/`
 - `$> bower install` (für Windows: in git shell ausführen)
-- `$> cp tworpus/static/bootstrap.less tworpus/static/bower_components/bootstrap/less/bootstrap.less`
-- `$> cd tworpus/static/bower_components/bootstrap`
-- `$> npm install -g grunt-cli`
+
+
+## CSS/JS aktualisieren
+- `$> cd tworpus/static`
 - `$> npm install`
 - `$> grunt`
+
+## CSS/JS auf änderungen überwachen
+- `$> cd tworpus/static`
+- `$> grunt watch`
 
 ## Falls sqlite3-Datenbank nicht existiert
 - `&> python manage.py syncdb`
