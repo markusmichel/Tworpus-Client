@@ -171,7 +171,7 @@
       create : function (opts) {
         // backwards compatability with data-text attribute
         var buttonText = opts.$li.attr('data-button') || opts.$li.attr('data-text'),
-          buttonLink = opts.$li.attr('data-href') || '#',
+          buttonLink = opts.$li.attr('data-href'),
           tipClass = opts.$li.attr('class'),
           $tip_content = $(methods.tip_template({
             tip_class : tipClass,
