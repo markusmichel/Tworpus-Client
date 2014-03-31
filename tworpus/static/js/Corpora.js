@@ -71,8 +71,8 @@ var updatePieChart = function(chart, data) {
 
 var updateCorpusView = function(item, el) {
 
-    var created = el.find('.corpus-view-details-created');
-    created.text(moment(item.created).format('MM/DD/YYYY'));
+    var fromTo = el.find('.corpus-view-details-fromTo');
+    fromTo.text(moment(item.startDate).format('MM/DD/YYYY') + " - " + moment(item.endDate).format('MM/DD/YYYY'));
 
     var details = el.find('.corpus-view-details');
     var buttonbar = el.find('.corpus-view-buttonbar');
