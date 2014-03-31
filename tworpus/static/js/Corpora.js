@@ -93,10 +93,7 @@ tworpusApp
         $scope.remove = corpusCreations.remove;
 
         $scope.download = function(id) {
-            console.log("download " + id);
-
-            var win=window.open(urls.downloadCorpus + "?id=" + id, '_blank');
-            win.focus();
+            window.location = urls.downloadCorpus + "?id=" + id;
         };
 
         corpusCreations.fetchAll();
