@@ -9,13 +9,14 @@ body {
 
 /* Default styles for the container */
 .joyride-tip-guide {
+  cursor: default;
   position: absolute;
   background: #000;
   background: rgba(37,46,42,0.8);
   display: none;
   color: #fff;
   width: 300px;
-  z-index: 101;
+  z-index: 1010;
   top: 0; /* keeps the page from scrolling when calculating position */
   left: 0;
   font-family: "HelveticaNeue", "Helvetica Neue", "Helvetica", Helvetica, Arial, Lucida, sans-serif;
@@ -165,7 +166,7 @@ body {
   text-decoration: none;
   color: #000000;
   font-family: 'Oswald', Arial, Verdana, sans-serif;
-
+  cursor: pointer;
   background: rgb(223,251,63);
   background: -moz-linear-gradient(top, rgb(223,251,63) 0%, rgb(142,163,20) 100%);
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgb(223,251,63)), color-stop(100%,rgb(142,163,20)));
