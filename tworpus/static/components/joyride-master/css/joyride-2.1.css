@@ -163,7 +163,8 @@ body {
   padding: 6px 18px 4px;
   font-size: 13px;
   text-decoration: none;
-  color: rgb(255,255,255);
+  color: #000000;
+  font-family: 'Oswald', Arial, Verdana, sans-serif;
 
   background: rgb(223,251,63);
   background: -moz-linear-gradient(top, rgb(223,251,63) 0%, rgb(142,163,20) 100%);
@@ -173,7 +174,6 @@ body {
   background: -ms-linear-gradient(top, rgb(223,251,63) 0%,rgb(142,163,20) 100%);
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#2b80ff', endColorstr='#1d66d3',GradientType=0 );
   background: linear-gradient(top, rgb(223,251,63) 0%,rgb(142,163,20) 100%);
-  text-shadow: 0 -1px 0 rgba(0,0,0,0.5);
 }
 
 .joyride-next-tip:hover {
