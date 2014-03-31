@@ -240,16 +240,19 @@
 {#    <script src="{% static 'dist/js/tworpus.js' %}"></script>#}
 
     <script>
-        $(window).load(function(){
-            setTimeout(function() {
-                $("#joyRideTipContent").joyride({
-                autostart : true,
-                modal : true,
-                expose : true
-            });
-            }, 500);
+        if (!localStorage.getItem('firstStart')) {
+            localStorage.setItem('firstStart', true);
 
-        });
+            $(window).load(function(){
+                setTimeout(function() {
+                    $("#joyRideTipContent").joyride({
+                    autostart : true,
+                    modal : true,
+                    expose : true
+                });
+                }, 500);
+            });
+        }
     </script>
 
 {% endblock javascripts %}
