@@ -88,9 +88,17 @@ var updateCorpusView = function(item, el) {
 
 tworpusApp
 
-    .controller("CorporaController",["$scope", "corpusCreations", function($scope, corpusCreations){
+    .controller("CorporaController",["$scope", "corpusCreations", "urls", function($scope, corpusCreations, urls){
         $scope.corpusCreations = corpusCreations.corpusCreationProcesses;
         $scope.remove = corpusCreations.remove;
+
+        $scope.download = function(id) {
+            console.log("download " + id);
+
+            var win=window.open(urls.downloadCorpus + "?id=" + id, '_blank');
+            win.focus();
+        };
+
         corpusCreations.fetchAll();
     }])
 

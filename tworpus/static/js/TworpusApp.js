@@ -50,7 +50,7 @@ tworpusApp
                             $rootScope.$emit("corpus:create:start");
                         }).error(function (data, status) {
                             console.log("data: ", data)
-                            console.log("statu: ", status)
+                            console.log("status: ", status)
 
                             switch(status) {
                                 case 409:

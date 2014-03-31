@@ -9,6 +9,8 @@ class Session(models.Model):
     numTweets = models.IntegerField(default=0)
     language = models.CharField(max_length=5)
     created = models.DateTimeField(auto_now_add=True)
+    startDate = models.DateTimeField()
+    endDate = models.DateTimeField()
 
     # actual tweet numbers
     tweetsFetched = models.IntegerField(default=0)
@@ -33,6 +35,8 @@ class Session(models.Model):
             "language": self.language,
             "completed": self.completed,
             "created": self.created.isoformat(),
+            "startDate": self.startDate.isoformat(),
+            "endDate": self.endDate.isoformat(),
             "progress": self.progress,
             "working": self.working,
             "tweetsFetched": self.tweetsFetched,

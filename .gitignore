@@ -10,6 +10,7 @@ projects/*
 
 tworpus/static/bower_components
 tworpus/static/bower_components/*
+tworpus/static/node_modules/
 
 xmlcache/*
 
