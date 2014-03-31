@@ -17,26 +17,26 @@
 
     <title></title>
 
-    <style>
-        #corpus-creation-progress {
-            position: fixed;
-            width: 100%;
-            bottom: 0;
-            height: 50px;
-            margin-bottom: 0;
-            z-index: 1000;
-            min-height: 0;
-            padding: 0;
+        <style>
+            #corpus-creation-progress {
+                position: fixed;
+                width: 100%;
+                bottom: 0;
+                height: 50px;
+                margin-bottom: 0;
+                z-index: 1000;
+                min-height: 0;
+                padding: 0;
 
-            -webkit-transition: height 1s ease-out;
-            -moz-transition: height 1s;
-            -ms-transition: height 1s;
-            -o-transition: height 1s;
-            transition: height 1s ease-out;
-        }
-        #corpus-creation-progress.expanded {
-            height: 200px;
-        }
+                -webkit-transition: height 1s ease-out;
+                -moz-transition: height 1s;
+                -ms-transition: height 1s;
+                -o-transition: height 1s;
+                transition: height 1s ease-out;
+            }
+            #corpus-creation-progress.expanded {
+                height: 200px;
+            }
 
         .progressbar-container.ng-leave,
         .progressbar-container.ng-enter {
@@ -115,6 +115,7 @@
             <!-- Main content end -->
 
         </div>
+    </div>
 
     {% include "includes/modal.html" %}
 
@@ -223,20 +224,21 @@
             'startCreateCorpus': "{% url 'session.views.startCreateCorpus' %}",
             'pauseCorpus': "{% url 'session.views.pauseCorpus' %}",
             'resumeCorpus': "{% url 'session.views.resumeCorpus' %}",
+            'downloadCorpus': "{% url 'session.views.downloadCorpus' %}",
             'clearCache': "{% url 'session.views_cache.clearCache' %}",
             'cacheStatus': "{% url 'session.views_cache.cacheStatus' %}"
         });
     </script>
 
-{#    <script src="{% static 'js/create_corpus/services.js' %}"></script>#}
-{#    <script src="{% static 'js/progress/services.js' %}"></script>#}
-{#    <script src="{% static 'js/notifications.js' %}"></script>#}
-{#    <script src="{% static 'js/TworpusApp.js' %}"></script>#}
-{#    <script src="{% static 'js/Corpora.js' %}"></script>#}
-{#    <script src="{% static 'js/cache/cache.js' %}"></script>#}
-{#    <script src="{% static 'js/progress/Progressbar.js' %}"></script>#}
-{#    <script src="{% static 'js/navigation/navigation.js' %}"></script>#}
-    <script src="{% static 'dist/js/tworpus.js' %}"></script>
+    <script src="{% static 'js/create_corpus/services.js' %}"></script>
+    <script src="{% static 'js/progress/services.js' %}"></script>
+    <script src="{% static 'js/notifications.js' %}"></script>
+    <script src="{% static 'js/TworpusApp.js' %}"></script>
+    <script src="{% static 'js/Corpora.js' %}"></script>
+    <script src="{% static 'js/cache/cache.js' %}"></script>
+    <script src="{% static 'js/progress/Progressbar.js' %}"></script>
+    <script src="{% static 'js/navigation/navigation.js' %}"></script>
+{#    <script src="{% static 'dist/js/tworpus.js' %}"></script>#}
 
     <script>
         $(window).load(function(){

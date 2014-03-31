@@ -1,3 +1,5 @@
+import datetime
+from django.utils.timezone import utc
 import django
 from django.http import HttpResponse
 from django import http
@@ -111,8 +113,11 @@ def startCreateCorpus(request):
         if len(csv) < 30:
             return HttpResponse(status=409)
 
+        startDateObj = datetime.datetime.utcfromtimestamp(int(startDate) / 1000).replace(tzinfo=utc)
+        endDateObj = datetime.datetime.utcfromtimestamp(int(endDate) / 1000).replace(tzinfo=utc)
+
         # save values to database
-        session = Session.objects.create(title=title)
+        session = Session.objects.create(title=title, startDate=startDateObj, endDate=endDateObj)
         session.language = language
         session.minCharsPerTweet = minCharsCount
         session.minWordsPerTweet = minWordCount
@@ -224,3 +229,15 @@ def resumeCorpus(request):
     invokeCorpusCreation(folder=folderPath, csvFile=csvFile, session=session)
 
     return HttpResponse(json.dumps("success"), status=200)
+
+
+from django.core.servers.basehttp import FileWrapper
+def downloadCorpus(request):
+    id = request.GET["id"]
+    session = Session.objects.all().filter(id=id).first()
+    tweetsFileLocation = os.path.join(settings.BASE_PROJECT_DIR, session.folder, "tweets.xml")
+    tweetsFile = open(tweetsFileLocation)
+
+    response = HttpResponse(FileWrapper(tweetsFile), content_type='application/xml')
+    response['Content-Disposition'] = 'attachment; filename=tweets.xml'
+    return response

@@ -2,3 +2,51 @@
   width: 90%;
   display: inline-block;
 }
+
+#corpus-creation-progress {
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+  height: 50px;
+  margin-bottom: 0;
+  z-index: 1000;
+  min-height: 0;
+  padding: 0;
+
+  -webkit-transition: height 1s ease-out;
+  -moz-transition: height 1s;
+  -ms-transition: height 1s;
+  -o-transition: height 1s;
+  transition: height 1s ease-out;
+}
+
+#corpus-creation-progress.expanded {
+  height: 200px;
+}
+
+.progressbar-container.ng-leave,
+.progressbar-container.ng-enter {
+  -webkit-transition: all linear .5s;
+  -moz-transition: all linear .5s;
+  -ms-transition: all linear .5s;
+  -o-transition: all linear .5s;
+  transition: all linear .5s;
+}
+
+.progressbar-container.ng-leave {
+  opacity: 1;
+}
+
+.progressbar-container.ng-leave.ng-leave-active {
+  opacity: 0;
+}
+
+.progress-bar-content {
+  overflow-y: auto;
+  height: 50px;
+  padding: 20px;
+}
+
+#corpus-creation-progress.expanded .progress-bar-content {
+  height: 200px;
+}
