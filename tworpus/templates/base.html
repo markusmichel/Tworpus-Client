@@ -1,40 +1,41 @@
 <!DOCTYPE html>
 <html ng-app="tworpusApp">
 
-    <head>
-        {% load staticfiles %}
-        <link href='http://fonts.googleapis.com/css?family=Oswald' rel='stylesheet' type='text/css'>
+<head>
+    {% load staticfiles %}
+    <link href='http://fonts.googleapis.com/css?family=Oswald' rel='stylesheet' type='text/css'>
 
-        <link rel="stylesheet" href="{% static 'components/select2-3.4.5/select2.css' %}" />
-        <link rel="stylesheet" href="{% static 'components/select2-bootstrap.css' %}" />
-        <link rel="stylesheet" href="{% static 'components/datepicker/css/pikaday.css' %}" />
-        <link rel="stylesheet" href="{% static 'components/pnotify-1.2.0/jquery.pnotify.default.css' %}" />
-        <link rel="stylesheet" href="{% static 'components/pnotify-1.2.0/use for pines style icons/jquery.pnotify.default.icons.css' %}" />
-        <link rel="stylesheet" href="{% static 'bower_components/angular-ui/build/angular-ui.css' %}" />
-        <link rel="stylesheet" href="{% static 'bower_components/bootstrap/dist/css/bootstrap.css' %}" />
+    <link rel="stylesheet" href="{% static 'components/select2-3.4.5/select2.css' %}" />
+    <link rel="stylesheet" href="{% static 'components/select2-bootstrap.css' %}" />
+    <link rel="stylesheet" href="{% static 'components/datepicker/css/pikaday.css' %}" />
+    <link rel="stylesheet" href="{% static 'components/joyride-master/css/joyride-2.1.css' %}" />
+    <link rel="stylesheet" href="{% static 'components/pnotify-1.2.0/jquery.pnotify.default.css' %}" />
+    <link rel="stylesheet" href="{% static 'components/pnotify-1.2.0/use for pines style icons/jquery.pnotify.default.icons.css' %}" />
+    <link rel="stylesheet" href="{% static 'bower_components/angular-ui/build/angular-ui.css' %}" />
+    <link rel="stylesheet" href="{% static 'bower_components/bootstrap/dist/css/bootstrap.css' %}" />
 
-        <title></title>
+    <title></title>
 
-        <style>
-            #corpus-creation-progress {
-                position: fixed;
-                width: 100%;
-                bottom: 0;
-                height: 50px;
-                margin-bottom: 0;
-                z-index: 1000;
-                min-height: 0;
-                padding: 0;
+    <style>
+        #corpus-creation-progress {
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+            height: 50px;
+            margin-bottom: 0;
+            z-index: 1000;
+            min-height: 0;
+            padding: 0;
 
-                -webkit-transition: height 1s ease-out;
-                -moz-transition: height 1s;
-                -ms-transition: height 1s;
-                -o-transition: height 1s;
-                transition: height 1s ease-out;
-            }
-            #corpus-creation-progress.expanded {
-                height: 200px;
-            }
+            -webkit-transition: height 1s ease-out;
+            -moz-transition: height 1s;
+            -ms-transition: height 1s;
+            -o-transition: height 1s;
+            transition: height 1s ease-out;
+        }
+        #corpus-creation-progress.expanded {
+            height: 200px;
+        }
 
         .progressbar-container.ng-leave,
         .progressbar-container.ng-enter {
@@ -96,7 +97,7 @@
         <div class="row">
 
             <!-- Nav sidebar -->
-            <div class="col-sm-3 col-md-2 sidebar">
+            <div class="col-sm-3 col-md-2 sidebar" >
                 {% block nav_sidebar %}
                     {% include "includes/sidebar_nav.html" %}
                 {% endblock nav_sidebar %}
@@ -111,25 +112,36 @@
                 {#                {% include "includes/progressbar.html" %}#}
             </div>
             <!-- Main content end -->
+
         </div>
-    </div>
 
     {% include "includes/modal.html" %}
 
-        <div ng-controller="ProgressController">
-            <div id="corpus-creation-progress" tw-corpus-progress tw-progresses=""
-                 ng-class="showProgressbar ? 'expanded' : ''" class="well">
-            </div>
+    <div ng-controller="ProgressController">
+        <div id="corpus-creation-progress" tw-corpus-progress tw-progresses=""
+             ng-class="showProgressbar ? 'expanded' : ''" class="well">
         </div>
     </div>
 
+    </div>
+    <ol id="joyRideTipContent">
+        <li data-id="input_title">
+            <h2>Titel</h2>
+            <p>Geben Sie ihrem Korpus einen Titel!</p>
+        </li>
+    </ol>
 {% endblock body %}
 
 {% block javascripts %}
     <script src="{% static 'bower_components/jquery/dist/jquery.min.js' %}"></script>
     <script src="{% static 'bower_components/underscore/underscore.js' %}"></script>
-{#    <script src="http://localhost:3000/socket.io/socket.io.js"></script>#}
+    {#    <script src="http://localhost:3000/socket.io/socket.io.js"></script>#}
     <script src="{% static 'bower_components/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+
+    <script src="{% static 'components/joyride-master/js/jquery-1.10.1.js' %}"></script>
+    <script src="{% static 'components/joyride-master/js/jquery.joyride-2.1.js' %}"></script>
+    <script src="{% static 'components/joyride-master/js/jquery.cookie.js' %}"></script>
+    <script src="{% static 'components/joyride-master/js/modernizr.mq.js' %}"></script>
 
     <script src="{% static 'components/datepicker/js/moment-min.js' %}"></script>
     <script src="{% static 'components/datepicker/js/pikaday.js' %}"></script>
@@ -203,7 +215,27 @@
     <script src="{% static 'js/progress/Progressbar.js' %}"></script>
     <script src="{% static 'js/navigation/navigation.js' %}"></script>
 
+    <script>
+        $(window).load(function(){
+            setTimeout(function() {
+                $("#joyRideTipContent").joyride({
+                autostart : true,
+                postStepCallback : function (index, tip) {
+                    if (index == 2) {
+                        $(this).joyride('set_li', false, 1);
+                    }
+                },
+                modal : true,
+                expose : true
+            });
+            }, 500);
+
+        });
+    </script>
+
 {% endblock javascripts %}
+
+
 
 </body>
 </html>
