@@ -1,5 +1,6 @@
-import datetime
+import datetime, time
 from django.utils.timezone import utc
+from django.core.servers.basehttp import FileWrapper
 import django
 from django.http import HttpResponse
 from django import http
@@ -16,7 +17,6 @@ import os
 from StringIO import StringIO
 from enum import Enum
 
-import Twitter
 import tworpus_fetcher
 from tworpus import settings as settings
 from django import forms
@@ -31,6 +31,7 @@ class Task(Enum):
     fetching = 1
     saving = 2
 
+
 class CreateCorpusForm(forms.Form):
     subject = forms.CharField(max_length=100)
     message = forms.CharField()
@@ -38,14 +39,15 @@ class CreateCorpusForm(forms.Form):
     cc_myself = forms.BooleanField(required=False)
     language = forms.ChoiceField(widget=forms.ChoiceField())
 
+
 def createCorpusContent(request):
     """
     Returns just the content for corpus creation.
     Used for angular.js route /views/createcorpus
     """
     from django.shortcuts import render_to_response
-    return render_to_response("create_corpus_content.html")
 
+    return render_to_response("create_corpus_content.html")
 
 
 class TweetsDownloadListener(TweetIO.FetcherProgressListener):
@@ -57,6 +59,7 @@ class TweetsDownloadListener(TweetIO.FetcherProgressListener):
 
     def onFinish(self):
         pass
+
 
 def startCreateCorpus(request):
     """
@@ -75,58 +78,40 @@ def startCreateCorpus(request):
         # AJAX request: parse body
         if request.is_ajax():
             data = json.loads(request.body)
-            minWordCount  = int(data["numMinWords"])
+            minWordCount = int(data["numMinWords"])
             minCharsCount = int(data["numMinChars"])
-            language      = str(data["language"])
-            numTweets     = int(data["numTweets"])
-            title         = str(data["title"])
-            startDate     = str(data["startDateTimestamp"])
-            endDate       = str(data["endDateTimestamp"])
+            language = str(data["language"])
+            numTweets = int(data["numTweets"])
+            title = str(data["title"])
+            startDate = str(data["startDateTimestamp"])
+            endDate = str(data["endDateTimestamp"])
 
         # "normal" POST request: parse request.POST
         else:
-            minWordCount  = request.POST["minWords"]
+            minWordCount = request.POST["minWords"]
             minCharsCount = request.POST["minChars"]
-            language      = request.POST["language"]
-            numTweets     = request.POST["limit"]
-            title         = request.POST["title"]
-            startDate     = request.POST["startDate"]
-            endDate       = request.POST["endDate"]
+            language = request.POST["language"]
+            numTweets = request.POST["limit"]
+            title = request.POST["title"]
+            startDate = request.POST["startDateTimestamp"]
+            endDate = request.POST["endDateTimestamp"]
 
-        # create project folder
         folderName = str(uuid4())
-        baseFolder = os.path.join(settings.BASE_PROJECT_DIR, folderName)
-        if not os.path.isdir(baseFolder):
-            os.makedirs(baseFolder)
-
-        # fetch and save csv list
-        csv = tworpus_fetcher.getCsvListStr(
-            minWordcount=minWordCount, minCharcount=minCharsCount,
-            language=language, limit=numTweets,
-            startDate=startDate, endDate=endDate
-        )
-        csvFile = open(os.path.join(baseFolder, "tweets.csv"), "w")
-        csv = csv.replace("\r","")
-        csvFile.write(csv)
-
-        # check if there are any tweets to fetch
-        if len(csv) < 30:
-            return HttpResponse(status=409)
-
         startDateObj = datetime.datetime.utcfromtimestamp(int(startDate) / 1000).replace(tzinfo=utc)
         endDateObj = datetime.datetime.utcfromtimestamp(int(endDate) / 1000).replace(tzinfo=utc)
 
-        # save values to database
         session = Session.objects.create(title=title, startDate=startDateObj, endDate=endDateObj)
         session.language = language
         session.minCharsPerTweet = minCharsCount
         session.minWordsPerTweet = minWordCount
         session.numTweets = numTweets
         session.folder = folderName
-        session.working = True
         session.save()
 
-        invokeCorpusCreation(csvFile=csvFile, session=session, folder=baseFolder)
+        try:
+            start_create_corpus(session)
+        except(CsvEmptyException):
+            return HttpResponse(status=409)
 
         # Notify corpus creation initialization
         response_data = {}
@@ -134,6 +119,7 @@ def startCreateCorpus(request):
         return HttpResponse(json.dumps(response_data), content_type="application/json")
     else:
         return http.HttpResponseServerError("Error fetching tweets")
+
 
 def invokeCorpusCreation(csvFile, folder, session):
     """
@@ -146,6 +132,7 @@ def invokeCorpusCreation(csvFile, folder, session):
     fetchersManager = TweetIO.getManager()
     fetchersManager.add(fetcher, session.id)
 
+
 def getSessions(request):
     """
     Returns a list of all sessions (completed, working, active/inactive).
@@ -153,12 +140,14 @@ def getSessions(request):
     sessions = [session.as_json() for session in Session.objects.all()]
     return HttpResponse(json.dumps(sessions))
 
+
 def getActiveSessions(request):
     """
     Returns a list of corpus creations in progress (currently working or already finished).
     """
     sessions = [session.as_json() for session in Session.objects.all().filter(completed=False)]
     return HttpResponse(json.dumps(sessions))
+
 
 #-------------------------------------------------------
 # Corpus CRUD operations
@@ -173,12 +162,14 @@ def getSession(request):
 
     return HttpResponse(json.dumps(session.as_json()))
 
+
 def removeCorpus(request):
     """
     Deletes an finished or unfinished corpus from the database
     and removes all downloaded files.
     """
     from django.core.exceptions import ValidationError
+
     corpusid = None
     try:
         corpusid = request.GET["corpusid"] if request.method == "GET" else request.POST["corpusid"]
@@ -194,6 +185,7 @@ def removeCorpus(request):
         return HttpResponse(status=400)
 
     return HttpResponse(json.dumps(corpusid))
+
 
 def pauseCorpus(request):
     """
@@ -211,11 +203,10 @@ def pauseCorpus(request):
 
     return HttpResponse(json.dumps("success"), status=200)
 
+
 def resumeCorpus(request):
     """
     Resumes (=restarting subprocess) a corpus creation process.
-    @TODO: Assert that XML files won't be overridden.
-    @TODO: Check on which step to resume
     """
     id = request.GET["id"]
     session = Session.objects.all().filter(id=id).first()
@@ -231,7 +222,6 @@ def resumeCorpus(request):
     return HttpResponse(json.dumps("success"), status=200)
 
 
-from django.core.servers.basehttp import FileWrapper
 def downloadCorpus(request):
     id = request.GET["id"]
     session = Session.objects.all().filter(id=id).first()
@@ -241,3 +231,52 @@ def downloadCorpus(request):
     response = HttpResponse(FileWrapper(tweetsFile), content_type='application/xml')
     response['Content-Disposition'] = 'attachment; filename=tweets.xml'
     return response
+
+
+def recreateCorpus(request):
+    id = request.GET["id"]
+    session = Session.objects.all().filter(id=id).first()
+    session.resetProgress()
+
+    try:
+        start_create_corpus(session, override=True)
+    except(CsvEmptyException):
+        return HttpResponse(status=409)
+
+    return HttpResponse(json.dumps("success"), status=200)
+
+
+def start_create_corpus(session, override=False):
+    session.working = True
+    session.save()
+
+    startDate = str(int((time.mktime(session.startDate.timetuple()))) * 1000)
+    endDate = str(int(time.mktime(session.endDate.timetuple())) * 1000)
+
+    # fetch and save csv list
+    csv = tworpus_fetcher.getCsvListStr(
+        minWordcount=session.minWordsPerTweet, minCharcount=session.minCharsPerTweet,
+        language=session.language, limit=session.numTweets,
+        startDate=startDate, endDate=endDate
+    )
+
+    folderName = session.folder
+    baseFolder = os.path.join(settings.BASE_PROJECT_DIR, folderName)
+    if not os.path.isdir(baseFolder):
+        os.makedirs(baseFolder)
+
+    csvFile = open(os.path.join(baseFolder, "tweets.csv"), "w")
+    csv = csv.replace("\r", "")
+    csvFile.write(csv)
+
+    # check if there are any tweets to fetch
+    # 29 chars is the length of the title line
+    if len(csv) < 30:
+        session.delete()
+        raise CsvEmptyException()
+
+    invokeCorpusCreation(csvFile=csvFile, session=session, folder=baseFolder)
+
+
+class CsvEmptyException(Exception):
+    pass

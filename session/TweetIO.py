@@ -158,15 +158,27 @@ class TweetProgressEventHandler(FetcherProgressListener):
     def __init__(self, corpusid):
         self.__corpusid = corpusid
         self.__session = Session.objects.all().filter(id=corpusid).first()
+
+        self.__numTweetsFetched = 0
+        self.__numTweetsFailed  = 0
+        self.__tweetsFetchedOnStart = self.__session.tweetsFetched
+        self.__tweetsFailedOnStart  = self.__session.tweetsFailed
+
         self.__lastProgressSent = 0
 
     def onSuccess(self, values):
-        self.__session.tweetsFetched += 1
+        self.__numTweetsFetched += 1
+        if self.__numTweetsFetched > self.__tweetsFetchedOnStart:
+            self.__session.tweetsFetched = self.__numTweetsFetched
+
         self.__onProgress(values)
         print "success"
 
     def onError(self, values):
-        self.__session.tweetsFailed += 1
+        self.__numTweetsFailed += 1
+        if self.__numTweetsFailed > self.__tweetsFailedOnStart:
+            self.__session.tweetsFailed = self.__numTweetsFailed
+
         self.__onProgress(values)
         print "error"
 

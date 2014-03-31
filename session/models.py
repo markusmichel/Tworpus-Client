@@ -42,3 +42,10 @@ class Session(models.Model):
             "tweetsFetched": self.tweetsFetched,
             "tweetsFailed": self.tweetsFailed
         }
+
+    def resetProgress(self):
+        self.tweetsFetched = 0
+        self.tweetsFailed = 0
+        self.progress = 0
+        self.completed = False
+        self.save()

@@ -636,14 +636,3 @@
   };
 
 }(jQuery, this));
-
-
-var myApp = angular.module('myApp',[]);
-
-myApp.directive('joyride', function() {
-
-  return function(scope, element, attributes) {
-    $(element).joyride()
-  }
-
-});
