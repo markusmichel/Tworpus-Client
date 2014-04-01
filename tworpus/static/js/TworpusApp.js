@@ -90,7 +90,7 @@ tworpusApp
 
                 slider.on('slide', function (e) {
                     var val = $(this).val();
-                    $scope.corpus.ngModel = parseInt(val);
+                    $scope.ngModel = parseInt(val);
                     $scope.$apply();
                 });
             },
