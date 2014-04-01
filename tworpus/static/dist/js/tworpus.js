@@ -11,9 +11,9 @@ tworpusApp
                     templateUrl: '/static/views/corpora.html',
                     controller: 'CorporaController'
                 }).
-                when('/cache', {
-                    templateUrl: '/static/views/cache.html',
-                    controller: 'CacheController'
+                when('/settings', {
+                    templateUrl: '/static/views/settings.html',
+                    controller: 'SettingsController'
                 }).
                 otherwise({
                     redirectTo: '/createcorpus'
@@ -45,15 +45,23 @@ tworpusApp
                 var isValid = $("form").get(0).checkValidity();
                 if (isValid === true) {
                     corpusCreationService.startCorpusCreation($scope.corpus)
-                        .success(function () {
-                            notify("Korpus <b>" + $scope.corpus.title + " </b>wird erstellt");
+                        .success(function (data, status) {
+                            switch (status) {
+                                case 206:
+                                    notify("Corpus <b>" + $scope.corpus.title + " </b>is being created, " +
+                                        "but there are not sufficient tweets available.", "info");
+                                    break;
+                                default:
+                                    notify("Corpus <b>" + $scope.corpus.title + " </b>is being created.");
+                                    break;
+                            }
                             $rootScope.$emit("corpus:create:start");
                         }).error(function (data, status) {
                             console.log("data: ", data)
-                            console.log("statu: ", status)
+                            console.log("status: ", status)
 
                             switch(status) {
-                                case 409:
+                                case 444:
                                     notify("No tweets found to fetch. Try to be less specific.", "error");
                                     break;
                                 default:
@@ -239,8 +247,8 @@ var updatePieChart = function(chart, data) {
 
 var updateCorpusView = function(item, el) {
 
-    var created = el.find('.corpus-view-details-created');
-    created.text(moment(item.created).format('MM/DD/YYYY'));
+    var fromTo = el.find('.corpus-view-details-fromTo');
+    fromTo.text(moment(item.startDate).format('MM/DD/YYYY') + " - " + moment(item.endDate).format('MM/DD/YYYY'));
 
     var details = el.find('.corpus-view-details');
     var buttonbar = el.find('.corpus-view-buttonbar');
@@ -256,9 +264,31 @@ var updateCorpusView = function(item, el) {
 
 tworpusApp
 
-    .controller("CorporaController",["$scope", "corpusCreations", function($scope, corpusCreations){
+    .controller("CorporaController",["$scope", "$http", "corpusCreations", "urls", "notify", "$filter", function($scope, $http, corpusCreations, urls, notify, $filter){
         $scope.corpusCreations = corpusCreations.corpusCreationProcesses;
         $scope.remove = corpusCreations.remove;
+
+        $scope.download = function(id) {
+            var index = $filter('indexOfCorpusid')(corpusCreations.corpusCreationProcesses, id),
+                        session = corpusCreations.corpusCreationProcesses[index];
+            if (session.working) return;
+            window.location = urls.downloadCorpus + "?id=" + id;
+        };
+
+        $scope.recreate = function(id) {
+            var index = $filter('indexOfCorpusid')(corpusCreations.corpusCreationProcesses, id),
+                        session = corpusCreations.corpusCreationProcesses[index];
+            if (session.working) return;
+            $http
+                .post(urls.recreateCorpus + "?id=" + id)
+                .success(function() {
+                    notify("Corpus is being recreated");
+                    corpusCreations.fetch(id).success(function() {
+                        corpusCreations.longPoll();
+                    });
+                });
+        };
+
         corpusCreations.fetchAll();
     }])
 
@@ -282,6 +312,9 @@ tworpusApp
                 var el = $(elm);
                 var tweetsFetched = el.find('.corpus-view-details-tweets-fetched');
                 var tweetsFailed = el.find('.corpus-view-details-tweets-failed');
+                var renewButton = el.find('.corpus-view-buttonbar-renew');
+                var exportButton = el.find('.corpus-view-buttonbar-export');
+                var title = el.find('.corpus-view-title');
 
                 updateCorpusView(corpusItem, el);
                 var pieChart = createPieChart(elm);
@@ -294,7 +327,6 @@ tworpusApp
 
                 $scope.processes = corpusCreations.corpusCreationProcesses;
                 $scope.$watch("ngModel", function(item) {
-
                     if (item.progress <= 100) {
 
                         tweetsFetched.text("Tweets fetched: " + item.tweetsFetched);
@@ -307,58 +339,40 @@ tworpusApp
                         );
                     }
 
+                    if (item.working && !renewButton.hasClass('disabled')) {
+                        title.toggleClass('working');
+                        renewButton.toggleClass('disabled');
+                        exportButton.toggleClass('disabled');
+
+                    }
+                    if (!item.working && renewButton.hasClass('disabled')) {
+                        title.toggleClass('working');
+                        renewButton.toggleClass('disabled');
+                        exportButton.toggleClass('disabled');
+                    }
                 }, true);
             }
         }
     }]);
 
-;angular
-    .module("tworpusApp.cache", ['ngAnimate'])
-
-    .controller("CacheController", ["$scope", "$http", "urls", "notify", function ($scope, $http, urls, notify) {
-        $scope.clearCache = function () {
-            $scope.showClearConfirmation = false;
-            $http
-                .post(urls.clearCache)
-                .success(function () {
-                    notify("Cache cleared");
-                    update();
-                })
-                .error(function () {
-                    notify("Failed to clear cache");
-                });
+;   tworpusApp.startJoyride = function() {
+             setTimeout(function() {
+                $("#joyRideTipContent").joyride({
+                autostart : true,
+                expose : true
+            });
+            }, 500);
         };
 
-        var update = function () {
-            $http
-                .get(urls.cacheStatus)
-                .success(function (data) {
-                    $scope.numFiles = data.numFiles;
-                    $scope.size = data.size;
-                });
-        };
-        update();
+        $('#help').click(tworpusApp.startJoyride);
 
-        var updateInterval = setInterval(update, 5000);
+        if (!localStorage.getItem('firstStart')) {
+            localStorage.setItem('firstStart', true);
 
-        $scope.$on("$destroy", function () {
-            clearInterval(updateInterval);
-        });
-
-        $scope.showClearConfirmation = false;
-    }])
-
-    .filter('bytes', function () {
-        return function (bytes, precision) {
-            if (bytes === 0) return '0 bytes';
-            if (isNaN(parseFloat(bytes)) || !isFinite(bytes)) return '';
-            if (typeof precision === 'undefined') precision = 1;
-            var units = ['bytes', 'kB', 'MB', 'GB', 'TB', 'PB'],
-                number = Math.floor(Math.log(bytes) / Math.log(1024));
-            return (bytes / Math.pow(1024, Math.floor(number))).toFixed(precision) + ' ' + units[number];
-        }
-    });
-;;/**
+            $(window).load(function(){
+               tworpusApp.startJoyride();
+            });
+        };/**
  * CorpusCreation based services for communication with django REST API
  */
 
@@ -405,11 +419,15 @@ angular.module("createCorpus.services", [])
             type = type || "success";
             console.log("notifification: ", message);
             console.log("notifification type: ", type);
-            $.pnotify({
-//                title: 'Regular Notice',
+
+            var res = {
                 text: message,
                 type: type
-            });
+            };
+            if(type === "info") res.icon = "glyphicon glyphicon-info-sign";
+            else if(type === "success") res.icon = "glyphicon glyphicon-ok-sign";
+
+            $.pnotify(res);
         }
     }])
 ;;angular.module("tworpusApp.progress", ["tworpusApp.progress.services"])
@@ -575,7 +593,7 @@ angular.module("createCorpus.services", [])
             var unfinishedProcesses = $filter('working')(that.corpusCreationProcesses);
 
             // Exit if there are no more processes to watch
-            if (unfinishedProcesses.length === 0 && ++pollCounter >= 3) {
+            if (unfinishedProcesses.length === 0 && ++pollCounter >= 30) {
                 isPolling = false;
                 pollCounter = 0;
                 return;
@@ -641,4 +659,49 @@ angular.module("createCorpus.services", [])
             }
         }
     }])
-;
+;;angular
+    .module("tworpusApp.cache", ['ngAnimate'])
+
+    .controller("SettingsController", ["$scope", "$http", "urls", "notify", function ($scope, $http, urls, notify) {
+        $scope.clearCache = function () {
+            $scope.showClearConfirmation = false;
+            $http
+                .post(urls.clearCache)
+                .success(function () {
+                    notify("Cache cleared");
+                    update();
+                })
+                .error(function () {
+                    notify("Failed to clear cache");
+                });
+        };
+
+        var update = function () {
+            $http
+                .get(urls.cacheStatus)
+                .success(function (data) {
+                    $scope.numFiles = data.numFiles;
+                    $scope.size = data.size;
+                });
+        };
+        update();
+
+        var updateInterval = setInterval(update, 5000);
+
+        $scope.$on("$destroy", function () {
+            clearInterval(updateInterval);
+        });
+
+        $scope.showClearConfirmation = false;
+    }])
+
+    .filter('bytes', function () {
+        return function (bytes, precision) {
+            if (bytes === 0) return '0 bytes';
+            if (isNaN(parseFloat(bytes)) || !isFinite(bytes)) return '';
+            if (typeof precision === 'undefined') precision = 1;
+            var units = ['bytes', 'kB', 'MB', 'GB', 'TB', 'PB'],
+                number = Math.floor(Math.log(bytes) / Math.log(1024));
+            return (bytes / Math.pow(1024, Math.floor(number))).toFixed(precision) + ' ' + units[number];
+        }
+    });

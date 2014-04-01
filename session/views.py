@@ -2,21 +2,24 @@ import datetime, time
 from django.utils.timezone import utc
 from django.core.servers.basehttp import FileWrapper
 import django
-from django.http import HttpResponse
+from django.http import HttpResponse, StreamingHttpResponse
 from django import http
 import shutil
 from uuid import uuid4
+import ntpath
+import StringIO
 from django.template import RequestContext, loader
 
 # csrf: https://docs.djangoproject.com/en/dev/ref/contrib/csrf/#unprotected-view-needs-the-csrf-token
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 
 import json
+import glob
 from django.core import serializers
 import os
 from StringIO import StringIO
 from enum import Enum
-
+from zipfile import ZipFile
 import tworpus_fetcher
 from tworpus import settings as settings
 from django import forms
@@ -227,12 +230,32 @@ def resumeCorpus(request):
 def downloadCorpus(request):
     id = request.GET["id"]
     session = Session.objects.all().filter(id=id).first()
-    tweetsFileLocation = os.path.join(settings.BASE_PROJECT_DIR, session.folder, "tweets.xml")
-    tweetsFile = open(tweetsFileLocation)
 
-    response = HttpResponse(FileWrapper(tweetsFile), content_type='application/xml')
-    response['Content-Disposition'] = 'attachment; filename=tweets.xml'
-    return response
+    baseFolder = os.path.join(settings.BASE_PROJECT_DIR, session.folder)
+    xmlfiles = glob.glob(os.path.join(baseFolder, "*.xml"))
+
+
+    if xmlfiles.__len__() == 1:
+        tweetsFileLocation = os.path.join(settings.BASE_PROJECT_DIR, session.folder, xmlfiles.pop(0))
+        tweetsFile = open(tweetsFileLocation)
+
+        response = HttpResponse(FileWrapper(tweetsFile), content_type='application/xml')
+        response['Content-Disposition'] = 'attachment; filename=tweets.xml'
+        return response
+
+    else:
+        zip_memory = StringIO()
+        xmlzip = ZipFile(zip_memory, 'w')
+        for xmlfile in xmlfiles:
+            filename = ntpath.basename(xmlfile)
+            print filename
+            xmlzip.write(xmlfile, filename)
+
+        xmlzip.close()
+
+        response = HttpResponse(zip_memory.getvalue(), content_type='application/x-zip-compressed')
+        response['Content-Disposition'] = 'attachment; filename=tweets.zip'
+        return response
 
 
 def recreateCorpus(request):
@@ -271,6 +294,10 @@ def start_create_corpus(session, override=False):
     baseFolder = os.path.join(settings.BASE_PROJECT_DIR, folderName)
     if not os.path.isdir(baseFolder):
         os.makedirs(baseFolder)
+    else:
+        xmlFiles = glob.glob(os.path.join(baseFolder, "*.xml"))
+        for xmlFile in xmlFiles:
+            os.remove(xmlFile)
 
     csvFile = open(os.path.join(baseFolder, "tweets.csv"), "w")
     csv['content'] = csv['content'].replace("\r", "")

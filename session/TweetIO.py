@@ -1,7 +1,6 @@
-from watchdog.events import FileSystemEventHandler
-from watchdog.observers import Observer
 import subprocess
 import shlex
+import glob
 import threading
 import os
 import sys
@@ -90,7 +89,8 @@ class TweetsFetcher():
         argsStr  = "java -jar " + settings.TWORPUS_FETCHAR_JAR + \
                    " -input-file " + self.tweetsCsvFile + \
                    " -xml-cache-folder " + self.__cacheDir + \
-                   " -xml-output-folder " + self.outputDir
+                   " -xml-output-folder " + self.outputDir + \
+                   " -split-after " + str(10)
         # argsStr += " -override"
         # argsStr += " -csv-no-title"
 
@@ -189,6 +189,24 @@ class TweetProgressEventHandler(FetcherProgressListener):
         print "cancel"
 
     def onFinish(self):
+        from tworpus import tweet_converter
+
+        baseFolder = os.path.join(settings.BASE_PROJECT_DIR, self.__session.folder)
+        xmlFiles = glob.glob(os.path.join(baseFolder, "*.xml"))
+        for xmlFile in xmlFiles:
+            newXmlFile = xmlFile + ".tmp.xml"
+            os.rename(xmlFile, newXmlFile)
+
+            app = tweet_converter.ConverterApp(newXmlFile, xmlFile)
+            app.register_converter(tweet_converter.PosTagConverter())
+            app.run()
+
+
+        xmlFiles = glob.glob(os.path.join(baseFolder, "*.tmp.xml"))
+        for xmlFile in xmlFiles:
+            os.remove(xmlFile)
+
+
         self.__session.working = False
         self.__session.completed = True
         self.__session.save()

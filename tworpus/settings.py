@@ -88,3 +88,14 @@ BASE_PROJECT_DIR = os.path.join(BASE_DIR, 'projects')
 XML_CACHE_DIR = os.path.join(BASE_DIR, 'xmlcache')
 TWORPUS_BASE_URL = "http://localhost:3000"
 TWORPUS_FETCHAR_JAR = os.path.join(BASE_DIR, "tworpus_fetcher.jar")
+
+
+nltk_languages = {}
+nltk_languages["de"] = "german"
+nltk_languages["en"] = "english"
+nltk_languages["es"] = "spanish"
+nltk_languages["fr"] = "french"
+nltk_languages["it"] = "italian"
+nltk_languages["nl"] = "dutch"
+nltk_languages["pt"] = "portuguese"
+nltk_languages["tr"] = "turkish"

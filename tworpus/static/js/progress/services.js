@@ -75,10 +75,10 @@ angular.module("tworpusApp.progress.services", [])
                 removed = removed[0];
                 $http.get(url)
                     .success(function () {
-                        notify("Korpus <b>" + removed.title + " </b>wurde entfernt");
+                        notify("Corpus <b>" + removed.title + " </b>was successfully removed");
                     })
                     .error(function () {
-                        notify("Corpus " + removed.title + " couldn't be removed");
+                        notify("Corpus " + removed.title + " couldn't be removed", "error");
                     });
             } else {
                 // Should never happen
