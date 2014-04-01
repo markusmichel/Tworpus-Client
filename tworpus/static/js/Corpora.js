@@ -88,15 +88,21 @@ var updateCorpusView = function(item, el) {
 
 tworpusApp
 
-    .controller("CorporaController",["$scope", "$http", "corpusCreations", "urls", "notify", function($scope, $http, corpusCreations, urls, notify){
+    .controller("CorporaController",["$scope", "$http", "corpusCreations", "urls", "notify", "$filter", function($scope, $http, corpusCreations, urls, notify, $filter){
         $scope.corpusCreations = corpusCreations.corpusCreationProcesses;
         $scope.remove = corpusCreations.remove;
 
         $scope.download = function(id) {
+            var index = $filter('indexOfCorpusid')(corpusCreations.corpusCreationProcesses, id),
+                        session = corpusCreations.corpusCreationProcesses[index];
+            if (session.working) return;
             window.location = urls.downloadCorpus + "?id=" + id;
         };
 
         $scope.recreate = function(id) {
+            var index = $filter('indexOfCorpusid')(corpusCreations.corpusCreationProcesses, id),
+                        session = corpusCreations.corpusCreationProcesses[index];
+            if (session.working) return;
             $http
                 .post(urls.recreateCorpus + "?id=" + id)
                 .success(function() {
@@ -130,6 +136,9 @@ tworpusApp
                 var el = $(elm);
                 var tweetsFetched = el.find('.corpus-view-details-tweets-fetched');
                 var tweetsFailed = el.find('.corpus-view-details-tweets-failed');
+                var renewButton = el.find('.corpus-view-buttonbar-renew');
+                var exportButton = el.find('.corpus-view-buttonbar-export');
+                var title = el.find('.corpus-view-title');
 
                 updateCorpusView(corpusItem, el);
                 var pieChart = createPieChart(elm);
@@ -142,7 +151,6 @@ tworpusApp
 
                 $scope.processes = corpusCreations.corpusCreationProcesses;
                 $scope.$watch("ngModel", function(item) {
-
                     if (item.progress <= 100) {
 
                         tweetsFetched.text("Tweets fetched: " + item.tweetsFetched);
@@ -155,6 +163,17 @@ tworpusApp
                         );
                     }
 
+                    if (item.working && !renewButton.hasClass('disabled')) {
+                        title.toggleClass('working');
+                        renewButton.toggleClass('disabled');
+                        exportButton.toggleClass('disabled');
+
+                    }
+                    if (!item.working && renewButton.hasClass('disabled')) {
+                        title.toggleClass('working');
+                        renewButton.toggleClass('disabled');
+                        exportButton.toggleClass('disabled');
+                    }
                 }, true);
             }
         }

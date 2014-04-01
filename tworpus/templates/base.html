@@ -197,31 +197,11 @@
     <script src="{% static 'js/notifications.js' %}"></script>
     <script src="{% static 'js/TworpusApp.js' %}"></script>
     <script src="{% static 'js/Corpora.js' %}"></script>
-    <script src="{% static 'js/cache/cache.js' %}"></script>
+    <script src="{% static 'js/settings/settings.js' %}"></script>
     <script src="{% static 'js/progress/Progressbar.js' %}"></script>
     <script src="{% static 'js/navigation/navigation.js' %}"></script>
+    <script src="{% static 'js/SiteTour.js' %}"></script>
 {#    <script src="{% static 'dist/js/tworpus.js' %}"></script>#}
-
-    <script>
-        tworpusApp.startJoyride = function() {
-             setTimeout(function() {
-                $("#joyRideTipContent").joyride({
-                autostart : true,
-                expose : true
-            });
-            }, 500);
-        };
-
-        $('#help').click(tworpusApp.startJoyride);
-
-        if (!localStorage.getItem('firstStart')) {
-            localStorage.setItem('firstStart', true);
-
-            $(window).load(function(){
-               tworpusApp.startJoyride();
-            });
-        }
-    </script>
 
 {% endblock javascripts %}
 </body>

@@ -5812,6 +5812,10 @@ body {
   padding-top: 70px;
   padding-bottom: 60px;
   line-height: 1.618;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 body.progressbar-expanded {
   padding-bottom: 200px;
@@ -5883,10 +5887,14 @@ body.progressbar-expanded {
   padding-left: 25px;
 }
 .collapsed-seperator {
-  border-bottom: 1px solid #fff;
+  border-bottom: 2px dashed #fff;
   margin-left: 11px;
   margin-right: 11px;
   margin-top: 35px;
+}
+.sidebar-seperator {
+  border-bottom: 2px dashed #252E2A;
+  margin: 10px 15px 10px;
 }
 .navbar-toggle {
   margin-top: 18px;
@@ -5996,6 +6004,7 @@ a:focus {
   position: relative;
   width: 250px;
   height: 285px;
+  overflow: hidden;
 }
 .corpus-view-title {
   text-align: center;
@@ -6004,6 +6013,13 @@ a:focus {
   margin: 0 0 10px 0;
   cursor: default;
   height: 25px;
+  padding: 0 32px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.corpus-view-title.working {
+  background: transparent url(../../res/corpus-view/hourglass.png) no-repeat left center;
 }
 .corpus-view-details {
   height: 235px;
@@ -6083,11 +6099,60 @@ a:focus {
 .corpus-view-buttonbar-export:hover {
   background: transparent url(../../res/corpus-view/export-hover.png) no-repeat center center;
 }
+.corpus-view-buttonbar-export.disabled {
+  background: transparent url(../../res/corpus-view/export-disabled.png) no-repeat center center;
+  cursor: default;
+}
 .corpus-view-buttonbar-renew {
   background: transparent url(../../res/corpus-view/reload.png) no-repeat center center;
 }
 .corpus-view-buttonbar-renew:hover {
   background: transparent url(../../res/corpus-view/reload-hover.png) no-repeat center center;
+}
+.corpus-view-buttonbar-renew.disabled {
+  background: transparent url(../../res/corpus-view/reload-disabled.png) no-repeat center center;
+  cursor: default;
+}
+/*
+* Settings Site
+*/
+.alert a {
+  color: black;
+  margin-left: 20px;
+}
+.alert a.small {
+  color: black;
+  font-size: 12pt;
+}
+.alert a.big {
+  color: black;
+  font-size: 16pt;
+}
+#clear-cache-confirmation {
+  position: absolute;
+  margin-top: 10px;
+}
+#clear-cache-confirmation.ng-hide-remove,
+#clear-cache-confirmation.ng-hide-add {
+  -webkit-transition: all ease-out 0.8s;
+  -moz-transition: all ease-out 0.8s;
+  -ms-transition: all ease-out 0.8s;
+  -o-transition: all ease-out 0.8s;
+  transition: all ease-out 0.8s;
+}
+#clear-cache-confirmation.ng-hide-remove,
+#clear-cache-confirmation.ng-hide-add-active {
+  display: block !important;
+  left: -500px;
+}
+#clear-cache-confirmation.ng-hide-remove-active {
+  display: block !important;
+  left: 0;
+}
+.btn-danger {
+  background-color: #ED5565;
+  border-color: #D43F3A;
+  color: #FFFFFF;
 }
 /*
 * Joyride Corpus View Example

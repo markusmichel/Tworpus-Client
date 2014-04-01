@@ -1,7 +1,7 @@
 angular
     .module("tworpusApp.cache", ['ngAnimate'])
 
-    .controller("CacheController", ["$scope", "$http", "urls", "notify", function ($scope, $http, urls, notify) {
+    .controller("SettingsController", ["$scope", "$http", "urls", "notify", function ($scope, $http, urls, notify) {
         $scope.clearCache = function () {
             $scope.showClearConfirmation = false;
             $http
@@ -44,4 +44,3 @@ angular
             return (bytes / Math.pow(1024, Math.floor(number))).toFixed(precision) + ' ' + units[number];
         }
     });
-;

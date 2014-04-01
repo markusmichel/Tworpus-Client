@@ -11,9 +11,9 @@ tworpusApp
                     templateUrl: '/static/views/corpora.html',
                     controller: 'CorporaController'
                 }).
-                when('/cache', {
-                    templateUrl: '/static/views/cache.html',
-                    controller: 'CacheController'
+                when('/settings', {
+                    templateUrl: '/static/views/settings.html',
+                    controller: 'SettingsController'
                 }).
                 otherwise({
                     redirectTo: '/createcorpus'
