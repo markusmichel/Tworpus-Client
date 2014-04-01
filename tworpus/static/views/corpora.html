@@ -1,4 +1,5 @@
-<div class="corpus-view" ng-repeat="session in corpusCreations | orderBy : 'created' : true ">
+<div ng-if="corpusCreations.length === 0" class="corpus-view-no-items">No corpora available !</div>
+<div ng-if="corpusCreations.length > 0" class="corpus-view" ng-repeat="session in corpusCreations | orderBy : 'created' : true ">
     <div tw-create-corpora-view ng-model='session'>
 
         <div class="corpus-view-title">{{ session.title }}</div>
