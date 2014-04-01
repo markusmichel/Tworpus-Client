@@ -6113,6 +6113,12 @@ a:focus {
   background: transparent url(../../res/corpus-view/reload-disabled.png) no-repeat center center;
   cursor: default;
 }
+.corpus-view-no-items {
+  font-family: oswald;
+  font-size: 30px;
+  font-weight: bold;
+  margin: 57px;
+}
 /*
 * Settings Site
 */
