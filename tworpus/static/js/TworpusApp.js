@@ -26,14 +26,15 @@ tworpusApp
 
             $scope.corpus = {};
 
-            var formValues = {} || JSON.parse(localStorage.getItem('formValues'));
-
-            if (!formValues.endDate) {
-                formValues.endDate = moment().add('days', 1).toDate();
-            }
-            if (!formValues.startDate) {
-                formValues.startDate = moment().subtract('days', 10).toDate();
-            }
+            var formValues = JSON.parse(localStorage.getItem('formValues'));
+            if (!formValues) formValues = {};
+            if (!formValues.endDate)  formValues.endDate = moment().add('days', 1).toDate();
+            if (!formValues.startDate) formValues.startDate = moment().subtract('days', 10).toDate();
+            if (!formValues.numTweets) formValues.numTweets = 20;
+            if (!formValues.numMinWords) formValues.numMinWords = 0;
+            if (!formValues.numMinChars) formValues.numMinChars = 0;
+            if (!formValues.language) formValues.language = "";
+            if (!formValues.title) formValues.title = "";
 
             $scope.corpus.endDate = moment(formValues.endDate).toDate();
             $scope.corpus.startDate = moment(formValues.startDate).toDate();
@@ -46,7 +47,7 @@ tworpusApp
              $('#input_slider_min_chars').attr('data-slider-value', formValues.numMinWords);
             $scope.corpus.numMinWords = formValues.numMinWords;
 
-            $('#input_slider_min_words').attr('data-slider-value', formValues.numMinWords);
+            $('#input_slider_min_words').attr('data-slider-value', formValues.numMinChars);
             $scope.corpus.numMinChars = formValues.numMinChars;
 
             $scope.corpus.title = formValues.title;
@@ -87,7 +88,6 @@ tworpusApp
                                     notify("Failed to fetch tweets.", "error");
                                     break;
                             }
-
                         });
                 }
             };
