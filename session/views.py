@@ -1,6 +1,7 @@
 import datetime, time
 from django.utils.timezone import utc
 from django.core.servers.basehttp import FileWrapper
+import signal
 import django
 from django.http import HttpResponse, StreamingHttpResponse
 from django import http
@@ -167,6 +168,18 @@ def getSession(request):
 
     return HttpResponse(json.dumps(session.as_json()))
 
+
+def exit(request):
+
+    fetchersManager = TweetIO.getManager()
+
+    for key, fetcher in enumerate(fetchersManager.fetchers.items()):
+        fetcher[1].cancel()
+    if fetchersManager.fetchers.__len__() > 0:
+        fetchersManager.fetchers.clear()
+
+    pid = os.getpid()
+    os.kill(pid, signal.SIGTERM)
 
 def removeCorpus(request):
     """

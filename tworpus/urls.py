@@ -15,6 +15,7 @@ urlpatterns = patterns('',
     url(r'^$', baseViews.home),
 
     url(r'^api/createcorpus', sessionViews.startCreateCorpus),
+    url(r'^api/exit', sessionViews.exit),
     url(r'^api/activesessions', sessionViews.getActiveSessions),
     url(r'^api/sessions', sessionViews.getSessions),
     url(r'^api/session', sessionViews.getSession),

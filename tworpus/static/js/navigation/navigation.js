@@ -14,4 +14,16 @@ angular
             }
         };
     }])
+
+    .controller("NavbarController", ["$scope", "$http", "urls", function($scope, $http, urls) {
+        $scope.exit = function() {
+            $http.post(urls.exit)
+                .success(function() {
+                    console.log("exit success");
+                })
+                .error(function() {
+
+                });
+        };
+    }])
 ;
