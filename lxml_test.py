@@ -1,51 +1,34 @@
-from lxml import etree
 from copy import deepcopy
-import codecs
-import nltk
+from lxml import etree
+
 
 # time start
 import time
+from tworpus import tweet_converter
+
 start_time = time.time()
 
-sent_detector = nltk.data.load('tokenizers/punkt/english.pickle')
+# file = codecs.open("tweets_modified.xml", encoding="UTF-8")
+# xmlSource = 'tweets_modified.xml'
+xmlSource = open('tweets_modified.xml')
 
-file = codecs.open("tweets_big.xml", encoding="UTF-8")
-xmlSource = 'tweets_big.xml'
 
 context = etree.iterparse(xmlSource, events=('end',), tag='tweet', encoding="UTF-8")
 
 # iterates through the whole xml without eating up the whole memory
 # http://www.ibm.com/developerworks/library/x-hiperfparse/
-# required for pos_tag --> numpy (http://sourceforge.net/projects/numpy/files/NumPy/)
 root = etree.Element("tweets")
 e = 0
 i = 0
 for action, tweet in context:
-    #print("%s: %s" % (action, tweet.findtext("text")))
+    # print("%s: %s" % (action, tweet.findtext("text")))
 
     tweetText = tweet.findtext("text")
 
     try:
 
-        posTagsNode = etree.Element("posTags")
-        textSentence = sent_detector.tokenize(tweetText)
-        textId = 0
-
-        for sentence in textSentence:
-
-            sentenceNode = etree.Element("sentence", id=str(textId))
-            tokenized = nltk.word_tokenize(sentence)
-            pos = nltk.pos_tag(tokenized)
-
-            posId = 0
-            for posTuple in pos:
-                posNode = etree.Element("word", pos=posTuple[1], id=str(posId))
-                posNode.text = posTuple[0]
-                sentenceNode.append(posNode)
-                posId += 1
-
-            posTagsNode.append(sentenceNode)
-            textId += 1
+        converter = tweet_converter.PosTagConverterBase()
+        posTagsNode = converter.convert(tweetText)
 
         tweet.append(posTagsNode)
         root.append(deepcopy(tweet))
@@ -64,7 +47,7 @@ for action, tweet in context:
 
 #newFile = codecs.open("tweets_modified_lxml.xml", "w", encoding='utf-8')
 
-file.close()
+# file.close()
 newFile = open("tweets_modified_lxml.xml","w")
 newFile.write(etree.tostring(root, pretty_print=True, xml_declaration=True,encoding="UTF-8"))
 newFile.close()

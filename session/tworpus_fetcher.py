@@ -9,7 +9,17 @@ def getCsvListStr(limit=10, language="en", minWordcount=0, minCharcount=0, start
     if startDate is not None and endDate is not None:
         url = url + "&startdate=" + startDate + "&enddate=" + endDate
 
-    response = urllib2.urlopen(url)
-    csvStr = response.read()
+    fetchedData = {}
+    try:
+        response = urllib2.urlopen(url)
+        status = response.getcode()
+        csvStr = response.read()
 
-    return csvStr
+        fetchedData['status'] = status
+        fetchedData['content'] = csvStr
+
+    except urllib2.HTTPError as e:
+        fetchedData['status'] = e.getcode()
+
+
+    return fetchedData

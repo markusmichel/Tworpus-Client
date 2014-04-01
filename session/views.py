@@ -110,8 +110,10 @@ def startCreateCorpus(request):
 
         try:
             start_create_corpus(session)
-        except(CsvEmptyException):
-            return HttpResponse(status=409)
+        except CsvEmptyException:
+            return HttpResponse(status=444)
+        except CsvPartiallyEmptyException:
+            return HttpResponse(status=206)
 
         # Notify corpus creation initialization
         response_data = {}
@@ -240,7 +242,7 @@ def recreateCorpus(request):
 
     try:
         start_create_corpus(session, override=True)
-    except(CsvEmptyException):
+    except CsvEmptyException:
         return HttpResponse(status=409)
 
     return HttpResponse(json.dumps("success"), status=200)
@@ -260,23 +262,28 @@ def start_create_corpus(session, override=False):
         startDate=startDate, endDate=endDate
     )
 
+    # status == 444 := no tweets to fetch
+    if csv['status'] == 444:
+        session.delete()
+        raise CsvEmptyException()
+
     folderName = session.folder
     baseFolder = os.path.join(settings.BASE_PROJECT_DIR, folderName)
     if not os.path.isdir(baseFolder):
         os.makedirs(baseFolder)
 
     csvFile = open(os.path.join(baseFolder, "tweets.csv"), "w")
-    csv = csv.replace("\r", "")
-    csvFile.write(csv)
-
-    # check if there are any tweets to fetch
-    # 29 chars is the length of the title line
-    if len(csv) < 30:
-        session.delete()
-        raise CsvEmptyException()
+    csv['content'] = csv['content'].replace("\r", "")
+    csvFile.write(csv['content'])
 
     invokeCorpusCreation(csvFile=csvFile, session=session, folder=baseFolder)
 
+    # status == 444 := no tweets to fetch
+    if csv['status'] == 206:
+        raise CsvPartiallyEmptyException
 
 class CsvEmptyException(Exception):
+    pass
+
+class CsvPartiallyEmptyException(Exception):
     pass

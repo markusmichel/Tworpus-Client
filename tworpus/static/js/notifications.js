@@ -4,11 +4,15 @@ angular.module("notifications", [])
             type = type || "success";
             console.log("notifification: ", message);
             console.log("notifification type: ", type);
-            $.pnotify({
-//                title: 'Regular Notice',
+
+            var res = {
                 text: message,
                 type: type
-            });
+            };
+            if(type === "info") res.icon = "glyphicon glyphicon-info-sign";
+            else if(type === "success") res.icon = "glyphicon glyphicon-ok-sign";
+
+            $.pnotify(res);
         }
     }])
 ;

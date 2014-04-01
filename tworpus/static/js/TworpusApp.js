@@ -45,15 +45,23 @@ tworpusApp
                 var isValid = $("form").get(0).checkValidity();
                 if (isValid === true) {
                     corpusCreationService.startCorpusCreation($scope.corpus)
-                        .success(function () {
-                            notify("Korpus <b>" + $scope.corpus.title + " </b>wird erstellt");
+                        .success(function (data, status) {
+                            switch (status) {
+                                case 206:
+                                    notify("Corpus <b>" + $scope.corpus.title + " </b>is being created, " +
+                                        "but there are not sufficient tweets available.", "info");
+                                    break;
+                                default:
+                                    notify("Corpus <b>" + $scope.corpus.title + " </b>is being created.");
+                                    break;
+                            }
                             $rootScope.$emit("corpus:create:start");
                         }).error(function (data, status) {
                             console.log("data: ", data)
                             console.log("status: ", status)
 
                             switch(status) {
-                                case 409:
+                                case 444:
                                     notify("No tweets found to fetch. Try to be less specific.", "error");
                                     break;
                                 default:
