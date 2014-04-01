@@ -26,8 +26,7 @@ tworpusApp
 
             $scope.corpus = {};
 
-            var formValues = {};
-            formValues = JSON.parse(localStorage.getItem('formValues'));
+            var formValues = {} || JSON.parse(localStorage.getItem('formValues'));
 
             if (!formValues.endDate) {
                 formValues.endDate = moment().add('days', 1).toDate();
