@@ -1,6 +1,4 @@
 <div>
-    <slider id="slider" scale="scale" class="span2"></slider>
-
     <form role="form" method="post">
 
         <div class="form-group">
@@ -21,13 +19,13 @@
             <label for="">Period of time</label>
 
             <div class="row">
-                <div class="col-lg-3" id="timepickerID">
+                <div class="col-lg-4" id="timepickerID">
                         <div tw-date ng-model="$parent.corpus.startDate" min-date="startDate.minDate" max-date="startDate.maxDate">
                             <div class="datepicker-label start-date">From</div>
                         </div>
                 </div>
 
-                <div class="col-lg-3">
+                <div class="col-lg-4">
                         <div tw-date ng-model="$parent.corpus.endDate" min-date="endDate.minDate" max-date="endDate.maxDate">
                             <div class="datepicker-label end-date">To</div>
                         </div>
@@ -52,7 +50,7 @@
                             data-slider-min="20"
                             data-slider-max="100000"
                             data-slider-step="20"
-                            data-slider-value="20"
+                            data-slider-value="{{ corpus.numTweets }}"
                             data-slider-orientation="horizontal"
                             data-slider-selection="after"
                             data-slider-tooltip="show">
@@ -82,7 +80,7 @@
                            data-slider-min="0"
                            data-slider-max="140"
                            data-slider-step="1"
-                           data-slider-value="0"
+                           data-slider-value="{{ corpus.numMinChars }}"
                            data-slider-orientation="horizontal"
                            data-slider-selection="after"
                            data-slider-tooltip="show">
@@ -110,7 +108,7 @@
                            data-slider-min="0"
                            data-slider-max="100"
                            data-slider-step="1"
-                           data-slider-value="0"
+                           data-slider-value="{{ corpus.numMinWords }}"
                            data-slider-orientation="horizontal"
                            data-slider-selection="after"
                            data-slider-tooltip="show">

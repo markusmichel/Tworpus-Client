@@ -2,11 +2,9 @@ from lxml import etree
 from copy import deepcopy
 import nltk
 
-
 class BaseTweetTextConverter():
     def convert(self, text):
         pass
-
 
 class PosTagConverter(BaseTweetTextConverter):
     def convert(self, text):

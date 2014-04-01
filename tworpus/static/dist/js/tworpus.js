@@ -366,8 +366,8 @@ tworpusApp
 
         $('#help').click(tworpusApp.startJoyride);
 
-        if (!localStorage.getItem('firstStart')) {
-            localStorage.setItem('firstStart', true);
+        if (!localStorage.getItem('firstStartDone')) {
+            localStorage.setItem('firstStartDone', true);
 
             $(window).load(function(){
                tworpusApp.startJoyride();
