@@ -6,7 +6,7 @@ import os
 import sys
 import signal
 from tworpus import settings
-
+from tworpus.models import TworpusSettings
 
 __manager = None
 
@@ -69,7 +69,7 @@ class TweetsFetcher():
     Fetches and merges tweets as XML file(s).
     Process is done by jar file started through subprocess.
     """
-    def __init__(self, tweetsCsvFile, outputDir, updateListener=None):
+    def __init__(self, tweetsCsvFile, outputDir, tweetsPerXml):
         """
         @type updateListener: FetcherProgressListener
         """
@@ -78,9 +78,9 @@ class TweetsFetcher():
         self.__process = None
         self.tweetsCsvFile = tweetsCsvFile
         self.outputDir = outputDir
-        self.__updateListener = updateListener
         self.__cacheDir = settings.XML_CACHE_DIR
         self.__canceled = False
+        self.__tweetsPerXml = tweetsPerXml
 
         self.__updateListeners = []
 
@@ -96,7 +96,7 @@ class TweetsFetcher():
                    " -input-file " + self.tweetsCsvFile + \
                    " -xml-cache-folder " + self.__cacheDir + \
                    " -xml-output-folder " + self.outputDir + \
-                   " -split-after " + str(1000)
+                   " -split-after " + str(self.__tweetsPerXml)
         # argsStr += " -override"
         # argsStr += " -csv-no-title"
 
@@ -113,11 +113,9 @@ class TweetsFetcher():
             values = self.parseDownloadProgressFromLine(line)
             if values is not None:
                 if values["result"] == "success":
-                    self.__updateListener.onSuccess(values)
                     for listener in self.__updateListeners:
                         listener.onSuccess(values)
                 elif values["result"] == "error":
-                    self.__updateListener.onError(values)
                     for listener in self.__updateListeners:
                         listener.onError(values)
 
@@ -158,13 +156,13 @@ class TweetsFetcher():
     # internal progress callbacks
     def __onFinish(self):
         self.__process = None
-        if self.__updateListener is not None: self.__updateListener.onFinish()
-    # end internal progress callbacks
+        for listener in self.__updateListeners:
+            listener.onFinish()
 
     def __onCancel(self):
-        self.__updateListener.onCancel()
         for listener in self.__updateListeners:
             listener.onCancel()
+    # end internal progress callbacks
 
 
 from session.models import Session

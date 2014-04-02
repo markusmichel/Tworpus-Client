@@ -1,30 +1,24 @@
 import datetime, time
+
 from django.utils.timezone import utc
 from django.core.servers.basehttp import FileWrapper
+from django.http import HttpResponse
+from django import forms, http
+
 import signal
-import django
-from django.http import HttpResponse, StreamingHttpResponse
-from django import http
 import shutil
 from uuid import uuid4
 import ntpath
-import StringIO
-from django.template import RequestContext, loader
-
-# csrf: https://docs.djangoproject.com/en/dev/ref/contrib/csrf/#unprotected-view-needs-the-csrf-token
-from django.views.decorators.csrf import csrf_exempt, csrf_protect
-
 import json
 import glob
-from django.core import serializers
 import os
 from StringIO import StringIO
 from enum import Enum
 from zipfile import ZipFile
+
+from tworpus.models import TworpusSettings
 import tworpus_fetcher
 from tworpus import settings as settings
-from django import forms
-from django.shortcuts import render
 import TweetIO
 
 from session.models import Session
@@ -131,8 +125,10 @@ def invokeCorpusCreation(csvFile, folder, session):
     """
     fetches tweets by calling fetcher jar
     """
+    tw_settings = TworpusSettings.objects.first()
     listener = TweetIO.TweetProgressEventHandler(session.id)
-    fetcher = TweetIO.TweetsFetcher(tweetsCsvFile=csvFile.name, outputDir=folder, updateListener=listener)
+    fetcher = TweetIO.TweetsFetcher(tweetsCsvFile=csvFile.name, outputDir=folder, tweetsPerXml=tw_settings.tweets_per_xml)
+    fetcher.addListener(listener)
     fetcher.fetch()
 
     fetchersManager = TweetIO.getManager()
@@ -283,6 +279,8 @@ def recreateCorpus(request):
         start_create_corpus(session, override=True)
     except CsvEmptyException:
         return HttpResponse(status=409)
+    except CsvPartiallyEmptyException:
+        return HttpResponse(status=206)
 
     return HttpResponse(json.dumps("success"), status=200)
 

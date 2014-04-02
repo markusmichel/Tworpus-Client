@@ -1,5 +1,4 @@
 from django.conf.urls import patterns, include, url
-from visualizer import views as visualizerViews
 from session import views as sessionViews
 import views as baseViews
 from session import views_cache as cacheViews
@@ -8,8 +7,6 @@ urlpatterns = patterns('',
     # Examples:
     # url(r'^$', 'tworpus.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
-
-    url(r'^test/', visualizerViews.index),
 
     url(r'^views/createcorpus/', sessionViews.createCorpusContent),
     url(r'^$', baseViews.home),
@@ -26,5 +23,8 @@ urlpatterns = patterns('',
     url(r'^api/corpus/recreate', sessionViews.recreateCorpus),
 
     url(r'^api/corpus/cache/status', cacheViews.cacheStatus),
-    url(r'^api/corpus/cache/clear', cacheViews.clearCache)
+    url(r'^api/corpus/cache/clear', cacheViews.clearCache),
+
+    url(r'^api/settings/tweets_per_xml/get', baseViews.get_tweets_per_xml),
+    url(r'^api/settings/tweets_per_xml/set', baseViews.set_tweets_per_xml)
 )

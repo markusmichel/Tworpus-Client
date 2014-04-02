@@ -186,7 +186,10 @@
             'downloadCorpus': "{% url 'session.views.downloadCorpus' %}",
             'clearCache': "{% url 'session.views_cache.clearCache' %}",
             'cacheStatus': "{% url 'session.views_cache.cacheStatus' %}",
-            'exit': "{% url 'session.views.exit' %}"
+            'exit': "{% url 'session.views.exit' %}",
+
+            'getTweetsPerXml': "{% url 'tworpus.views.get_tweets_per_xml' %}",
+            'setTweetsPerXml': "{% url 'tworpus.views.set_tweets_per_xml' %}"
         });
     </script>
 

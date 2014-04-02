@@ -46,9 +46,9 @@
 <div class="row">
     <div class="col-lg-5">
         <label>Tweets per XML</label>
-        <input ng-model="tweetsXml" value="{{ tweetsXml }} "style="margin-bottom: 20px;" name="tweetsPerXML" type="number" class="form-control" placeholder="Max tweets per XML" required="">
+        <input ng-model="tweetsXml" value="{{ tweetsXml }} "style="margin-bottom: 20px;" name="tweetsPerXML" type="number" class="form-control" required="">
 
-        <button class="btn btn-default" ng-click="setTweetsXml()">
+        <button class="btn btn-default" ng-click="setTweetsXml(tweetsXml)">
             set max tweets
         </button>
     </div>

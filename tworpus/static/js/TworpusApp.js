@@ -117,7 +117,7 @@ tworpusApp
 
         $scope.resetForm = function() {
             setFormValues();
-        }
+        };
     }])
 
     .directive('ngBootstrapSlider', function () {

@@ -58,10 +58,25 @@ angular
             else $scope.showClearConfirmation = true;
         };
 
-        $scope.tweetsXml = 500;
-        $scope.setTweetsXml = function() {
-             console.log($scope.tweetsXml);
-        }
+        $scope.setTweetsXml = function(num) {
+            $http
+                .post(urls.setTweetsPerXml, {tweets_per_xml: num})
+                .success(function() {
+                    notify("Tweets/XML successfully set to " + num);
+                })
+                .error(function() {
+                    notify("Couldn't set Tweets/XML", "error");
+                })
+            ;
+        };
+
+        (function getTweetsPerXml() {
+            $http
+                .get(urls.getTweetsPerXml)
+                .success(function(data) {
+                    $scope.tweetsXml = data.tweets_per_xml;
+                });
+        })();
     }])
 
     .filter('bytes', function () {

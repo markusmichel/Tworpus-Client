@@ -1,5 +1,4 @@
 from django.db import models
-from datetime import datetime
 
 class Session(models.Model):
     title = models.CharField(max_length=200, unique=False)
