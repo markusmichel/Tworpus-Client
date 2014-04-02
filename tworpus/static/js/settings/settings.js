@@ -59,6 +59,8 @@ angular
         };
 
         $scope.setTweetsXml = function(num) {
+             if (processInProgress) return;
+
             $http
                 .post(urls.setTweetsPerXml, {tweets_per_xml: num})
                 .success(function() {
