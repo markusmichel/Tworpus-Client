@@ -115,6 +115,10 @@ tworpusApp
         window.onbeforeunload = function () {
             saveIntoLocalStorage();
         };
+
+        $scope.resetForm = function() {
+            setFormValues();
+        }
     }])
 
     .directive('ngBootstrapSlider', function () {

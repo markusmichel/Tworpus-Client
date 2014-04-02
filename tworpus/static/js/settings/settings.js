@@ -16,8 +16,8 @@ angular
                     break;
                 }
             }
-            if (processInProgress) $('.btn-danger').addClass('btn-disabled');
-            else  $('.btn-danger').removeClass('btn-disabled');
+            if (processInProgress) $('.btn').addClass('btn-disabled');
+            else  $('.btn').removeClass('btn-disabled');
          }, true);
 
         $scope.clearCache = function () {
@@ -57,6 +57,11 @@ angular
             if (processInProgress)  $scope.showClearConfirmation = false;
             else $scope.showClearConfirmation = true;
         };
+
+        $scope.tweetsXml = 500;
+        $scope.setTweetsXml = function() {
+             console.log($scope.tweetsXml);
+        }
     }])
 
     .filter('bytes', function () {

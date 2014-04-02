@@ -42,9 +42,31 @@
         </ul>
         </p>
     </div>
-
 </div>
+<div class="row">
+    <div class="col-lg-5">
+        <label>Tweets per XML</label>
+        <input ng-model="tweetsXml" value="{{ tweetsXml }} "style="margin-bottom: 20px;" name="tweetsPerXML" type="number" class="form-control" placeholder="Max tweets per XML" required="">
 
+        <button class="btn btn-default" ng-click="setTweetsXml()">
+            set max tweets
+        </button>
+    </div>
+
+    <div class="col-lg-6 col-lg-offset-1">
+        <p>
+            BESCHREIBUNG HIER REIN
+
+        <ul>
+            <li>Sinn und Zweck des Caches</li>
+            <li>Mehrfach benötigte Tweets müssen nicht mehrfach heruntergeladen werden</li>
+            <li>Nachteil: belegen zusätzlichen Speicherplatz</li>
+            <li>Unter Umständen werden sie nicht mehr benötigt</li>
+            <li>Möglichkeit des Löschens um Speicherplatz freizugeben</li>
+        </ul>
+        </p>
+    </div>
+</div>
 
 
 
