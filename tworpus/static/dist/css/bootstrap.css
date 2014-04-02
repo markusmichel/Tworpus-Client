@@ -5873,7 +5873,7 @@ body.progressbar-expanded {
 }
 .navbar-fixed-top,
 .navbar-fixed-bottom {
-  z-index: 10000;
+  z-index: 8000;
 }
 .navbar-left > .active > a,
 .navbar-left > .active > a:hover,
@@ -6169,6 +6169,11 @@ a:focus {
   background-color: #ED5565;
   border-color: #D43F3A;
   color: #FFFFFF;
+}
+.btn-disabled {
+  background-color: #ADADAD !important;
+  border-color: #ADADAD !important;
+  cursor: default !important;
 }
 /*
 * Joyride Corpus View Example
