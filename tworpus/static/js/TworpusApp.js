@@ -23,7 +23,6 @@ tworpusApp
 
     .controller('CreateCorpusController', ["$scope", "$rootScope", "$http", "urls", "corpusCreationService", "notify",
         function ($scope, $rootScope, $http, urls, corpusCreationService, notify) {
-
             $scope.corpus = {};
 
             //no values resets form
@@ -34,7 +33,7 @@ tworpusApp
                 if (!formValues.numTweets) formValues.numTweets = 20;
                 if (!formValues.numMinWords) formValues.numMinWords = 0;
                 if (!formValues.numMinChars) formValues.numMinChars = 0;
-                if (!formValues.language) formValues.language = "";
+                if (!formValues.language) formValues.language = "en";
                 if (!formValues.title) formValues.title = "";
 
                 $scope.corpus.endDate = moment(formValues.endDate).toDate();
@@ -98,13 +97,13 @@ tworpusApp
 
         var saveIntoLocalStorage = function() {
             localStorage.setItem('formValues', JSON.stringify({
-                endDate: $scope.corpus.endDate || null,
-                startDate: $scope.corpus.startDate || null,
-                language: $scope.corpus.language || "",
-                numMinChars: $scope.corpus.numMinChars || 0,
-                numMinWords: $scope.corpus.numMinWords || 0,
-                numTweets: $scope.corpus.numTweets || 20,
-                title: $scope.corpus.title || ""
+                endDate: $scope.corpus.endDate,
+                startDate: $scope.corpus.startDate,
+                language: $scope.corpus.language,
+                numMinChars: $scope.corpus.numMinChars,
+                numMinWords: $scope.corpus.numMinWords,
+                numTweets: $scope.corpus.numTweets,
+                title: $scope.corpus.title
             }));
         };
 

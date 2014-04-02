@@ -103,7 +103,11 @@ body.progressbar-expanded {
 }
 
 .navbar-fixed-top, .navbar-fixed-bottom {
-  z-index: 8000;
+  z-index: 10000;
+}
+
+.ui-pnotify {
+  z-index: 11000;
 }
 
 .navbar-left > .active > a, .navbar-left > .active > a:hover, .navbar-left > .active > a:focus{
@@ -133,8 +137,8 @@ body.progressbar-expanded {
 }
 
 .navbar-toggle {
-  margin-top: 18px;
-  border: 1px solid #333333;
+    margin-top: 18px;
+    border: 1px solid #333333;
 }
 
 .navbar-inverse .navbar-toggle:hover, .navbar-inverse .navbar-toggle:focus {
@@ -471,8 +475,4 @@ a:focus {
 .corpus-view-example-stats {
   background: transparent url(../../res/help-example/corpus-example-2.png) no-repeat center right;
   float: right;
-}
-
-.select2-drop {
-  z-index: 5000;
 }
