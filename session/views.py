@@ -186,23 +186,26 @@ def removeCorpus(request):
     Deletes an finished or unfinished corpus from the database
     and removes all downloaded files.
     """
-    from django.core.exceptions import ValidationError
+    method = request.method
+    corpusid = request.GET["corpusid"] if request.method == "GET" else request.POST["corpusid"]
+    session = Session.objects.all().filter(id=corpusid).first()
+    folder = os.path.join(settings.BASE_PROJECT_DIR, session.folder)
 
-    corpusid = None
-    try:
-        corpusid = request.GET["corpusid"] if request.method == "GET" else request.POST["corpusid"]
-        session = Session.objects.all().filter(id=corpusid).first()
-        folder = os.path.join(settings.BASE_PROJECT_DIR, session.folder)
-        session.delete()
+    manager = TweetIO.getManager()
+    fetcher = manager.get(corpusid)
 
-        manager = TweetIO.getManager()
-        manager.remove(corpusid)
-        shutil.rmtree(folder)
-    except:
-        # Title not found
-        return HttpResponse(status=400)
+    class OnCancelListener(TweetIO.FetcherProgressListener):
+        def onCancel(self):
+            shutil.rmtree(folder)
+            session.delete()
+            manager.remove(corpusid)
+            if str(corpusid) in manager.fetchers:
+                manager.fetchers.pop(str(corpusid))
 
-    return HttpResponse(json.dumps(corpusid))
+    fetcher.addListener(OnCancelListener())
+    fetcher.cancel()
+
+    return HttpResponse("success")
 
 
 def pauseCorpus(request):

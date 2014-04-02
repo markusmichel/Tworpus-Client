@@ -109,34 +109,20 @@ angular.module("tworpusApp.progress", ["tworpusApp.progress.services"])
             };
 
             var that = this;
-            // @TODO: Prozesse der Direktive übergeben. Diese überwacht dann die Prozesse und stellt die Progressbars dar oder nicht
             $scope.$watchCollection("corpusCreationProcesses", function (newValue) {
                 var unfinishedProcesses = $filter('working')(corpusCreations.corpusCreationProcesses);
                 if(unfinishedProcesses.length > 0) {
                     corpusCreations.longPoll();
                 }
-
-                if (corpusCreations.corpusCreationProcesses.length == 0) {
-                    $scope.showProgressbar = false;
-                }
             });
 
-//            $scope.$watch(function () {
-//                return corpusCreations.corpusCreationProcesses.length;
-//            }, function (oldValue, newValue) {
-//                console.log("CHANGE IN METHOD VARIANT 2");
-//            });
-//
-//            $scope.$watch(function () {
-//                return corpusCreations.corpusCreationProcesses;
-//            }, function (oldValue, newValue) {
-//                console.log("CHANGE IN METHOD VARIANT 3");
-//            });
-//
-//            $scope.$watchCollection(function () {
-//                return corpusCreations.corpusCreationProcesses;
-//            }, function () {
-//                console.log("CHANGE IN METHOD VARIANT 4");
-//            });
+            $scope.$watch("corpusCreationProcesses", function (oldValue, newValue) {
+                var unfinishedProcesses = $filter('working')(corpusCreations.corpusCreationProcesses);
+                    console.log("collection changed");
+                if (unfinishedProcesses.length == 0) {
+                    console.log("collection empty");
+                    $scope.showProgressbar = false;
+                }
+            }, true);
         }])
 ;

@@ -1,9 +1,19 @@
 from session.models import Session
+from tworpus import settings
+import os
 
 try:
     for session in Session.objects.all():
+        # Set all session to NOT working on server start
         session.working = False
         session.save()
+
+        # Check if all folders for saved sessions still exist
+        projectFolder = os.path.join(settings.BASE_PROJECT_DIR, session.folder)
+        if os.path.isdir(projectFolder) is not True:
+            session.delete()
+
+
 except:
     pass
 

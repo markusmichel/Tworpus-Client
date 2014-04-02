@@ -58,9 +58,10 @@ class FetchersManager():
         return self.fetchers[str(id)]
 
     def remove(self, id):
-        fetcher = self.get(str(id))
-        fetcher.cancel()
-        self.fetchers.pop(str(id))
+        if str(id) in self.fetchers:
+            fetcher = self.get(str(id))
+            fetcher.cancel()
+            self.fetchers.pop(str(id))
 
 
 class TweetsFetcher():
@@ -81,6 +82,11 @@ class TweetsFetcher():
         self.__cacheDir = settings.XML_CACHE_DIR
         self.__canceled = False
 
+        self.__updateListeners = []
+
+    def addListener(self, listener):
+        self.__updateListeners.append(listener)
+
     def fetch(self):
         thread = threading.Thread(target=self.__startJar)
         thread.start()
@@ -90,7 +96,7 @@ class TweetsFetcher():
                    " -input-file " + self.tweetsCsvFile + \
                    " -xml-cache-folder " + self.__cacheDir + \
                    " -xml-output-folder " + self.outputDir + \
-                   " -split-after " + str(10)
+                   " -split-after " + str(1000)
         # argsStr += " -override"
         # argsStr += " -csv-no-title"
 
@@ -108,13 +114,17 @@ class TweetsFetcher():
             if values is not None:
                 if values["result"] == "success":
                     self.__updateListener.onSuccess(values)
+                    for listener in self.__updateListeners:
+                        listener.onSuccess(values)
                 elif values["result"] == "error":
                     self.__updateListener.onError(values)
+                    for listener in self.__updateListeners:
+                        listener.onError(values)
 
             sys.stdout.flush()
 
         self.__process.communicate()  # blocks subprocess until finish
-        self.__onFinish() if self.__canceled is not True else self.__updateListener.onCancel()
+        self.__onFinish() if self.__canceled is not True else self.__onCancel()
 
         print "FINISHED JAR PROGRAM"
 
@@ -150,6 +160,11 @@ class TweetsFetcher():
         self.__process = None
         if self.__updateListener is not None: self.__updateListener.onFinish()
     # end internal progress callbacks
+
+    def __onCancel(self):
+        self.__updateListener.onCancel()
+        for listener in self.__updateListeners:
+            listener.onCancel()
 
 
 from session.models import Session
