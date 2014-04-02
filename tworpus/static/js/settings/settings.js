@@ -1,8 +1,28 @@
 angular
     .module("tworpusApp.cache", ['ngAnimate'])
 
-    .controller("SettingsController", ["$scope", "$http", "urls", "notify", function ($scope, $http, urls, notify) {
+    .controller("SettingsController", ["$scope", "$http", "urls", "notify", "corpusCreations", function ($scope, $http, urls, notify, corpusCreations) {
+
+        var processInProgress = false;
+        corpusCreations.fetchAll();
+
+        $scope.$watch(function() {
+             return corpusCreations.corpusCreationProcesses
+         }, function(processes) {
+             processInProgress = false;
+             for (var i = 0; i < processes.length; i++) {
+                if (processes[i].working === true) {
+                    processInProgress = true;
+                    break;
+                }
+            }
+            if (processInProgress) $('.btn-danger').addClass('btn-disabled');
+            else  $('.btn-danger').removeClass('btn-disabled');
+         }, true);
+
         $scope.clearCache = function () {
+            if (processInProgress) return;
+
             $scope.showClearConfirmation = false;
             $http
                 .post(urls.clearCache)
@@ -32,6 +52,11 @@ angular
         });
 
         $scope.showClearConfirmation = false;
+
+        $scope.displayClearConfirmation = function() {
+            if (processInProgress)  $scope.showClearConfirmation = false;
+            else $scope.showClearConfirmation = true;
+        };
     }])
 
     .filter('bytes', function () {

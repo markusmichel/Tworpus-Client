@@ -103,7 +103,7 @@ body.progressbar-expanded {
 }
 
 .navbar-fixed-top, .navbar-fixed-bottom {
-  z-index: 10000;
+  z-index: 8000;
 }
 
 .navbar-left > .active > a, .navbar-left > .active > a:hover, .navbar-left > .active > a:focus{
@@ -254,7 +254,7 @@ a:focus {
   position: relative;
   width: 250px;
   height: 285px;
-    overflow: hidden;
+  overflow: hidden;
 }
 
 .corpus-view-title {
@@ -383,6 +383,18 @@ a:focus {
    cursor: default;
 }
 
+.corpus-view-no-items {
+    background: url("../../res/corpus-view/twitter.gif") no-repeat scroll center center / cover rgba(0, 0, 0, 0);
+    cursor: default;
+    font-family: oswald;
+    font-size: 34px;
+    font-weight: bold;
+    margin: 10px;
+    padding: 41px;
+    text-align: center;
+    text-decoration: underline;
+}
+
 /*
 * Settings Site
 */
@@ -430,6 +442,12 @@ a:focus {
     background-color: #ED5565;
     border-color: #D43F3A;
     color: #FFFFFF;
+}
+
+.btn-disabled {
+    background-color: #ADADAD !important;
+    border-color: #ADADAD !important;
+    cursor: default !important;
 }
 /*
 * Joyride Corpus View Example

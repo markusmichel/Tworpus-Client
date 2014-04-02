@@ -23,11 +23,37 @@ tworpusApp
 
     .controller('CreateCorpusController', ["$scope", "$rootScope", "$http", "urls", "corpusCreationService", "notify",
         function ($scope, $rootScope, $http, urls, corpusCreationService, notify) {
-            $scope.slider = {};
-            $scope.slider.config = {};
-            $scope.slider.config.minTweetLength = 0;
-            $scope.slider.config.maxTweetLength = 140;
+
             $scope.corpus = {};
+
+            //no values resets form
+            var setFormValues = function(formValues) {
+                if (!formValues) formValues = {};
+                if (!formValues.endDate) formValues.endDate = moment().add('days', 1).toDate();
+                if (!formValues.startDate) formValues.startDate = moment().subtract('days', 10).toDate();
+                if (!formValues.numTweets) formValues.numTweets = 20;
+                if (!formValues.numMinWords) formValues.numMinWords = 0;
+                if (!formValues.numMinChars) formValues.numMinChars = 0;
+                if (!formValues.language) formValues.language = "";
+                if (!formValues.title) formValues.title = "";
+
+                $scope.corpus.endDate = moment(formValues.endDate).toDate();
+                $scope.corpus.startDate = moment(formValues.startDate).toDate();
+
+                $scope.corpus.language = formValues.language;
+
+                $('#input_slider_num_tweets').attr('data-slider-value', formValues.numTweets);
+                $scope.corpus.numTweets = formValues.numTweets;
+
+                 $('#input_slider_min_chars').attr('data-slider-value', formValues.numMinWords);
+                $scope.corpus.numMinWords = formValues.numMinWords;
+
+                $('#input_slider_min_words').attr('data-slider-value', formValues.numMinChars);
+                $scope.corpus.numMinChars = formValues.numMinChars;
+
+                $scope.corpus.title = formValues.title;
+            };
+            setFormValues(JSON.parse(localStorage.getItem('formValues')));
 
             $scope.languages = [
                 {name: "German", value: "de"},
@@ -56,10 +82,8 @@ tworpusApp
                                     break;
                             }
                             $rootScope.$emit("corpus:create:start");
+                             setFormValues();
                         }).error(function (data, status) {
-                            console.log("data: ", data)
-                            console.log("status: ", status)
-
                             switch(status) {
                                 case 444:
                                     notify("No tweets found to fetch. Try to be less specific.", "error");
@@ -68,11 +92,30 @@ tworpusApp
                                     notify("Failed to fetch tweets.", "error");
                                     break;
                             }
-
                         });
                 }
             };
-        }])
+
+        var saveIntoLocalStorage = function() {
+            localStorage.setItem('formValues', JSON.stringify({
+                endDate: $scope.corpus.endDate || null,
+                startDate: $scope.corpus.startDate || null,
+                language: $scope.corpus.language || "",
+                numMinChars: $scope.corpus.numMinChars || 0,
+                numMinWords: $scope.corpus.numMinWords || 0,
+                numTweets: $scope.corpus.numTweets || 20,
+                title: $scope.corpus.title || ""
+            }));
+        };
+
+        $scope.$on("$destroy", function () {
+            saveIntoLocalStorage();
+        });
+
+        window.onbeforeunload = function () {
+            saveIntoLocalStorage();
+        };
+    }])
 
     .directive('ngBootstrapSlider', function () {
         // uses http://www.eyecon.ro/bootstrap-slider/
@@ -90,7 +133,7 @@ tworpusApp
 
                 slider.on('slide', function (e) {
                     var val = $(this).val();
-                    $scope.corpus.ngModel = parseInt(val);
+                    $scope.ngModel = parseInt(val);
                     $scope.$apply();
                 });
             },
@@ -142,37 +185,18 @@ tworpusApp
 
     .controller('twDateRangeController', ["$scope",
         function ($scope) {
-            var oneDayInMillis = (24*60*60*1000);
-
-            var startDate = new Date();
-            startDate.setTime(startDate.getTime() - oneDayInMillis * 10);
-            $scope.$parent.corpus.startDate = startDate;
-
-            var endDate = new Date();
-            endDate.setHours(23);
-            endDate.setMinutes(59);
-            endDate.setTime(endDate.getTime() + oneDayInMillis);
-            $scope.$parent.corpus.endDate  = endDate;
-
-            // initialize start and end dates
-            $scope.startDate = {};
-            $scope.endDate = {
-                maxDate: endDate
-            };
-
-
             $scope.$watch('corpus.startDate', function (newValue, oldValue) {
                 if (!$scope.corpus) return;
                 if (newValue > $scope.corpus.endDate) $scope.corpus.startDate = $scope.corpus.endDate;
 
-                $scope.endDate.minDate = newValue;
+                $scope.corpus.endDate.minDate = newValue;
             });
 
             $scope.$watch('corpus.endDate', function (newValue, oldValue) {
                 if (!$scope.corpus) return;
                 if (newValue < $scope.corpus.startDate) $scope.corpus.endDate = $scope.corpus.startDate;
 
-                $scope.startDate.maxDate = newValue;
+                $scope.corpus.startDate.maxDate = newValue;
             });
         }]);;
 var pieChartConfig = {
@@ -366,8 +390,8 @@ tworpusApp
 
         $('#help').click(tworpusApp.startJoyride);
 
-        if (!localStorage.getItem('firstStartDone')) {
-            localStorage.setItem('firstStartDone', true);
+        if (!localStorage.getItem('firstStart')) {
+            localStorage.setItem('firstStart', true);
 
             $(window).load(function(){
                tworpusApp.startJoyride();
@@ -411,6 +435,18 @@ angular.module("createCorpus.services", [])
                     else elm.closest("li").removeClass("active");
                 });
             }
+        };
+    }])
+
+    .controller("NavbarController", ["$scope", "$http", "urls", function($scope, $http, urls) {
+        $scope.exit = function() {
+            $http.post(urls.exit)
+                .success(function() {
+                    console.log("exit success");
+                })
+                .error(function() {
+
+                });
         };
     }])
 ;;angular.module("notifications", [])
@@ -648,10 +684,10 @@ angular.module("createCorpus.services", [])
                 removed = removed[0];
                 $http.get(url)
                     .success(function () {
-                        notify("Korpus <b>" + removed.title + " </b>wurde entfernt");
+                        notify("Corpus <b>" + removed.title + " </b>was successfully removed");
                     })
                     .error(function () {
-                        notify("Corpus " + removed.title + " couldn't be removed");
+                        notify("Corpus " + removed.title + " couldn't be removed", "error");
                     });
             } else {
                 // Should never happen
@@ -662,7 +698,16 @@ angular.module("createCorpus.services", [])
 ;;angular
     .module("tworpusApp.cache", ['ngAnimate'])
 
-    .controller("SettingsController", ["$scope", "$http", "urls", "notify", function ($scope, $http, urls, notify) {
+    .controller("SettingsController", ["$scope", "$http", "urls", "notify", "corpusCreations", function ($scope, $http, urls, notify, corpusCreations) {
+        console.log(corpusCreations);
+$('.btn-danger').addClass('btn-disabled');
+        corpusCreations.fetchAll();
+        for (var i = 0; i < corpusCreations.corpusCreationProcesses.length; i++) {
+            console.log(corpusCreations.corpusCreationProcesses[i].working)
+            if (corpusCreations.corpusCreationProcesses[i].working === true) $('.btn-danger').addClass('btn-disabled');
+        }
+
+
         $scope.clearCache = function () {
             $scope.showClearConfirmation = false;
             $http
