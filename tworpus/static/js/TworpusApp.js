@@ -70,9 +70,6 @@ tworpusApp
                 // Starts corpus creation through corpusCreationService if form is valid
                 var isValid = $("form").get(0).checkValidity();
                 if (isValid === true) {
-
-                    setFormValues();
-
                     corpusCreationService.startCorpusCreation($scope.corpus)
                         .success(function (data, status) {
                             switch (status) {
@@ -85,6 +82,7 @@ tworpusApp
                                     break;
                             }
                             $rootScope.$emit("corpus:create:start");
+                             setFormValues();
                         }).error(function (data, status) {
                             switch(status) {
                                 case 444:
