@@ -186,7 +186,6 @@ def removeCorpus(request):
     Deletes an finished or unfinished corpus from the database
     and removes all downloaded files.
     """
-    method = request.method
     corpusid = request.GET["corpusid"] if request.method == "GET" else request.POST["corpusid"]
     session = Session.objects.all().filter(id=corpusid).first()
     folder = os.path.join(settings.BASE_PROJECT_DIR, session.folder)
