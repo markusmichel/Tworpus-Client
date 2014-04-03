@@ -9,6 +9,12 @@ Aus den Tweets können Korpora erstellt werden.
 - `$> cd tworpus/static/`
 - `$> bower install` (für Windows: in git shell ausführen)
 
+## Installing NLTK Data:
+- Python Shell
+- `>>> import nltk`
+- `>>> nltk.download()`
+- download all
+
 ## Create CSS/JS files
 - `$> cd tworpus/static`
 - `$> npm install`
@@ -22,7 +28,7 @@ Aus den Tweets können Korpora erstellt werden.
 - `&> python manage.py syncdb`
 
 ## Technologies
-- Python `2.7.x`
+- Python `2.7.x` `32 Bit`
 - Django
 - https://github.com/markusmichel/Tworpus-Fetcher-Lib
 
@@ -31,3 +37,4 @@ Aus den Tweets können Korpora erstellt werden.
 - beautifulsoup4
 - enum
 - lxml (Download: http://www.lfd.uci.edu/~gohlke/pythonlibs/)
+- For Windows: NumPy (Download: http://sourceforge.net/projects/numpy/files/NumPy/)
