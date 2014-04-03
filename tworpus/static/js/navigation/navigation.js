@@ -19,7 +19,6 @@ angular
         $scope.exit = function() {
             $http.post(urls.exit)
                 .success(function() {
-                    console.log("exit success");
                 })
                 .error(function() {
 

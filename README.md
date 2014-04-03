@@ -4,12 +4,13 @@ Ermöglicht das Abfragen großer Mengen an aktuellen und alten Tweets.
 Aus den Tweets können Korpora erstellt werden.
 
 ## Benötigte PyCharm/Python Packages:
-- `setuptools`
-- `pip`
-- `Django`
-- `nltk`
-- `beautifulsoup4`
-- `watchdog` (?)
+- setuptools
+- pip
+- Django
+- nltk
+- beautifulsoup4
+- enum
+- lxml
 
 
 ## Installation

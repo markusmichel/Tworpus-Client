@@ -267,7 +267,6 @@ def downloadCorpus(request):
         xmlzip = ZipFile(zip_memory, 'w')
         for xmlfile in xmlfiles:
             filename = ntpath.basename(xmlfile)
-            print filename
             xmlzip.write(xmlfile, filename)
 
         xmlzip.close()

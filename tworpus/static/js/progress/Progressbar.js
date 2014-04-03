@@ -118,9 +118,7 @@ angular.module("tworpusApp.progress", ["tworpusApp.progress.services"])
 
             $scope.$watch("corpusCreationProcesses", function (oldValue, newValue) {
                 var unfinishedProcesses = $filter('working')(corpusCreations.corpusCreationProcesses);
-                    console.log("collection changed");
                 if (unfinishedProcesses.length == 0) {
-                    console.log("collection empty");
                     $scope.showProgressbar = false;
                 }
             }, true);

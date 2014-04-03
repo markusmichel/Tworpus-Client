@@ -21,20 +21,37 @@ tworpusApp
         }
     ])
 
+    .directive("twCreateCorpus", function () {
+        return {
+            restrict: 'A',
+
+            link: function ($scope, elm, attrs) {
+                $scope.$watch("availableConverters", function (newValue) {
+                    if(newValue.length > 0) {
+                        setTimeout(function() {
+                            var $converters = $("#converters label");
+                            $converters.tooltip();
+                        }, 100);
+
+                    }
+                });
+            }
+        }
+    })
+
     .controller('CreateCorpusController', ["$scope", "$rootScope", "$http", "urls", "corpusCreationService", "notify",
         function ($scope, $rootScope, $http, urls, corpusCreationService, notify) {
-
             $scope.corpus = {};
 
             //no values resets form
-            var setFormValues = function(formValues) {
+            var setFormValues = function (formValues) {
                 if (!formValues) formValues = {};
                 if (!formValues.endDate) formValues.endDate = moment().add('days', 1).toDate();
                 if (!formValues.startDate) formValues.startDate = moment().subtract('days', 10).toDate();
                 if (!formValues.numTweets) formValues.numTweets = 20;
                 if (!formValues.numMinWords) formValues.numMinWords = 0;
                 if (!formValues.numMinChars) formValues.numMinChars = 0;
-                if (!formValues.language) formValues.language = "";
+                if (!formValues.language) formValues.language = "en";
                 if (!formValues.title) formValues.title = "";
 
                 $scope.corpus.endDate = moment(formValues.endDate).toDate();
@@ -45,7 +62,7 @@ tworpusApp
                 $('#input_slider_num_tweets').attr('data-slider-value', formValues.numTweets);
                 $scope.corpus.numTweets = formValues.numTweets;
 
-                 $('#input_slider_min_chars').attr('data-slider-value', formValues.numMinWords);
+                $('#input_slider_min_chars').attr('data-slider-value', formValues.numMinWords);
                 $scope.corpus.numMinWords = formValues.numMinWords;
 
                 $('#input_slider_min_words').attr('data-slider-value', formValues.numMinChars);
@@ -66,10 +83,26 @@ tworpusApp
                 {name: "Turkish", value: "tr"}
             ];
 
+            $scope.availableConverters = {};
+            $http
+                .get(urls.converters)
+                .success(function (data) {
+                    $scope.availableConverters = data;
+                });
+
             $scope.startCreateCorpus = function () {
                 // Starts corpus creation through corpusCreationService if form is valid
                 var isValid = $("form").get(0).checkValidity();
                 if (isValid === true) {
+
+                    // Append converters to corpus object on form submit
+                    var converters = [];
+                    var $converters = $("form").find("#converters label.active input[type='checkbox']");
+                    angular.forEach($converters, function (input, index) {
+                        converters.push($(input).val());
+                    });
+                    $scope.corpus.converters = converters;
+
                     corpusCreationService.startCorpusCreation($scope.corpus)
                         .success(function (data, status) {
                             switch (status) {
@@ -82,9 +115,9 @@ tworpusApp
                                     break;
                             }
                             $rootScope.$emit("corpus:create:start");
-                             setFormValues();
+                            setFormValues();
                         }).error(function (data, status) {
-                            switch(status) {
+                            switch (status) {
                                 case 444:
                                     notify("No tweets found to fetch. Try to be less specific.", "error");
                                     break;
@@ -96,26 +129,30 @@ tworpusApp
                 }
             };
 
-        var saveIntoLocalStorage = function() {
-            localStorage.setItem('formValues', JSON.stringify({
-                endDate: $scope.corpus.endDate || null,
-                startDate: $scope.corpus.startDate || null,
-                language: $scope.corpus.language || "",
-                numMinChars: $scope.corpus.numMinChars || 0,
-                numMinWords: $scope.corpus.numMinWords || 0,
-                numTweets: $scope.corpus.numTweets || 20,
-                title: $scope.corpus.title || ""
-            }));
-        };
+            var saveIntoLocalStorage = function () {
+                localStorage.setItem('formValues', JSON.stringify({
+                    endDate: $scope.corpus.endDate,
+                    startDate: $scope.corpus.startDate,
+                    language: $scope.corpus.language,
+                    numMinChars: $scope.corpus.numMinChars,
+                    numMinWords: $scope.corpus.numMinWords,
+                    numTweets: $scope.corpus.numTweets,
+                    title: $scope.corpus.title
+                }));
+            };
 
-        $scope.$on("$destroy", function () {
-            saveIntoLocalStorage();
-        });
+            $scope.$on("$destroy", function () {
+                saveIntoLocalStorage();
+            });
 
-        window.onbeforeunload = function () {
-            saveIntoLocalStorage();
-        };
-    }])
+            window.onbeforeunload = function () {
+                saveIntoLocalStorage();
+            };
+
+            $scope.resetForm = function () {
+                setFormValues();
+            };
+        }])
 
     .directive('ngBootstrapSlider', function () {
         // uses http://www.eyecon.ro/bootstrap-slider/
@@ -170,12 +207,12 @@ tworpusApp
                     picker.setDate(newValue, true);
                 });
 
-                $scope.$watch("minDate", function(newValue) {
+                $scope.$watch("minDate", function (newValue) {
                     picker.setMinDate(newValue);
                     picker.setDate($scope.ngModel, true); // need setDate to update Datepicker
                 });
 
-                $scope.$watch("maxDate", function(newValue) {
+                $scope.$watch("maxDate", function (newValue) {
                     picker.setMaxDate(newValue);
                     picker.setDate($scope.ngModel, true); // need setDate to update Datepicker
                 });
@@ -442,10 +479,8 @@ angular.module("createCorpus.services", [])
         $scope.exit = function() {
             $http.post(urls.exit)
                 .success(function() {
-                    console.log("exit success");
                 })
                 .error(function() {
-
                 });
         };
     }])
@@ -453,8 +488,6 @@ angular.module("createCorpus.services", [])
     .factory("notify", [function() {
         return function(message, type) {
             type = type || "success";
-            console.log("notifification: ", message);
-            console.log("notifification type: ", type);
 
             var res = {
                 text: message,
@@ -577,35 +610,19 @@ angular.module("createCorpus.services", [])
             };
 
             var that = this;
-            // @TODO: Prozesse der Direktive übergeben. Diese überwacht dann die Prozesse und stellt die Progressbars dar oder nicht
             $scope.$watchCollection("corpusCreationProcesses", function (newValue) {
                 var unfinishedProcesses = $filter('working')(corpusCreations.corpusCreationProcesses);
                 if(unfinishedProcesses.length > 0) {
                     corpusCreations.longPoll();
                 }
-
-                if (corpusCreations.corpusCreationProcesses.length == 0) {
-                    $scope.showProgressbar = false;
-                }
             });
 
-//            $scope.$watch(function () {
-//                return corpusCreations.corpusCreationProcesses.length;
-//            }, function (oldValue, newValue) {
-//                console.log("CHANGE IN METHOD VARIANT 2");
-//            });
-//
-//            $scope.$watch(function () {
-//                return corpusCreations.corpusCreationProcesses;
-//            }, function (oldValue, newValue) {
-//                console.log("CHANGE IN METHOD VARIANT 3");
-//            });
-//
-//            $scope.$watchCollection(function () {
-//                return corpusCreations.corpusCreationProcesses;
-//            }, function () {
-//                console.log("CHANGE IN METHOD VARIANT 4");
-//            });
+            $scope.$watch("corpusCreationProcesses", function (oldValue, newValue) {
+                var unfinishedProcesses = $filter('working')(corpusCreations.corpusCreationProcesses);
+                if (unfinishedProcesses.length == 0) {
+                    $scope.showProgressbar = false;
+                }
+            }, true);
         }])
 ;;angular.module("tworpusApp.progress.services", [])
     .service('corpusCreations', ['$http', '$filter', 'urls', 'socketId', 'notify', function ($http, $filter, urls, socketId, notify) {
@@ -699,16 +716,27 @@ angular.module("createCorpus.services", [])
     .module("tworpusApp.cache", ['ngAnimate'])
 
     .controller("SettingsController", ["$scope", "$http", "urls", "notify", "corpusCreations", function ($scope, $http, urls, notify, corpusCreations) {
-        console.log(corpusCreations);
-$('.btn-danger').addClass('btn-disabled');
-        corpusCreations.fetchAll();
-        for (var i = 0; i < corpusCreations.corpusCreationProcesses.length; i++) {
-            console.log(corpusCreations.corpusCreationProcesses[i].working)
-            if (corpusCreations.corpusCreationProcesses[i].working === true) $('.btn-danger').addClass('btn-disabled');
-        }
 
+        var processInProgress = false;
+        corpusCreations.fetchAll();
+
+        $scope.$watch(function() {
+             return corpusCreations.corpusCreationProcesses
+         }, function(processes) {
+             processInProgress = false;
+             for (var i = 0; i < processes.length; i++) {
+                if (processes[i].working === true) {
+                    processInProgress = true;
+                    break;
+                }
+            }
+            if (processInProgress) $('.btn').addClass('btn-disabled');
+            else  $('.btn').removeClass('btn-disabled');
+         }, true);
 
         $scope.clearCache = function () {
+            if (processInProgress) return;
+
             $scope.showClearConfirmation = false;
             $http
                 .post(urls.clearCache)
@@ -738,6 +766,33 @@ $('.btn-danger').addClass('btn-disabled');
         });
 
         $scope.showClearConfirmation = false;
+
+        $scope.displayClearConfirmation = function() {
+            if (processInProgress)  $scope.showClearConfirmation = false;
+            else $scope.showClearConfirmation = true;
+        };
+
+        $scope.setTweetsXml = function(num) {
+             if (processInProgress) return;
+
+            $http
+                .post(urls.setTweetsPerXml, {tweets_per_xml: num})
+                .success(function() {
+                    notify("Tweets/XML successfully set to " + num);
+                })
+                .error(function() {
+                    notify("Couldn't set Tweets/XML", "error");
+                })
+            ;
+        };
+
+        (function getTweetsPerXml() {
+            $http
+                .get(urls.getTweetsPerXml)
+                .success(function(data) {
+                    $scope.tweetsXml = data.tweets_per_xml;
+                });
+        })();
     }])
 
     .filter('bytes', function () {

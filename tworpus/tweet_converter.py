@@ -20,7 +20,6 @@ class ConverterApp():
         self.converters.append(converter)
 
     def _run_converters(self, text):
-        print text
         converter_node = etree.Element(self.converter_node_name)
         for converter in self.converters:
             converter_node.append(converter.convert(text))

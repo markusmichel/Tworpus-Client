@@ -125,8 +125,6 @@ class TweetsFetcher():
         self.__process.communicate()  # blocks subprocess until finish
         self.__onFinish() if self.__canceled is not True else self.__onCancel()
 
-        print "FINISHED JAR PROGRAM"
-
     def parseDownloadProgressFromLine(self, line):
         """
         Receives a string/line from the command line output of tworpus_fetcher.jar
@@ -188,7 +186,6 @@ class TweetProgressEventHandler(FetcherProgressListener):
             self.__session.tweetsFetched = self.__numTweetsFetched
 
         self.__onProgress(values)
-        print "success"
 
     def onError(self, values):
         self.__numTweetsFailed += 1
@@ -196,13 +193,11 @@ class TweetProgressEventHandler(FetcherProgressListener):
             self.__session.tweetsFailed = self.__numTweetsFailed
 
         self.__onProgress(values)
-        print "error"
 
     def onCancel(self):
         self.__session.working = False
         self.__session.completed = False
         self.__session.save()
-        print "cancel"
 
     def onFinish(self):
         from tworpus import tweet_converter
@@ -244,7 +239,6 @@ class TweetProgressEventHandler(FetcherProgressListener):
         self.__session.working = False
         self.__session.completed = True
         self.__session.save()
-        print "on finish"
 
     def __onProgress(self, values):
         progress = (float(values["failed"]) + float(values["succeeded"])) / float(values["total"]) * 100
