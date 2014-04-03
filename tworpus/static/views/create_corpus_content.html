@@ -1,4 +1,4 @@
-<div>
+<div tw-create-corpus>
     <form role="form" method="post">
 
         <div class="form-group">
@@ -128,15 +128,11 @@
             <label for="input_slider_min_words">Data converters</label>
             <br/>
 
-            <div class="btn-group" data-toggle="buttons">
-                <label class="btn btn-default btn-sm">
-                    <input type="checkbox"> Option 1
-                </label>
-                <label class="btn btn-default btn-sm">
-                    <input type="checkbox"> Option 2
-                </label>
-                <label class="btn btn-default btn-sm">
-                    <input type="checkbox"> Option 3
+            <div class="btn-group" data-toggle="buttons" id="converters">
+
+                <label class="btn btn-default btn-sm" ng-repeat="converter in availableConverters"
+                         data-toggle="tooltip" data-placement="top" title="{{ converter.description }}" data-container="body">
+                    <input type="checkbox" name="converter" value="{{ converter.id }}"> {{ converter.title }}
                 </label>
             </div>
         </div>

@@ -26,5 +26,8 @@ urlpatterns = patterns('',
     url(r'^api/corpus/cache/clear', cacheViews.clearCache),
 
     url(r'^api/settings/tweets_per_xml/get', baseViews.get_tweets_per_xml),
-    url(r'^api/settings/tweets_per_xml/set', baseViews.set_tweets_per_xml)
+    url(r'^api/settings/tweets_per_xml/set', baseViews.set_tweets_per_xml),
+
+
+    url(r'^api/converters/', baseViews.converters_list)
 )

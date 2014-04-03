@@ -83,6 +83,9 @@ def startCreateCorpus(request):
             title = str(data["title"])
             startDate = str(data["startDateTimestamp"])
             endDate = str(data["endDateTimestamp"])
+            converters = data["converters"]
+            foo = json.dumps(converters)
+            bar = "kjhkj"
 
         # "normal" POST request: parse request.POST
         else:
@@ -104,6 +107,7 @@ def startCreateCorpus(request):
         session.minWordsPerTweet = minWordCount
         session.numTweets = numTweets
         session.folder = folderName
+        session.converters = json.dumps(converters)
         session.save()
 
         try:
@@ -194,12 +198,15 @@ def removeCorpus(request):
         def onCancel(self):
             shutil.rmtree(folder)
             session.delete()
-            manager.remove(corpusid)
             if str(corpusid) in manager.fetchers:
                 manager.fetchers.pop(str(corpusid))
 
-    fetcher.addListener(OnCancelListener())
-    fetcher.cancel()
+    if fetcher is not None:
+        fetcher.addListener(OnCancelListener())
+        fetcher.cancel()
+    else:
+        shutil.rmtree(folder)
+        session.delete()
 
     return HttpResponse("success")
 

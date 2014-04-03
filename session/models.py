@@ -20,6 +20,9 @@ class Session(models.Model):
     completed = models.BooleanField(default=False)
     progress = models.FloatField(default=0) #progress in percent
 
+
+    converters = models.TextField(default="")
+
     def __unicode__(self):
         return self.title
 

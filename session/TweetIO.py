@@ -5,8 +5,8 @@ import threading
 import os
 import sys
 import signal
-from tworpus import settings
-from tworpus.models import TworpusSettings
+from tworpus import settings, data_converter
+import json
 
 __manager = None
 
@@ -55,7 +55,8 @@ class FetchersManager():
         #     self.fetchers[id]
         # else:
         #     None
-        return self.fetchers[str(id)]
+        if str(id) in self.fetchers:
+            return self.fetchers[str(id)]
 
     def remove(self, id):
         if str(id) in self.fetchers:
@@ -152,6 +153,8 @@ class TweetsFetcher():
         self.__canceled = True
         if self.__process is not None:
             os.kill(self.__process.pid, signal.SIGTERM)
+        else:
+            self.__onCancel()
 
     # internal progress callbacks
     def __onFinish(self):
@@ -207,12 +210,30 @@ class TweetProgressEventHandler(FetcherProgressListener):
         baseFolder = os.path.join(settings.BASE_PROJECT_DIR, self.__session.folder)
         xmlFiles = glob.glob(os.path.join(baseFolder, "*.xml"))
         for xmlFile in xmlFiles:
-            newXmlFile = xmlFile + ".tmp.xml"
-            os.rename(xmlFile, newXmlFile)
+            try:
+                # Run data converters if selected
+                converterIds = json.loads(self.__session.converters)
+                if converterIds.__len__() > 0:
 
-            app = tweet_converter.ConverterApp(newXmlFile, xmlFile)
-            app.register_converter(tweet_converter.PosTagConverter())
-            app.run()
+                    newXmlFile = xmlFile + ".tmp.xml"
+                    os.rename(xmlFile, newXmlFile)
+
+                    app = tweet_converter.ConverterApp(newXmlFile, xmlFile)
+                    converters = data_converter.get_converters_from_ids(converterIds)
+                    for converter in converters:
+                        class_name = converter["class_name"]
+                        module_name = converter["module_name"]
+                        package = converter["package"]
+                        fullname = "converters." + package
+
+                        mod = __import__(fullname, globals(), locals(), [module_name], -1)
+                        converter_module = getattr(mod, module_name)
+                        converter_class = getattr(converter_module, class_name)
+                        app.register_converter(converter_class())
+
+                    app.run()
+            except:
+                pass
 
 
         xmlFiles = glob.glob(os.path.join(baseFolder, "*.tmp.xml"))
