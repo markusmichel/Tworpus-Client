@@ -10,7 +10,7 @@ Aus den Tweets können Korpora erstellt werden.
 - nltk
 - beautifulsoup4
 - enum
-- lxml
+- lxml (Download: http://www.lfd.uci.edu/~gohlke/pythonlibs/)
 
 
 ## Installation
