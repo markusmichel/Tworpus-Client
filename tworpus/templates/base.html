@@ -2,25 +2,24 @@
 <html ng-app="tworpusApp">
 
 <head>
-    {% load staticfiles %}
     <link href='http://fonts.googleapis.com/css?family=Oswald' rel='stylesheet' type='text/css'>
 
-    <link rel="stylesheet" href="{% static 'components/select2-3.4.5/select2.css' %}" />
-    <link rel="stylesheet" href="{% static 'components/select2-bootstrap.css' %}" />
-    <link rel="stylesheet" href="{% static 'components/datepicker/css/pikaday.css' %}" />
-    <link rel="stylesheet" href="{% static 'components/joyride-master/css/joyride-2.1.css' %}" />
-    <link rel="stylesheet" href="{% static 'components/pnotify-1.2.0/jquery.pnotify.default.css' %}" />
-    <link rel="stylesheet" href="{% static 'components/pnotify-1.2.0/use for pines style icons/jquery.pnotify.default.icons.css' %}" />
-    <link rel="stylesheet" href="{% static 'dist/css/bootstrap.css' %}" />
-    <link rel="stylesheet" href="{% static 'bower_components/angular-ui/build/angular-ui.css' %}" />
+    <link rel="stylesheet" href="/st/components/select2-3.4.5/select2.css"/>
+    <link rel="stylesheet" href="/st/components/select2-bootstrap.css"/>
+    <link rel="stylesheet" href="/st/components/datepicker/css/pikaday.css"/>
+    <link rel="stylesheet" href="/st/components/joyride-master/css/joyride-2.1.css"/>
+    <link rel="stylesheet" href="/st/components/pnotify-1.2.0/jquery.pnotify.default.css"/>
+    <link rel="stylesheet"
+          href="/st/components/pnotify-1.2.0/use for pines style icons/jquery.pnotify.default.icons.css"/>
+    <link rel="stylesheet" href="/st/dist/css/bootstrap.css"/>
+    <link rel="stylesheet" href="/st/bower_components/angular-ui/build/angular-ui.css"/>
 
     <title>Tworpus</title>
 
 
 </head>
 
-<body >
-<div id="sid" class="hidden" data-sessionid="{{ sid }}">{{ sid }}</div>
+<body>
 {% block body %}
 
     <div class="navbar navbar-inverse navbar-fixed-top" role="navigation" ng-controller="NavbarController">
@@ -77,74 +76,80 @@
     <ol id="joyRideTipContent">
         <li data-id="input_title">
             <h2>Step #1</h2>
+
             <p>Enter a project title for creating your corpus</p>
         </li>
         <li data-id="select-language-id">
             <h2>Step #2</h2>
+
             <p>Choose a language to filter your results</p>
         </li>
         <li data-id="timepickerID">
             <h2>Step #3</h2>
+
             <p>Select a start and end date to determine the timespan</p>
         </li>
         <li data-id="sliderTestID" data-options="tipLocation:right">
             <h2>Step #4</h2>
+
             <p>Adjust the sliders for your preferred settings</p>
         </li>
         <li data-id="doitBtnID" data-options="tipLocation:top;tipAnimation:fade">
             <h2>Step #5</h2>
+
             <p>Create the corpus</p>
         </li>
         <li data-button="View corpora" data-href="#/corpora" data-options="tipLocation:top;tipAnimation:fade">
             <h2>VOILA</h2>
+
             <p>Ok. You just created a corpus. For more information about it select "View corpora"</p>
         </li>
         <li data-options="tipLocation:top;tipAnimation:fade">
             <h2>Step #6</h2>
+
             <p>View the corpus</p>
+
             <p>Hover over it to see stats</p>
+
             <div class="corpus-view-example-chart"></div>
             <div class="corpus-view-example-stats"></div>
             <div style="clear: both;"></div>
         </li>
-            <li data-button="Close" data-options="tipLocation:top;tipAnimation:fade">
+        <li data-button="Close" data-options="tipLocation:top;tipAnimation:fade">
             <h2>Have fun !</h2>
+
             <p>Now you know how to use Tworpus</p>
         </li>
     </ol>
 {% endblock body %}
 
 {% block javascripts %}
-    <script src="{% static 'bower_components/jquery/dist/jquery.min.js' %}"></script>
-    <script src="{% static 'bower_components/underscore/underscore.js' %}"></script>
-    {#    <script src="http://localhost:3000/socket.io/socket.io.js"></script>#}
-    <script src="{% static 'bower_components/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+    <script src="/st/bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="/st/bower_components/underscore/underscore.js"></script>
+    <script src="/st/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 
 
-    <script src="{% static 'components/datepicker/js/moment-min.js' %}"></script>
-    <script src="{% static 'components/datepicker/js/pikaday.js' %}"></script>
-    <script src="{% static 'components/select2-3.4.5/select2.min.js' %}"></script>
-    <script src="{% static 'components/select2-3.4.5/select2_locale_de.js' %}"></script>
-    <script src="{% static 'components/pnotify-1.2.0/jquery.pnotify.min.js' %}"></script>
-    <script src="{% static 'components/slider/js/bootstrap-slider.js' %}"></script>
-    <script src="{% static 'components/d3/d3.min.js' %}"></script>
+    <script src="/st/components/datepicker/js/moment-min.js"></script>
+    <script src="/st/components/datepicker/js/pikaday.js"></script>
+    <script src="/st/components/select2-3.4.5/select2.min.js"></script>
+    <script src="/st/components/select2-3.4.5/select2_locale_de.js"></script>
+    <script src="/st/components/pnotify-1.2.0/jquery.pnotify.min.js"></script>
+    <script src="/st/components/slider/js/bootstrap-slider.js"></script>
+    <script src="/st/components/d3/d3.min.js"></script>
 
-    <!-- Angular -->
-    {#        <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.12/angular.min.js"></script>#}
-
-    <script src="{% static 'bower_components/angular/angular.js' %}"></script>
-    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.12/angular-route.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.13/angular-animate.js"></script>
-    <script src="{% static 'bower_components/angular-cookies/angular-cookies.js' %}"></script>
-    <script src="{% static 'bower_components/angular-ui/build/angular-ui.js' %}"></script>
-    <script src="{% static 'bower_components/angular-ui/build/angular-ui-ieshiv.js' %}"></script>
-    <script src="{% static 'bower_components/angular-bootstrap/ui-bootstrap.js' %}"></script>
+    <script src="/st/bower_components/angular/angular.js"></script>
+    <script src="/st/components/angular-route.js"></script>
+    <script src="/st/components/angular-animate.js"></script>
+    <script src="/st/bower_components/angular-cookies/angular-cookies.js"></script>
+    <script src="/st/bower_components/angular-ui/build/angular-ui.js"></script>
+    <script src="/st/bower_components/angular-ui/build/angular-ui-ieshiv.js"></script>
+    <script src="/st/bower_components/angular-bootstrap/ui-bootstrap.js"></script>
     <script src="http://code.angularjs.org/1.0.8/i18n/angular-locale_de-de.js"></script>
-    <script src="{% static 'bower_components/angular-bootstrap/ui-bootstrap-tpls.js' %}"></script>
-    <script src="{% static 'bower_components/angular-ui-select2/src/select2.js' %}"></script>
+    <script src="/st/bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+    <script src="/st/bower_components/angular-ui-select2/src/select2.js"></script>
 
-    <script src="{% static 'components/joyride-master/js/jquery.joyride-2.1.js' %}"></script>
-    <script src="{% static 'components/joyride-master/js/modernizr.mq.js' %}"></script>
+    <script src="/st/components/joyride-master/js/jquery.joyride-2.1.js"></script>
+    <script src="/st/components/joyride-master/js/modernizr.mq.js"></script>
 
     <script>
         // Init angular app
@@ -172,39 +177,38 @@
             $http.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
         });
 
-        // Inject viariables generated from django
         tworpusApp.constant('socketId', "{{ sid }}");
         tworpusApp.constant('urls', {
-            'sessions': "{% url 'session.views.getSessions'  %}",
-            'session': "{% url 'session.views.getSession'  %}",
-            'activeSessions': "{% url 'session.views.getActiveSessions'  %}",
-            'removeCorpus': "{% url 'session.views.removeCorpus'  %}",
-            'startCreateCorpus': "{% url 'session.views.startCreateCorpus' %}",
-            'pauseCorpus': "{% url 'session.views.pauseCorpus' %}",
-            'resumeCorpus': "{% url 'session.views.resumeCorpus' %}",
-            'recreateCorpus': "{% url 'session.views.recreateCorpus' %}",
-            'downloadCorpus': "{% url 'session.views.downloadCorpus' %}",
-            'clearCache': "{% url 'session.views_cache.clearCache' %}",
-            'cacheStatus': "{% url 'session.views_cache.cacheStatus' %}",
-            'exit': "{% url 'session.views.exit' %}",
+            'sessions': "/api/sessions",
+            'session': "/api/session",
+            'activeSessions': "/api/activesessions",
+            'removeCorpus': "/api/corpus/remove",
+            'startCreateCorpus': "/api/createcorpus",
+            'pauseCorpus': "{% url 'session.views.pauseCorpus",
+            'resumeCorpus': "/api/corpus/resume",
+            'recreateCorpus': "/api/corpus/recreate",
+            'downloadCorpus': "/api/corpus/download",
+            'clearCache': "/api/corpus/cache/clear",
+            'cacheStatus': "/api/corpus/cache/status",
+            'exit': "/api/exit",
 
-            'getTweetsPerXml': "{% url 'tworpus.views.get_tweets_per_xml' %}",
-            'setTweetsPerXml': "{% url 'tworpus.views.set_tweets_per_xml' %}",
+            'getTweetsPerXml': "/api/settings/tweets_per_xml/get",
+            'setTweetsPerXml': "/api/settings/tweets_per_xml/set",
 
-            'converters': "{% url 'tworpus.views.converters_list' %}"
+            'converters': "/api/converters/"
         });
     </script>
 
-    <script src="{% static 'js/create_corpus/services.js' %}"></script>
-    <script src="{% static 'js/progress/services.js' %}"></script>
-    <script src="{% static 'js/notifications.js' %}"></script>
-    <script src="{% static 'js/TworpusApp.js' %}"></script>
-    <script src="{% static 'js/Corpora.js' %}"></script>
-    <script src="{% static 'js/settings/settings.js' %}"></script>
-    <script src="{% static 'js/progress/Progressbar.js' %}"></script>
-    <script src="{% static 'js/navigation/navigation.js' %}"></script>
-    <script src="{% static 'js/SiteTour.js' %}"></script>
-{#    <script src="{% static 'dist/js/tworpus.js' %}"></script>#}
+    <script src="/st/js/create_corpus/services.js"></script>
+    <script src="/st/js/progress/services.js"></script>
+    <script src="/st/js/notifications.js"></script>
+    <script src="/st/js/TworpusApp.js"></script>
+    <script src="/st/js/Corpora.js"></script>
+    <script src="/st/js/settings/settings.js"></script>
+    <script src="/st/js/progress/Progressbar.js"></script>
+    <script src="/st/js/navigation/navigation.js"></script>
+    <script src="/st/js/SiteTour.js"></script>
+    {#<script src="/st/dist/js/tworpus.min.js"></script>#}
 
 {% endblock javascripts %}
 </body>
