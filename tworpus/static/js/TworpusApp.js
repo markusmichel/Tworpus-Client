@@ -4,15 +4,15 @@ tworpusApp
         function ($routeProvider) {
             $routeProvider.
                 when('/createcorpus', {
-                    templateUrl: '/static/views/create_corpus_content.html',
+                    templateUrl: '/st/views/create_corpus_content.html',
                     controller: 'CreateCorpusController'
                 }).
                 when('/corpora', {
-                    templateUrl: '/static/views/corpora.html',
+                    templateUrl: '/st/views/corpora.html',
                     controller: 'CorporaController'
                 }).
                 when('/settings', {
-                    templateUrl: '/static/views/settings.html',
+                    templateUrl: '/st/views/settings.html',
                     controller: 'SettingsController'
                 }).
                 otherwise({

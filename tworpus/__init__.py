@@ -1,4 +1,4 @@
-from models import TworpusSettings
+#from models import TworpusSettings
 
 def check_settings_available():
     """
@@ -12,4 +12,4 @@ def check_settings_available():
     except:
         pass
 
-check_settings_available()
+#check_settings_available()

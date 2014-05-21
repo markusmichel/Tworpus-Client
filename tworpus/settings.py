@@ -9,7 +9,21 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 """
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+from importlib import import_module
 import os
+
+# Application definition
+INSTALLED_APPS = (
+    'django.contrib.staticfiles',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'tworpus',
+    'session',
+    'visualizer',
+)
+
+
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 
@@ -26,18 +40,6 @@ TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
-# Application definition
-
-INSTALLED_APPS = (
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'tworpus',
-    'session',
-    'visualizer',
-)
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',

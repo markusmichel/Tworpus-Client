@@ -1,15 +1,15 @@
 from django.shortcuts import render_to_response, RequestContext
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 import tworpus_user_id
 from models import TworpusSettings
 import json
 import data_converter
+from tworpus import settings
 
 
 def home(request):
     request.META["CSRF_COOKIE_USED"] = True
-    id = tworpus_user_id.getUid()
-    return render_to_response("base.html", {"sid": str(id)}, context_instance=RequestContext(request))
+    return render_to_response("base.html", {}, context_instance=RequestContext(request))
 
 
 def set_tweets_per_xml(request):
@@ -32,3 +32,20 @@ def get_tweets_per_xml(request):
 def converters_list(request):
     converters = data_converter.get_converter_data()
     return HttpResponse(json.dumps(converters))
+
+def static(request):
+    import os.path
+    import mimetypes
+    path = request.get_full_path().replace("/st", "", 1).split("/")
+    full_path = os.path.join(settings.BASE_DIR, "tworpus", "static")
+
+    for p in path:
+        full_path = os.path.join(full_path, p)
+
+    if os.path.isfile(full_path) is False:
+        raise Http404
+
+    file = open(full_path, "rb")
+    mimetype = mimetypes.guess_type(full_path)
+
+    return HttpResponse(file, mimetype=mimetype[0])

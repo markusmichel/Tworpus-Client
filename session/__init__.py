@@ -13,7 +13,6 @@ try:
         if os.path.isdir(projectFolder) is not True:
             session.delete()
 
-
 except:
     pass
 

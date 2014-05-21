@@ -5,6 +5,7 @@ import shutil
 
 from tworpus import settings
 
+
 def cacheStatus(request):
     size = 0
     numFiles = 0
@@ -18,6 +19,7 @@ def cacheStatus(request):
         "numFiles": numFiles,
         "size": size
     }))
+
 
 def clearCache(request):
     if request.method == "POST":

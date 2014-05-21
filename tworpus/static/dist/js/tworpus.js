@@ -4,15 +4,15 @@ tworpusApp
         function ($routeProvider) {
             $routeProvider.
                 when('/createcorpus', {
-                    templateUrl: '/static/views/create_corpus_content.html',
+                    templateUrl: '/st/views/create_corpus_content.html',
                     controller: 'CreateCorpusController'
                 }).
                 when('/corpora', {
-                    templateUrl: '/static/views/corpora.html',
+                    templateUrl: '/st/views/corpora.html',
                     controller: 'CorporaController'
                 }).
                 when('/settings', {
-                    templateUrl: '/static/views/settings.html',
+                    templateUrl: '/st/views/settings.html',
                     controller: 'SettingsController'
                 }).
                 otherwise({
@@ -481,6 +481,7 @@ angular.module("createCorpus.services", [])
                 .success(function() {
                 })
                 .error(function() {
+
                 });
         };
     }])
@@ -502,7 +503,7 @@ angular.module("createCorpus.services", [])
 ;;angular.module("tworpusApp.progress", ["tworpusApp.progress.services"])
     .directive('twCorpusProgress', [function () {
         return {
-            templateUrl: '/static/views/corpus_creation_progress.html',
+            templateUrl: '/st/views/corpus_creation_progress.html',
             replace: true,
             scope: {
                 twProgresses: "="

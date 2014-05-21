@@ -7,10 +7,15 @@ projects/*
 *.pyc
 *_bak.py
 .idea/
+*.pyo
+
+build/
+dist/
 
 tworpus/static/bower_components
 tworpus/static/bower_components/*
 tworpus/static/node_modules/
+node_modules/
 
 xmlcache/*
 

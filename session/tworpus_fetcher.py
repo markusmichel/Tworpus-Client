@@ -1,13 +1,14 @@
 import urllib2
 from tworpus import settings
 
-def getCsvListStr(limit=10, language="en", minWordcount=0, minCharcount=0, startDate=None, endDate=None):
+
+def getCsvListStr(limit=10, language="en", min_wordcount=0, min_charcount=0, start_date=None, end_date=None):
     baseTworpusUrl = settings.TWORPUS_BASE_URL
     url = baseTworpusUrl + "/api/v1/tweets/find?format=csv&limit=" + str(limit) + "&languages=" + language
-    url = url + "&wordcount=" + str(minWordcount) + "&charcount=" + str(minCharcount)
+    url = url + "&wordcount=" + str(min_wordcount) + "&charcount=" + str(min_charcount)
 
-    if startDate is not None and endDate is not None:
-        url = url + "&startdate=" + startDate + "&enddate=" + endDate
+    if start_date is not None and end_date is not None:
+        url = url + "&startdate=" + start_date + "&enddate=" + end_date
 
     fetchedData = {}
     try:

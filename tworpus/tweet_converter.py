@@ -1,9 +1,11 @@
 from lxml import etree
 from copy import deepcopy
 
+
 class BaseTweetTextConverter():
     def convert(self, text):
         pass
+
 
 class ConverterApp():
     def __init__(self, source_file, dest_file):
@@ -50,5 +52,5 @@ class ConverterApp():
                 del tweet.getparent()[0]
 
         newFile = open(self.dest_file, "w")
-        newFile.write(etree.tostring(root, pretty_print=True, xml_declaration=True,encoding="UTF-8"))
+        newFile.write(etree.tostring(root, pretty_print=True, xml_declaration=True, encoding="UTF-8"))
         newFile.close()

@@ -1,7 +1,7 @@
 angular.module("tworpusApp.progress", ["tworpusApp.progress.services"])
     .directive('twCorpusProgress', [function () {
         return {
-            templateUrl: '/static/views/corpus_creation_progress.html',
+            templateUrl: '/st/views/corpus_creation_progress.html',
             replace: true,
             scope: {
                 twProgresses: "="

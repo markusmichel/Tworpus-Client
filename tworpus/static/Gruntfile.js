@@ -56,6 +56,36 @@ module.exports = function (grunt) {
                     'js/**/*.js'
                 ],
                 dest: 'dist/js/tworpus.js'
+            },
+            assets: {
+                src: [
+                    'bower_components/jquery/dist/jquery.min.js',
+                    'bower_components/underscore/underscore.js',
+                    'bower_components/bootstrap/dist/js/bootstrap.min.js',
+
+
+                    'components/datepicker/js/moment-min.js',
+                    'components/datepicker/js/pikaday.js',
+                    'components/select2-3.4.5/select2.min.js',
+                    'components/select2-3.4.5/select2_locale_de.js',
+                    'components/pnotify-1.2.0/jquery.pnotify.min.js',
+                    'components/slider/js/bootstrap-slider.js',
+                    'components/d3/d3.min.js',
+                    'bower_components/angular/angular.js',
+                    'components/angular-route.js',
+                    'components/angular-animate.js',
+                    'bower_components/angular-cookies/angular-cookies.js',
+                    'bower_components/angular-ui/build/angular-ui.js',
+                    'bower_components/angular-ui/build/angular-ui-ieshiv.js',
+                    'bower_components/angular-bootstrap/ui-bootstrap.js',
+                    'components/angular-locale_de-de.js',
+                    'bower_components/angular-bootstrap/ui-bootstrap-tpls.js',
+                    'bower_components/angular-ui-select2/src/select2.js',
+
+                    'components/joyride-master/js/jquery.joyride-2.1.js',
+                    'components/joyride-master/js/modernizr.mq.js'
+                ],
+                dest: 'dist/js/assets.js'
             }
         },
 
@@ -69,7 +99,8 @@ module.exports = function (grunt) {
         uglify: {
             all: {
                 files: {
-                    'dist/js/tworpus.min.js': '<%= concat.dist.dest %>'
+                    'dist/js/tworpus.min.js': '<%= concat.dist.dest %>',
+                    'dist/js/assets.min.js': '<%= concat.assets.dest %>'
                 }
             }
         },

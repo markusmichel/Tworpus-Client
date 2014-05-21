@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class Session(models.Model):
     title = models.CharField(max_length=200, unique=False)
     folder = models.CharField(max_length=200)
@@ -18,8 +19,7 @@ class Session(models.Model):
     # progress indicators
     working = models.BooleanField(default=False)
     completed = models.BooleanField(default=False)
-    progress = models.FloatField(default=0) #progress in percent
-
+    progress = models.FloatField(default=0)  # progress in percent
 
     converters = models.TextField(default="")
 

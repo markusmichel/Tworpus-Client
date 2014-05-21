@@ -7,6 +7,7 @@ import sys
 import signal
 from tworpus import settings, data_converter
 import json
+from session.models import Session
 
 __manager = None
 
@@ -22,9 +23,6 @@ def getManager():
 
 
 class FetcherProgressListener:
-    """
-
-    """
     def onSuccess(self, values):
         pass
 
@@ -47,22 +45,22 @@ class FetchersManager():
     def __init__(self):
         self.fetchers = dict()
 
-    def add(self, fetcher, id):
-        self.fetchers[str(id)] = fetcher
+    def add(self, fetcher, _id):
+        self.fetchers[str(_id)] = fetcher
 
-    def get(self, id):
+    def get(self, _id):
         # if id in self.fetchers:
         #     self.fetchers[id]
         # else:
         #     None
-        if str(id) in self.fetchers:
-            return self.fetchers[str(id)]
+        if str(_id) in self.fetchers:
+            return self.fetchers[str(_id)]
 
-    def remove(self, id):
-        if str(id) in self.fetchers:
-            fetcher = self.get(str(id))
+    def remove(self, _id):
+        if str(_id) in self.fetchers:
+            fetcher = self.get(str(_id))
             fetcher.cancel()
-            self.fetchers.pop(str(id))
+            self.fetchers.pop(str(_id))
 
 
 class TweetsFetcher():
@@ -71,11 +69,6 @@ class TweetsFetcher():
     Process is done by jar file started through subprocess.
     """
     def __init__(self, tweetsCsvFile, outputDir, tweetsPerXml):
-        """
-        @type updateListener: FetcherProgressListener
-        """
-        # assert isinstance(updateListener, FetcherProgressListener)
-
         self.__process = None
         self.tweetsCsvFile = tweetsCsvFile
         self.outputDir = outputDir
@@ -102,7 +95,7 @@ class TweetsFetcher():
         # argsStr += " -csv-no-title"
 
         #setting the correct path for windows
-        argsStr = argsStr.replace("\\","/")
+        argsStr = argsStr.replace("\\", "/")
         args = shlex.split(argsStr)  # creates args array for subprocess
         self.__process = subprocess.Popen(args, shell=False, stdout=subprocess.PIPE)
 
@@ -166,7 +159,6 @@ class TweetsFetcher():
     # end internal progress callbacks
 
 
-from session.models import Session
 class TweetProgressEventHandler(FetcherProgressListener):
 
     def __init__(self, corpusid):
@@ -230,11 +222,9 @@ class TweetProgressEventHandler(FetcherProgressListener):
             except:
                 pass
 
-
         xmlFiles = glob.glob(os.path.join(baseFolder, "*.tmp.xml"))
         for xmlFile in xmlFiles:
             os.remove(xmlFile)
-
 
         self.__session.working = False
         self.__session.completed = True

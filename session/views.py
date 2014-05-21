@@ -1,4 +1,5 @@
-import datetime, time
+import datetime
+import time
 
 from django.utils.timezone import utc
 from django.core.servers.basehttp import FileWrapper
@@ -38,21 +39,14 @@ class CreateCorpusForm(forms.Form):
     language = forms.ChoiceField(widget=forms.ChoiceField())
 
 
-def createCorpusContent(request):
-    """
-    Returns just the content for corpus creation.
-    Used for angular.js route /views/createcorpus
-    """
-    from django.shortcuts import render_to_response
 
-    return render_to_response("create_corpus_content.html")
 
 
 class TweetsDownloadListener(TweetIO.FetcherProgressListener):
-    def onSuccess(self):
+    def onSuccess(self, values):
         pass
 
-    def onError(self):
+    def onError(self, values):
         pass
 
     def onFinish(self):
@@ -69,8 +63,6 @@ def startCreateCorpus(request):
     Status codes:
     - 409: No tweets found to fetch
     """
-
-    idList = []
     if request.method == 'POST':
 
         # AJAX request: parse body
@@ -84,8 +76,6 @@ def startCreateCorpus(request):
             startDate = str(data["startDateTimestamp"])
             endDate = str(data["endDateTimestamp"])
             converters = data["converters"]
-            foo = json.dumps(converters)
-            bar = "kjhkj"
 
         # "normal" POST request: parse request.POST
         else:
@@ -96,6 +86,7 @@ def startCreateCorpus(request):
             title = request.POST["title"]
             startDate = request.POST["startDateTimestamp"]
             endDate = request.POST["endDateTimestamp"]
+            converters = request.POST["converters"]
 
         folderName = str(uuid4())
         startDateObj = datetime.datetime.utcfromtimestamp(int(startDate) / 1000).replace(tzinfo=utc)
@@ -131,7 +122,9 @@ def invokeCorpusCreation(csvFile, folder, session):
     """
     tw_settings = TworpusSettings.objects.first()
     listener = TweetIO.TweetProgressEventHandler(session.id)
-    fetcher = TweetIO.TweetsFetcher(tweetsCsvFile=csvFile.name, outputDir=folder, tweetsPerXml=tw_settings.tweets_per_xml)
+    fetcher = TweetIO.TweetsFetcher(
+        tweetsCsvFile=csvFile.name, outputDir=folder, tweetsPerXml=tw_settings.tweets_per_xml
+    )
     fetcher.addListener(listener)
     fetcher.fetch()
 
@@ -163,13 +156,13 @@ def getSession(request):
     """
     Return one specific session by its id
     """
-    id = int(request.GET["id"])
-    session = Session.objects.all().filter(id=id).first()
+    sid = int(request.GET["id"])
+    session = Session.objects.all().filter(id=sid).first()
 
     return HttpResponse(json.dumps(session.as_json()))
 
 
-def exit(request):
+def exit_application(request):
 
     fetchersManager = TweetIO.getManager()
 
@@ -180,6 +173,7 @@ def exit(request):
 
     pid = os.getpid()
     os.kill(pid, signal.SIGTERM)
+
 
 def removeCorpus(request):
     """
@@ -215,12 +209,12 @@ def pauseCorpus(request):
     Sets the corpus with a specific corpusid to NOT working
     and cancels its' running subprocesses.
     """
-    id = request.GET["id"]
+    sid = request.GET["id"]
 
     fetchersManager = TweetIO.getManager()
-    fetchersManager.remove(id)
+    fetchersManager.remove(sid)
 
-    session = Session.objects.all().filter(id=id).first()
+    session = Session.objects.all().filter(id=sid).first()
     session.working = False
     session.save()
 
@@ -231,8 +225,8 @@ def resumeCorpus(request):
     """
     Resumes (=restarting subprocess) a corpus creation process.
     """
-    id = request.GET["id"]
-    session = Session.objects.all().filter(id=id).first()
+    sid = request.GET["id"]
+    session = Session.objects.all().filter(id=sid).first()
     session.working = True
     session.completed = False
     session.save()
@@ -246,12 +240,11 @@ def resumeCorpus(request):
 
 
 def downloadCorpus(request):
-    id = request.GET["id"]
-    session = Session.objects.all().filter(id=id).first()
+    sid = request.GET["id"]
+    session = Session.objects.all().filter(id=sid).first()
 
     baseFolder = os.path.join(settings.BASE_PROJECT_DIR, session.folder)
     xmlfiles = glob.glob(os.path.join(baseFolder, "*.xml"))
-
 
     if xmlfiles.__len__() == 1:
         tweetsFileLocation = os.path.join(settings.BASE_PROJECT_DIR, session.folder, xmlfiles.pop(0))
@@ -276,12 +269,12 @@ def downloadCorpus(request):
 
 
 def recreateCorpus(request):
-    id = request.GET["id"]
-    session = Session.objects.all().filter(id=id).first()
+    sid = request.GET["id"]
+    session = Session.objects.all().filter(id=sid).first()
     session.resetProgress()
 
     try:
-        start_create_corpus(session, override=True)
+        start_create_corpus(session)
     except CsvEmptyException:
         return HttpResponse(status=409)
     except CsvPartiallyEmptyException:
@@ -290,7 +283,7 @@ def recreateCorpus(request):
     return HttpResponse(json.dumps("success"), status=200)
 
 
-def start_create_corpus(session, override=False):
+def start_create_corpus(session):
     session.working = True
     session.save()
 
@@ -299,9 +292,9 @@ def start_create_corpus(session, override=False):
 
     # fetch and save csv list
     csv = tworpus_fetcher.getCsvListStr(
-        minWordcount=session.minWordsPerTweet, minCharcount=session.minCharsPerTweet,
+        min_wordcount=session.minWordsPerTweet, min_charcount=session.minCharsPerTweet,
         language=session.language, limit=session.numTweets,
-        startDate=startDate, endDate=endDate
+        start_date=startDate, end_date=endDate
     )
 
     # status == 444 := no tweets to fetch
@@ -328,8 +321,10 @@ def start_create_corpus(session, override=False):
     if csv['status'] == 206:
         raise CsvPartiallyEmptyException
 
+
 class CsvEmptyException(Exception):
     pass
+
 
 class CsvPartiallyEmptyException(Exception):
     pass
